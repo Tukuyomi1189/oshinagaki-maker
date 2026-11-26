@@ -163,12 +163,6 @@ body.view #cv{touch-action:auto}
   #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
   #split:focus-visible{outline:none}
   nav button{font-size:13px}
-}
-/* タブレットの幅ではヘッダーの補足（入力 → 自動レイアウト → …）を省いて1行に収める */
-@media(max-width:1023px){header h1 small{display:none}}
-/* 幅の狭いスマホ（iPhone SE・mini など）でもヘッダーを1行に収める */
-@media(max-width:400px){
-  header h1{font-size:12px}header{gap:3px;padding:6px 6px}header button,header .fbtn{padding:3px 5px}
   footer{flex-wrap:wrap;gap:4px 8px;padding:4px 8px}footer .pc,footer #stat{display:none}
   #hint{display:inline;color:var(--ac2);font-size:12px} /* 箱を選んでいないときの操作のヒント（スマホのみ） */
   /* プロパティパネルは画面下から出るシートにする（画面下のボタン列の上に重ねる。--fh＝画面下の高さ） */
@@ -179,6 +173,12 @@ body.view #cv{touch-action:auto}
   #props input[type=color]{height:32px!important}
   #props .lg,#props .lf{display:none}
   #props .pb{flex-direction:row;margin-top:8px}#props .pb button{flex:1;padding:7px 2px;font-size:12px}
+}
+/* タブレットの幅ではヘッダーの補足（入力 → 自動レイアウト → …）を省いて1行に収める */
+@media(max-width:1023px){header h1 small{display:none}}
+/* 幅の狭いスマホ（iPhone SE・mini など）でもヘッダーを1行に収める */
+@media(max-width:400px){
+  header h1{font-size:12px}header{gap:3px;padding:6px 6px}header button,header .fbtn{padding:3px 5px}
 }
 </style>
 </head>
