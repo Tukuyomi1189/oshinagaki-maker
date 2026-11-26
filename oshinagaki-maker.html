@@ -70,6 +70,36 @@ h2:first-child{margin-top:0}
 #tsgrid input{margin:0}#tsgrid input[type=color]{height:28px}#tsgrid button{padding:2px 0;font-size:11px}#tsgrid .hd{color:var(--sub);font-size:11px}
 #tlist .body{padding:10px}
 #pgmap{flex-wrap:wrap}#pgmap label{flex:1 0 28%}#bsKinds{flex-wrap:wrap}#bsKinds label{flex:1 0 40%}
+/* レイヤー一覧 */
+#layers{border:1px solid var(--ln);border-radius:8px;background:#fff;overflow:hidden;font-size:13px}
+#layers .lg{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#f1eee9;border-top:1px solid var(--ln);font-weight:700}
+#layers .lg:first-child{border-top:0}
+#layers .lg .tw{border:0;background:transparent;padding:0 2px;width:20px;color:var(--sub);flex:none}
+#layers .lr{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 28px;border-top:1px solid #efebe4;cursor:pointer;min-height:36px}
+#layers .lg.sel,#layers .lr.sel{background:#dcebff;box-shadow:inset 3px 0 0 #0a84ff}
+#layers .lr:hover,#layers .lg[data-key]:hover{background:#eef5ff}
+#layers .lg[data-key]{cursor:pointer}
+#layers .ln{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#layers .tg{font-size:11px;border-radius:99px;padding:1px 7px;white-space:nowrap;flex:none;border:1px solid var(--ln);color:var(--sub);background:#fff}
+#layers .tg.mn{border-color:#0a84ff;color:#0a84ff}
+#layers .tg.sd{border-color:#555;color:#fff;background:#555}
+#layers .sz{font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap;flex:none}
+#layers .rs{padding:1px 7px;font-size:12px;flex:none}
+#layers .fx{color:var(--sub);cursor:default;font-weight:400;background:#faf9f7}
+#layers .em{padding:14px;color:var(--sub)}
+#layers{position:relative}
+#layers .lr{padding-left:10px}
+#layers .dh{cursor:grab;color:#b3aba0;padding:0 2px;touch-action:none;user-select:none;-webkit-user-select:none;flex:none;font-size:14px;letter-spacing:-3px;line-height:1}
+#layers .drg{opacity:.45}
+#layers .ic{border:0;background:transparent;padding:2px;flex:none;color:#b3aba0;display:flex;border-radius:4px}
+#layers .ic:hover{background:#eef0f5;color:var(--ink)}
+#layers .ic.off,#layers .ic.on{color:var(--ink)}
+#layers .icg{display:flex;gap:0;flex:none}
+#layers .hd .ln,#layers .hd .kd,#layers .hd .sz{opacity:.4}
+#layers .hd .ln{text-decoration:line-through}
+#lyInd{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;pointer-events:none;z-index:2}
+#lyTool{align-items:center}#lyTool button{padding:3px 8px;font-size:12px}#lyTool button:disabled{opacity:.4;cursor:default}
+.lyw{font-size:11px;color:var(--sub);flex-basis:100%}
 label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk select{width:auto;flex:1;margin:0}.kd.k-set{background:var(--ac2)}
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -124,6 +154,11 @@ body.view #cv{touch-action:auto}
   #split::before{content:"";width:48px;height:5px;border-radius:3px;background:var(--sub);opacity:.45}
   #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
   #split:focus-visible{outline:none}
+  nav button{font-size:13px}
+}
+/* 幅の狭いスマホ（iPhone SE・mini など）でもヘッダーを1行に収める */
+@media(max-width:400px){
+  header h1{font-size:12px}header{gap:3px;padding:6px 6px}header button,header .fbtn{padding:3px 5px}
   footer{flex-wrap:wrap;gap:4px 8px;padding:4px 8px}footer .pc,footer #stat{display:none}
   #hint{display:inline;color:var(--ac2);font-size:12px} /* 箱を選んでいないときの操作のヒント（スマホのみ） */
   /* プロパティパネルは画面下から出るシートにする（画面下のボタン列の上に重ねる。--fh＝画面下の高さ） */
@@ -154,6 +189,7 @@ body.view #cv{touch-action:auto}
     <button role="tab" data-t="t2">頒布物</button>
     <button role="tab" data-t="t3">デザイン</button>
     <button role="tab" data-t="t5">文字</button>
+    <button role="tab" data-t="t6">レイヤー</button>
     <button role="tab" data-t="t4">書き出し</button>
   </nav>
 
@@ -282,6 +318,14 @@ body.view #cv{touch-action:auto}
     <p class="note"><b>濃さ</b>は 100％で通常、下げると薄く（半透明に）なります。色を変えていない項目はテーマの色に従います。「戻」で色だけテーマ色に戻せます。<br>箱ごとに変えたいときは、プロパティパネルを表示して箱を選ぶと、その箱だけの文字サイズ（全体・要素ごと）・色・濃さ・表紙画像の大きさを指定できます。</p>
   </div>
 
+  <div class="tab" id="t6">
+    <p class="note">プレビューに置いている箱の一覧です（2枚に分けているときは表示中のページ）。<b>上にあるものほど前面</b>に描かれます。行を押すと選択、<b>⋮⋮</b> をドラッグすると重なり順の入れ替え、目のアイコンで表示／非表示、鍵のアイコンでロック（プレビューで選べない・動かせない）。PC ではマウスを乗せるとプレビューで強調します。</p>
+    <div id="lyTool" class="bar" role="toolbar" aria-label="重なり順">
+      <button type="button" data-z="top" title="最前面へ（Ctrl+Shift+]）">⤒ 最前面</button><button type="button" data-z="up" title="前面へ（Ctrl+]）">↑ 前面</button><button type="button" data-z="down" title="背面へ（Ctrl+[）">↓ 背面</button><button type="button" data-z="bottom" title="最背面へ（Ctrl+Shift+[）">⤓ 最背面</button>
+      <span class="lyw" id="lyWhat"></span>
+    </div>
+    <div id="layers"></div>
+  </div>
   <div class="tab" id="t4">
     <h2>PNG</h2>
     <label>解像度<select id="selRes">
@@ -358,7 +402,7 @@ body.view #cv{touch-action:auto}
 <dialog id="help" aria-labelledby="helpT">
 <div class="hh"><h2 id="helpT">お品書きメーカーの使い方</h2><button type="button" id="bHelpX">閉じる</button></div>
 <div class="hb">
-<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-undo">元に戻す</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
+<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-layer">レイヤー</a><a href="#h-undo">元に戻す</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
 
 <h3 id="h-flow">基本の流れ</h3>
 <ol>
@@ -406,6 +450,25 @@ body.view #cv{touch-action:auto}
 <li>デザインタブの「目安線を常に表示」で、余白と中央の線（水色）を出しっぱなしにできます。書き出しには出ません</li>
 <li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）。パネル右上の「▾」で折りたたむと、箱の名前だけの 1 行になります。スマホではこの設定に関係なく、箱をタップすると画面下からシートで表示されます。「×」で箱の選択を外して閉じます</li>
 <li>ヘッダーとフッターは固定です</li>
+</ul>
+
+<h3 id="h-layer">レイヤー（配置している箱の一覧）</h3>
+<table>
+<tr><th>行を押す</th><td>その箱を選択します。プレビューで選んだ箱は、一覧でも選択されます</td></tr>
+<tr><th>行にマウスを乗せる（PC）</th><td>プレビューでその箱をオレンジ色で強調します</td></tr>
+<tr><th>⋮⋮ をドラッグ</th><td>重なり順を入れ替えます。行はまとまりの中で、まとまりの行はまとまりごと動きます（指でも操作できます）</td></tr>
+<tr><th>最前面 / 前面 / 背面 / 最背面</th><td>選択中の箱の重なり順を変えます。見出しを選んでいるときはまとまりごと。<kbd>Ctrl</kbd>＋<kbd>]</kbd> / <kbd>Ctrl</kbd>＋<kbd>[</kbd>（<kbd>Shift</kbd> 併用で最前面・最背面）</td></tr>
+<tr><th>目のアイコン</th><td>表示／非表示。非表示の箱は描かれず、書き出しにも出ません（場所は空いたまま）</td></tr>
+<tr><th>鍵のアイコン</th><td>ロック。プレビューで選べず、動かせなくなります（下の箱を選べます）。一覧からは選べ、文字や色は変えられます</td></tr>
+<tr><th>▾ / ▸</th><td>まとまりを閉じる・開く</td></tr>
+<tr><th>↺</th><td>その箱を自動配置に戻す（手動配置の箱だけ）</td></tr>
+</table>
+<ul>
+<li>上にあるものほど前面に描かれます（Adobe ツールのレイヤーパネルと同じ）。まとまりの行の目・鍵は、まとまり全体を切り替えます</li>
+<li>重なり順は、箱を手動で重ねたときに効きます。お品書き上の並びは、頒布物タブの ↑↓ とデザインタブの種別の順で変えます</li>
+<li>「すべて自動配置に戻す」では、ロックした箱はそのまま残ります</li>
+<li>Illustrator 用スクリプトでは、重なり順は同じレイヤー（背景 / 装飾 / 画像 / テキスト / 最前面）の中だけに反映されます</li>
+<li>2枚に分けているときは、表示中のページの箱だけが出ます。ヘッダー・フッター・背景は「固定」です</li>
 </ul>
 
 <h3 id="h-undo">元に戻す／やり直し</h3>
@@ -654,7 +717,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -673,6 +736,9 @@ function load(){try{const j=JSON.parse(localStorage.getItem(LS));if(j&&j.items)r
 function norm(j){const b=blank();
   const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:''},i))};
   if(!s.design.free||typeof s.design.free!=='object')s.design.free={};
+  // レイヤー：重なり順（lo.g＝まとまりの順、lo.i＝まとまりの中の順。どちらも前面→背面）、非表示、ロック
+  {const lo=s.design.lo&&typeof s.design.lo==='object'?s.design.lo:{};s.design.lo={g:Array.isArray(lo.g)?lo.g:[],i:lo.i&&typeof lo.i==='object'?lo.i:{}};
+    ['hid','lock'].forEach(k=>{if(!s.design[k]||typeof s.design[k]!=='object'||Array.isArray(s.design[k]))s.design[k]={};});}
   s.texts=(j.texts||[]).map(t=>Object.assign({id:uid(),s:'',size:8,color:'#2a2622',a:100,b:true,al:'l',pg:1},t));
   {const ts=mkTs(),o=(j.design&&j.design.ts)||{},tc=j.design&&j.design.tc;CATS.forEach(c=>Object.assign(ts[c[0]],o[c[0]]));
     if(tc&&tc.on){ts.title.c=ts.desc.c=tc.title;ts.price.c=tc.price;ts.spec.c=tc.sub;} // 旧「文字色を上書き」の設定を引き継ぐ
@@ -733,11 +799,13 @@ function build(S,M,page){
   // 手動配置：ドラッグで動かした箱は自動位置の代わりに保存した位置・大きさを使う
   const F=d.free||{},hits=[];
   const place=(key,x,y,w,h,rs)=>{const f=F[key],r=f?{x:f.x,y:f.y,w:rs?f.w:w,h:rs?f.h:h}:{x,y,w,h};hits.push({key,x:r.x,y:r.y,w:r.w,h:r.h,rs,ax:x,ay:y,aw:w,ah:h});return r;}; // ax〜ah：自動配置のときの位置と大きさ（「位置だけ戻す」で使う）
-  const R=(x,y,w,h,fill,o)=>ops.push(Object.assign({t:'rect',x,y,w,h,fill,r:0,stroke:null,sw:0,a:1,L:1},o));
+  // 描画命令を足す。箱（頒布物・見出し・自由テキスト）を描いている間は、その箱のキー（k）を付けて重なり順・非表示に使う
+  let BK=null;const put=o=>{if(BK)o.k=BK;ops.push(o);};
+  const R=(x,y,w,h,fill,o)=>put(Object.assign({t:'rect',x,y,w,h,fill,r:0,stroke:null,sw:0,a:1,L:1},o));
   // 文字：cat を付けると「文字」タブの種類ごとの色・濃さが掛かる（keep＝箱ごとの色を優先、ia＝箱ごとの濃さ）
   const TS=d.ts||{},alp=v=>v===''||v==null||isNaN(+v)?1:Math.max(0,Math.min(1,+v/100));
   const X=(s,x,y,size,color,o)=>{s=String(s);if(!s.trim())return;const op=Object.assign({t:'text',s,x,y,size,color,al:'l',b:1,a:1,L:3},o),c=op.cat&&TS[op.cat];
-    if(c){if(c.c&&!op.keep)op.color=c.c;op.a*=alp(c.a);}if(op.ia!=null)op.a*=op.ia;op.g=op.g||CATL[op.cat]||'文字';delete op.cat;delete op.keep;delete op.ia;ops.push(op);};
+    if(c){if(c.c&&!op.keep)op.color=c.c;op.a*=alp(c.a);}if(op.ia!=null)op.a*=op.ia;op.g=op.g||CATL[op.cat]||'文字';delete op.cat;delete op.keep;delete op.ia;put(op);};
   const fit=(s,mw,size,b)=>{const w=M(s,size,b);return w<=mw?size:Math.max(size*.4,size*mw/w);};
   const mid=(top,h,size)=>top+h/2+size*.36;
   const wrap=(s,mw,size,max,b)=>{if(max<1)return[];const out=[];
@@ -797,10 +865,10 @@ function build(S,M,page){
       const c=ps.filter(s=>s.r>1&&(bw-s.c*g)/(s.c+1)>=38*u).sort((a,b)=>b.r*b.wt-a.r*a.wt)[0];if(!c)break;setC(c,c.c+1);}
     minUnit=Math.min(minUnit,unit);let y=by;
     ps.forEach(s=>{
-      if(sh){const K=kOf(d,s.k),lab=kName(K),ls=4.6*u*FS.sec,ph=6.4*u*FS.sec,pw=M(lab,ls,1)+7*u,pc=K.c||(s.k==='new'?T.accent:T.ink);
+      if(sh){BK='sec:'+s.k;const K=kOf(d,s.k),lab=kName(K),ls=4.6*u*FS.sec,ph=6.4*u*FS.sec,pw=M(lab,ls,1)+7*u,pc=K.c||(s.k==='new'?T.accent:T.ink);
         const q=place('sec:'+s.k,bx,y,bw,ph,0);
         R(q.x,q.y,pw,ph,pc,{r:ph/2,g:'見出し：'+lab});X(lab,q.x+pw/2,mid(q.y,ph,ls),ls,on(pc),{al:'c',cat:'sec',g:'見出し：'+lab});
-        R(q.x+pw+2*u,q.y+ph/2-.2*u,bw-pw-2*u,.4*u,T.line,{g:'見出し：'+lab});y+=sh;}
+        R(q.x+pw+2*u,q.y+ph/2-.2*u,bw-pw-2*u,.4*u,T.line,{g:'見出し：'+lab});y+=sh;BK=null;}
       const rh=Math.max(6*u,Math.min(unit*s.wt,s.cw*1.75));
       s.it.forEach((it,i)=>{const row=Math.floor(i/s.c),col=i%s.c,nr=row===s.r-1?s.it.length-row*s.c:s.c;
         card(bx+(s.c-nr)*(s.cw+g)/2+col*(s.cw+g),y+row*(rh+g),s.cw,rh,it);});
@@ -826,10 +894,10 @@ function build(S,M,page){
     if(st==='dash'){const rad=2.5*u;box(rad,null,0);R(x,y,w,h,null,{r:rad,stroke:isNew?kc:T.sub,sw:(isNew?.6:.4)*u,dash:[1.6*u,1.1*u],g:G});return{r:rad,ins};}
     if(st==='frame'){const Fr=d.bframe,cm=Math.max(.5,+Fr.cm||5)*u;
       if(Fr.fill)box(0,null,0);
-      ops.push({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:al(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
+      put({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:al(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
       ins.fill(Math.min(cm*.3,Math.min(w,h)*.08));return{r:0,ins};} // 枠の飾りに文字が重なりにくいよう、少しだけ内側へ
     const rad=2.5*u;box(rad,lc,lw);return{r:rad,ins};} // 標準
-  function card(x,y,w,h,it){
+  function card(x,y,w,h,it){BK=it.id;
     const q=place(it.id,x,y,w,h,1),ia=alp(it.ta),tt=String(it.title||'').trim()||'（無題）',nm=tt.replace(/\s*\n\s*/g,' '),bc=it.bcol||T.card;x=q.x;y=q.y;w=q.w;h=q.h; // nm：レイヤー名などに使う1行の名前
     // 種別の色：指定が無ければテーマの色（新刊はアクセント色、ほかは補助色）。新刊は箱の枠もこの色
     const K=kOf(d,it.kind),isNew=K.id==='new',kc=K.c||(isNew?T.accent:T.sub);
@@ -841,10 +909,10 @@ function build(S,M,page){
       const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),asp=imgAsp(it.id)||.74,io={id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm},hit=hits[hits.length-1];let got;
       if(w/h>1.25){const b0=Math.min(th*.74,tw*.45),iw=s>1?Math.max(b0,Math.min(b0*s,th*asp,tw*.8)):b0*s,ih=th*Math.min(1,s);
         got=Math.min(iw,ih*asp)/Math.min(b0,th*asp);kw=tw-(b0+p);kh=th;
-        ops.push(Object.assign({t:'img',x:tx,y:ty+(th-ih)/2,w:iw,h:ih},io));tx+=iw+p;tw-=iw+p;}
+        put(Object.assign({t:'img',x:tx,y:ty+(th-ih)/2,w:iw,h:ih},io));tx+=iw+p;tw-=iw+p;}
       else{const b0=th*.6,ih=s>1?Math.max(b0,Math.min(b0*s,tw/asp,th*.8)):b0*s,iw=tw*Math.min(1,s);
         got=Math.min(ih,iw/asp)/Math.min(b0,tw/asp);kw=tw;kh=th-(b0+p*.7);
-        ops.push(Object.assign({t:'img',x:tx+(tw-iw)/2,y:ty,w:iw,h:ih},io));ty+=ih+p*.7;th-=ih+p*.7;}
+        put(Object.assign({t:'img',x:tx+(tw-iw)/2,y:ty,w:iw,h:ih},io));ty+=ih+p*.7;th-=ih+p*.7;}
       hit.icap=s>1&&got<s-.005?Math.floor(got*100+.001):0;} // 指定した％まで大きくできなかったとき、実際の上限（％）を画面に出す
     // 文字の大きさは残りの場所から決める。「文字の大きさを変えない」がオンなら、表紙を100％にしたときの場所で決める（表紙の％を変えても文字は同じ大きさ）
     const wide=tw/th>3.5,fx=d.imgFix&&kw>0&&kh>0,aw=fx?kw:tw,ah=fx?kh:th,k=Math.max(.2,Math.min(1.7,aw/46/u,ah/(aw/ah>3.5?23:30)/u));
@@ -868,14 +936,34 @@ function build(S,M,page){
       wrap(it.desc,txw,ds,Math.floor((limit-cy)/lh),0).forEach(l=>{X(l,tx,cy+ds*.92,ds,tcol,{b:0,cat:'desc',keep:!!it.tcol,ia,g:'説明：'+nm});cy+=lh;});}
     if(pstr){const s2=fit(pstr,tw,ps,1);X(pstr,tx+tw,ty+th-s2*.1,s2,priceC,{al:'r',cat:'price',ia,g:'価格：'+nm});}
     if(it.sold){R(x,y,w,h,'#000000',{r:r.r,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(w/3.2,h/2.6,22*u);X('完売',x+w/2,mid(y,h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
-  }
+    BK=null;}
   // 自由テキスト：好きな場所に置ける文字（位置はドラッグで決める）
   (S.texts||[]).forEach((t,i)=>{if((d.twoPage?(+t.pg||1):1)!==(page||1)||!String(t.s||'').trim())return;
-    const{size,b,lines,lh,w,h}=tBox(t,M);
+    const{size,b,lines,lh,w,h}=tBox(t,M);BK='t:'+t.id;
     const q=place('t:'+t.id,(W-w)/2,by+bh/2-h/2+(i%6)*4*u,w,h,0),ax=t.al==='c'?q.x+w/2:t.al==='r'?q.x+w:q.x;
-    lines.forEach((l,k)=>X(l,ax,q.y+k*lh+size*.95,size,t.color||T.ink,{al:t.al||'l',b,a:alp(t.a),L:4,g:'自由テキスト：'+lines[0]}));});
-  return{W,H,ops,warn,hits};
+    lines.forEach((l,k)=>X(l,ax,q.y+k*lh+size*.95,size,t.color||T.ink,{al:t.al||'l',b,a:alp(t.a),L:4,g:'自由テキスト：'+lines[0]}));BK=null;});
+  // 重なり順（z）：まとまり（自由テキスト・種別ごと）の順と、まとまりの中の順から、箱ごとに通し番号を振る（大きいほど前面）
+  const groups=zGroups(hits,d),zm={};let z=0;
+  groups.slice().reverse().forEach(g=>{if(g.head)zm[g.head]=z++;g.keys.slice().reverse().forEach(k=>{zm[k]=z++;});});
+  // 非表示の箱は描かない（場所は空けたまま）。ロックした箱は画面で選べない・動かせない
+  const hid=d.hid||{},lock=d.lock||{};
+  hits.forEach(h=>{h.z=zm[h.key];h.hid=!!hid[h.key];h.lock=!!lock[h.key];});
+  const vis=ops.filter(o=>!(o.k&&hid[o.k]));vis.forEach(o=>{if(o.k)o.z=zm[o.k];});
+  return{W,H,ops:vis,warn,hits,groups};
 }
+// まとまりの並び（前面→背面）。既定は描いた順の逆（後に描いたものが前面）。保存した順（design.lo）があればそれに従い、新しい箱は既定の位置に入れる
+function zGroups(hits,d){const lo=d.lo||{},gs=[],tx={id:'texts',head:null,keys:[]};let cur=null;
+  for(const h of hits){if(h.key.startsWith('t:')){tx.keys.push(h.key);continue;}
+    if(h.key.startsWith('sec:')){cur={id:h.key,head:h.key,keys:[]};gs.push(cur);}
+    else{if(!cur){cur={id:'items',head:null,keys:[]};gs.push(cur);}cur.keys.push(h.key);}}
+  gs.reverse();gs.forEach(g=>g.keys.reverse());tx.keys.reverse();if(tx.keys.length)gs.unshift(tx);
+  const byId={};gs.forEach(g=>{byId[g.id]=g;});
+  const out=zOrd(gs.map(g=>g.id),lo.g).map(id=>byId[id]);
+  out.forEach(g=>{g.keys=zOrd(g.keys,(lo.i||{})[g.id]);});
+  return out;}
+const zOrd=(def,saved)=>{const r=(Array.isArray(saved)?saved:[]).filter(k=>def.includes(k));def.forEach((k,i)=>{if(!r.includes(k))r.splice(Math.min(i,r.length),0,k);});return r;};
+// 描く順：箱に属さないもの（背景・ヘッダー・フッター）を先に、箱は重なり順（z）の小さい順。同じ箱の中は従来どおり L（背景→装飾→画像→文字→最前面）の順
+const drawOrder=ops=>ops.map((o,i)=>[o,i]).sort((a,b)=>(a[0].z==null?-1:a[0].z)-(b[0].z==null?-1:b[0].z)||a[0].L-b[0].L||a[1]-b[1]).map(x=>x[0]);
 
 /* ---------- Canvas描画 ---------- */
 // 画像は読み込み後に ImageBitmap（デコード済み）にしておき、毎回の描画で再デコードが走らないようにする
@@ -902,9 +990,9 @@ function nine(ctx,src,nw,nh,o,sc){const s=Math.max(1,Math.min(nw,nh)*Math.max(1,
     if(sw>0&&sh>0&&dw>0&&dh>0)ctx.drawImage(src,sx[i],sy[j],sw,sh,dx[i]*sc,dy[j]*sc,dw*sc,dh*sc);}
   ctx.restore();}
 function render(ctx,B,sc,f,only){
-  const list=B.ops.map((o,i)=>[o,i]).sort((a,b)=>a[0].L-b[0].L||a[1]-b[1]);
+  const list=drawOrder(B.ops);
   ctx.textBaseline='alphabetic';
-  for(const [o] of list){if(only!=null&&o.L!==only)continue;
+  for(const o of list){if(only!=null&&o.L!==only)continue;
     if(o.t==='rect'){ctx.globalAlpha=o.a;rr(ctx,o.x*sc,o.y*sc,o.w*sc,o.h*sc,o.r*sc);
       if(o.fill){ctx.fillStyle=o.fill;ctx.fill();}
       if(o.stroke){ctx.strokeStyle=o.stroke;ctx.lineWidth=o.sw*sc;if(o.dash)ctx.setLineDash(o.dash.map(v=>v*sc));ctx.stroke();if(o.dash)ctx.setLineDash([]);}
@@ -933,8 +1021,8 @@ function draw(){
   cv.style.width=B.W*fitSc+'px';cv.style.height=B.H*fitSc+'px';
   render(ctx,B,fitSc*dpr,fam(S.design));lastB=B;lastSc=fitSc;
   const sh=sel&&B.hits.find(h=>h.key===sel);
-  if(sh){const k=fitSc*dpr;ctx.save();ctx.strokeStyle='#0a84ff';ctx.lineWidth=2*dpr;ctx.setLineDash([6*dpr,4*dpr]);ctx.strokeRect(sh.x*k,sh.y*k,sh.w*k,sh.h*k);
-    if(sh.rs){ctx.setLineDash([]);ctx.fillStyle='#0a84ff';const q=7*dpr;for(const fx of [0,.5,1])for(const fy of [0,.5,1]){if(fx===.5&&fy===.5)continue;const hx=(sh.x+sh.w*fx)*k-q/2,hy=(sh.y+sh.h*fy)*k-q/2;ctx.fillStyle='#fff';ctx.fillRect(hx,hy,q,q);ctx.lineWidth=1.5*dpr;ctx.strokeRect(hx,hy,q,q);}}
+  if(sh){const k=fitSc*dpr,dim=sh.hid||sh.lock;ctx.save();ctx.strokeStyle=dim?'#8a8a8a':'#0a84ff';ctx.lineWidth=2*dpr;ctx.setLineDash([6*dpr,4*dpr]);ctx.strokeRect(sh.x*k,sh.y*k,sh.w*k,sh.h*k);
+    if(sh.rs&&!dim){ctx.setLineDash([]);ctx.fillStyle='#0a84ff';const q=7*dpr;for(const fx of [0,.5,1])for(const fy of [0,.5,1]){if(fx===.5&&fy===.5)continue;const hx=(sh.x+sh.w*fx)*k-q/2,hy=(sh.y+sh.h*fy)*k-q/2;ctx.fillStyle='#fff';ctx.fillRect(hx,hy,q,q);ctx.lineWidth=1.5*dpr;ctx.strokeRect(hx,hy,q,q);}}
     if(S.design.showProps||MOB.matches){const r1=v=>Math.round(v*10)/10,t=r1(sh.w)+' × '+r1(sh.h)+' mm';ctx.setLineDash([]);ctx.font='700 '+11*dpr+'px sans-serif';ctx.textAlign='left';
       const tw=ctx.measureText(t).width+10*dpr,ty=Math.min((sh.y+sh.h)*k+4*dpr,cv.height-18*dpr);ctx.fillStyle='#0a84ff';ctx.fillRect(sh.x*k,ty,tw,17*dpr);ctx.fillStyle='#fff';ctx.fillText(t,sh.x*k+5*dpr,ty+12.5*dpr);}
     ctx.restore();}
@@ -942,14 +1030,17 @@ function draw(){
       if(t==='x'){ctx.moveTo(v*k,0);ctx.lineTo(v*k,cv.height);}else{ctx.moveTo(0,v*k);ctx.lineTo(cv.width,v*k);}ctx.stroke();ctx.restore();};
     if(S.design.showGuides){const m=pageM(B);[m,B.W/2,B.W-m].forEach(v=>ln('x',v,'rgba(0,160,220,.7)',[4*dpr,4*dpr]));ln('y',B.H/2,'rgba(0,160,220,.7)',[4*dpr,4*dpr]);}
     guides.forEach(g=>ln(g[0],g[1],'#ff2d9b',[]));}
-  $('#al').hidden=!sh;$('#hint').hidden=!!sh;$('#bPos').disabled=!sh||!S.design.free[sh.key];updProps(sh);
+  {const hv=hoverKey&&hoverKey!==sel&&B.hits.find(h=>h.key===hoverKey); // レイヤー一覧でマウスを乗せている箱
+    if(hv){const k=fitSc*dpr;ctx.save();ctx.fillStyle='rgba(255,149,0,.12)';ctx.fillRect(hv.x*k,hv.y*k,hv.w*k,hv.h*k);
+      ctx.strokeStyle='#ff9500';ctx.lineWidth=2*dpr;ctx.strokeRect(hv.x*k,hv.y*k,hv.w*k,hv.h*k);ctx.restore();}}
+  $('#al').hidden=!sh;$('#hint').hidden=!!sh;$$('#al button').forEach(b=>{b.disabled=!sh||sh.lock||(b.id==='bPos'&&!S.design.free[sh.key]);});updProps(sh);
   $$('.isn',list).forEach(e=>{const h=B.hits.find(x=>x.key===e.dataset.id),t=capMsg(h);if(e.textContent!==t)e.textContent=t;});
   // 種別の一覧：点数と、色を指定していない種別のテーマ由来の色を最新にする
   {const T=getTheme(S.design);$$('.kr',kindsEl).forEach(r=>{const k=S.design.kinds.find(x=>x.id===r.dataset.id);if(!k)return;
     const ne=$('.kn',r),t=kCount(k.id)+'点';if(ne.textContent!==t)ne.textContent=t;
     const ci=$('[data-kf=c]',r);if(!k.c&&document.activeElement!==ci){const v=kDef(k.id,T);if(ci.value!==v)ci.value=v;}});}
   $('#stat').textContent=PAPERS[S.design.paper].n+'　頒布物 '+S.items.length+' 点';
-  $('#warn').textContent=imgErr||B.warn;persist();checkpoint();
+  $('#warn').textContent=imgErr||B.warn;persist();checkpoint();renderLayers();
 }
 
 /* ---------- 入力バインド ---------- */
@@ -978,11 +1069,13 @@ $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(
   if(!S.design.box.on){S.design.box.fill=THEMES[b.dataset.th].card;S.design.box.line=THEMES[b.dataset.th].line;}
   if(!S.design.tc.on){const t=THEMES[b.dataset.th];S.design.tc.title=t.ink;S.design.tc.price=t.accent;S.design.tc.sub=t.sub;}fillForm();schedule();});
 $$('nav button').forEach(b=>b.addEventListener('click',()=>{$$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
-  $$('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));}));
+  $$('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));if(b.dataset.t==='t6')renderLayers(true);}));
 /* ---------- 箱の手動配置（ドラッグ / リサイズ / キー操作） ---------- */
 const toMM=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/lastSc,y:(e.clientY-r.top)/lastSc};};
-const hitAt=p=>{const inb=h=>p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h,cur=sel&&lastB.hits.find(h=>h.key===sel);if(cur&&inb(cur))return cur; // 重なっているときは選択中の箱を優先
-  for(let i=lastB.hits.length-1;i>=0;i--){const h=lastB.hits[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h;}return null;};
+// 非表示・ロックの箱は画面では選べない（その下の箱を選べる）。重なっているときは選択中の箱、次に前面（z の大きい）箱を優先
+const pickable=h=>!h.hid&&!h.lock;
+const hitAt=p=>{const inb=h=>p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h,cur=sel&&lastB.hits.find(h=>h.key===sel);if(cur&&pickable(cur)&&inb(cur))return cur;
+  let best=null;for(const h of lastB.hits)if(pickable(h)&&inb(h)&&(!best||(h.z||0)>(best.z||0)))best=h;return best;};
 // つかんだ位置から伸縮方向を決める（n/s/e/w とその組み合わせ。内側は移動）
 const dirAt=(h,p)=>{if(!h.rs)return'';const hs=Math.min(Math.max(2.5,9/lastSc),h.w/4,h.h/4);
   return(p.y<h.y+hs?'n':p.y>h.y+h.h-hs?'s':'')+(p.x<h.x+hs?'w':p.x>h.x+h.w-hs?'e':'');};
@@ -992,7 +1085,7 @@ let guides=[];
 const pageM=B=>8*Math.min(B.W,B.H)/210;
 // 目安線の候補：用紙の余白・中央と、ほかの箱の端・中心
 const guideLines=key=>{const B=lastB,m=pageM(B),xs=[m,B.W/2,B.W-m],ys=[B.H/2];
-  for(const h of B.hits){if(h.key===key)continue;xs.push(h.x,h.x+h.w/2,h.x+h.w);ys.push(h.y,h.y+h.h/2,h.y+h.h);}return{xs,ys};};
+  for(const h of B.hits){if(h.key===key||h.hid)continue;xs.push(h.x,h.x+h.w/2,h.x+h.w);ys.push(h.y,h.y+h.h/2,h.y+h.h);}return{xs,ys};};
 const snap1=(pts,lines)=>{let b=null;for(const p of pts)for(const l of lines){const d=l-p;if(Math.abs(d)<1.5&&(!b||Math.abs(d)<Math.abs(b.d)))b={d,l};}return b;};
 cv.addEventListener('pointerdown',e=>{if(!lastB||UI.view)return;const p=toMM(e),h=hitAt(p);sel=h?h.key:null;
   if(h){drag={key:h.key,mode:dirAt(h,p)||'mv',p,o:{x:h.x,y:h.y,w:h.w,h:h.h},moved:false};cv.setPointerCapture(e.pointerId);}
@@ -1023,12 +1116,13 @@ $('#stage').addEventListener('click',e=>{const st=e.currentTarget;if(e.target!==
 cv.addEventListener('dblclick',e=>{if(UI.view)return;const h=hitAt(toMM(e));if(h){delete S.design.free[h.key];schedule();}});
 cv.addEventListener('keydown',e=>{if(UI.view)return;const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h)return;
   if(e.key==='Escape'){sel=null;e.preventDefault();schedule();return;} // Esc は選択を外すだけ（以前は手動配置を消していた）
+  if(h.lock)return; // ロック中は動かさない
   if(e.key==='Delete'||e.key==='Backspace'){delete S.design.free[sel];e.preventDefault();schedule();return;}
   const mv={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!mv)return;e.preventDefault();
   const n=(e.ctrlKey||e.metaKey)?.5:1,f={x:h.x,y:h.y,w:h.w,h:h.h};
   if(e.shiftKey&&h.rs){f.w=Math.max(15,f.w+mv[0]*n);f.h=Math.max(8,f.h+mv[1]*n);}else{f.x+=mv[0]*n;f.y+=mv[1]*n;}
   S.design.free[sel]=f;schedule();});
-$('#al').addEventListener('click',e=>{const a=e.target.dataset.al,h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!a||!h)return;
+$('#al').addEventListener('click',e=>{const a=e.target.dataset.al,h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!a||!h||h.lock)return;
   const m=pageM(lastB),f={x:h.x,y:h.y,w:h.w,h:h.h};
   if(a==='l')f.x=m;if(a==='c')f.x=(lastB.W-f.w)/2;if(a==='r')f.x=lastB.W-m-f.w;
   if(a==='w'&&h.rs){f.x=m;f.w=lastB.W-2*m;}
@@ -1043,7 +1137,7 @@ const capMsg=h=>h&&h.icap?'この箱では '+h.icap+'% が上限です（箱を�
 function updProps(h){props.hidden=MOB.matches?!h:!S.design.showProps;if(props.hidden)return; // スマホは設定に関係なく、箱を選んでいるときだけシートを出す。PC は設定で表示
   const it=h&&S.items.find(i=>i.id===h.key);
   $('#pName').textContent=!h?'箱を選択してください':it?kName(kOf(S.design,it.kind))+'：'+(it.title||'（無題）'):h.key.startsWith('t:')?'文字：'+String((S.texts.find(t=>'t:'+t.id===h.key)||{}).s||'').split('\n')[0]:'見出し：'+kName(kOf(S.design,h.key.slice(4)));
-  $('#pMode').textContent=!h?'':S.design.free[h.key]?'手動配置':'自動配置';
+  $('#pMode').textContent=!h?'':(h.hid?'非表示・':'')+(h.lock?'ロック中・':'')+(S.design.free[h.key]?'手動配置':'自動配置');
   const th=getTheme(S.design),ink=S.design.tc.on?S.design.tc.title:th.ink,fi=$('[data-i=fs]',props),ci=$('[data-i=tcol]',props),ai=$('[data-i=ta]',props);
   {const bi=$('[data-i=bcol]',props);bi.disabled=!it;bi.value=it&&it.bcol||th.card;}
   {const ii=$('[data-i=is]',props);ii.disabled=!it||!it.img;if(document.activeElement!==ii)ii.value=it&&it.img?(+it.is||100):'';
@@ -1052,10 +1146,10 @@ function updProps(h){props.hidden=MOB.matches?!h:!S.design.showProps;if(props.hi
   fi.disabled=ci.disabled=!it;if(document.activeElement!==fi)fi.value=it?(+it.fs||100):'';ci.value=it&&it.tcol||ink;
   FE.forEach(f=>{const e=$(`[data-i=${f}]`,props);e.disabled=!it;if(document.activeElement!==e)e.value=it?(+it[f]||100):'';});
   $('#pTxt').disabled=!it||(!it.tcol&&!it.bcol&&(it.ta==null||+it.ta===100)&&['fs','is'].concat(FE).every(f=>(+it[f]||100)===100));
-  $$('input[data-p]',props).forEach(i=>{const k=i.dataset.p;i.disabled=!h||(!h.rs&&(k==='w'||k==='h'));if(document.activeElement!==i)i.value=h?Math.round(h[k]*10)/10:'';});
-  $('#pReset').disabled=!h||!S.design.free[h.key];$('#pPos').disabled=!h||!S.design.free[h.key];}
+  $$('input[data-p]',props).forEach(i=>{const k=i.dataset.p;i.disabled=!h||h.lock||(!h.rs&&(k==='w'||k==='h'));if(document.activeElement!==i)i.value=h?Math.round(h[k]*10)/10:'';});
+  $('#pReset').disabled=$('#pPos').disabled=!h||h.lock||!S.design.free[h.key];}
 props.addEventListener('change',e=>{const k=e.target.dataset.p,h=sel&&lastB&&lastB.hits.find(x=>x.key===sel),v=parseFloat(e.target.value);
-  if(!k||!h||isNaN(v))return;const f={x:h.x,y:h.y,w:h.w,h:h.h};f[k]=k==='w'?Math.max(15,v):k==='h'?Math.max(8,v):v;S.design.free[sel]=f;schedule();});
+  if(!k||!h||h.lock||isNaN(v))return;const f={x:h.x,y:h.y,w:h.w,h:h.h};f[k]=k==='w'?Math.max(15,v):k==='h'?Math.max(8,v):v;S.design.free[sel]=f;schedule();});
 props.addEventListener('input',e=>{const k=e.target.dataset.i,it=sel&&S.items.find(i=>i.id===sel);if(!k||!it)return;
   if(PCT[k]){const v=+e.target.value;if(!v)return;it[k]=Math.max(PCT[k][0],Math.min(PCT[k][1],v));syncF(it,k);}
   else if(k==='ta'){if(e.target.value==='')return;it.ta=Math.max(0,Math.min(100,+e.target.value||0));}else it[k]=e.target.value;schedule();});
@@ -1073,8 +1167,8 @@ function applyPMin(){const m=!!UI.pmin;props.classList.toggle('min',m);$('#pBody
 $('#pMin').addEventListener('click',()=>{UI.pmin=!UI.pmin;applyPMin();saveUI();});
 $('#pClose').addEventListener('click',()=>{if(MOB.matches){sel=null;schedule();return;} // スマホ：選択を外してシートを閉じるだけ（設定は変えない）
   S.design.showProps=false;fillForm();schedule();});
-$('#pReset').addEventListener('click',()=>{if(sel){delete S.design.free[sel];schedule();}});
-$('#bFree').addEventListener('click',()=>{S.design.free={};sel=null;schedule();});
+$('#pReset').addEventListener('click',()=>{if(sel&&!(S.design.lock||{})[sel]){delete S.design.free[sel];schedule();}});
+$('#bFree').addEventListener('click',()=>{const L=S.design.lock||{},nf={};Object.keys(S.design.free).forEach(k=>{if(L[k])nf[k]=S.design.free[k];});S.design.free=nf;sel=null;schedule();}); // ロックした箱はそのまま
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
 // 2枚構成：種別ごとに載せるページ（種別の一覧から作る）
 function renderPgmap(){if(typeof renderBsKinds==='function'&&$('#selBs').options.length){renderBsKinds();renderBulkKind();}const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
@@ -1122,7 +1216,7 @@ applyUI();applyPMin();
 
 /* ---------- 箱の位置だけ戻す ---------- */
 // 大きさはそのままで、位置だけ自動配置の場所（左上）に戻す。大きさも自動のままなら、手動配置そのものを外す
-function resetPos(){const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h||!S.design.free[h.key])return;
+function resetPos(){const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h||h.lock||!S.design.free[h.key])return;
   if(!h.rs||(Math.abs(h.w-h.aw)<.05&&Math.abs(h.h-h.ah)<.05))delete S.design.free[h.key];
   else S.design.free[h.key]={x:h.ax,y:h.ay,w:h.w,h:h.h};schedule();}
 $('#pPos').addEventListener('click',resetPos);$('#bPos').addEventListener('click',resetPos);
@@ -1202,7 +1296,7 @@ list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.t
   schedule();});
 list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target);if(!a||!it)return;
   const i=S.items.indexOf(it);
-  if(a==='del'){S.items.splice(i,1);delete S.design.free[it.id];if(sel===it.id)sel=null;}
+  if(a==='del'){S.items.splice(i,1);['free','hid','lock'].forEach(f=>{delete S.design[f][it.id];});if(sel===it.id)sel=null;}
   if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid()}));
   if(a==='up'&&i>0)S.items.splice(i-1,0,S.items.splice(i,1)[0]);
   if(a==='down'&&i<S.items.length-1)S.items.splice(i+1,0,S.items.splice(i,1)[0]);
@@ -1295,7 +1389,7 @@ kindsEl.addEventListener('click',e=>{const a=e.target.dataset.ka,r=e.target.clos
     const rest=d.kinds.filter(x=>x!==k),to=rest.find(x=>x.id==='old')||rest[0],n=kCount(k.id); // 頒布物の移り先は「既刊」（無ければ先頭）
     if(n&&!confirm(`種別「${kName(k)}」を削除しますか？\nこの種別の頒布物 ${n} 点は「${kName(to)}」に移ります。`))return;
     d.kinds.splice(i,1);S.items.forEach(it=>{if(it.kind===k.id)it.kind=to.id;});
-    delete d.free['sec:'+k.id];delete d.pg[k.id];if(sel==='sec:'+k.id)sel=null;}
+    ['free','hid','lock'].forEach(f=>{delete d[f]['sec:'+k.id];});delete d.pg[k.id];if(sel==='sec:'+k.id)sel=null;}
   kindsChanged(true);});
 $('#bKindAdd').addEventListener('click',()=>{const d=S.design,k={id:newKindId(),n:'新しい種別',c:''};d.kinds.push(k);d.pg[k.id]=1;kindsChanged(true);
   const inp=$(`.kr[data-id="${k.id}"] [data-kf=n]`,kindsEl);inp.focus();inp.select();});
@@ -1349,7 +1443,7 @@ $('#bPng').addEventListener('click',()=>{const v=$('#selRes').value,n=S.design.t
     c.toBlob(b=>setTimeout(()=>download(baseName()+(n>1?'_p'+p:'')+'_'+c.width+'x'+c.height+'.png',b),(p-1)*600),'image/png');}});
 function genJSX(){const d=S.design,F=FONTS[d.font],rd=n=>Math.round(n*1000)/1000,n=d.twoPage?2:1,ops=[];let W,H;
   for(let p=1;p<=n;p++){const B=build(S,mkMeasure(d),p);W=B.W;H=B.H;
-    B.ops.forEach(o=>{const c={P:p-1};for(const k in o){if(k==='id')continue;c[k]=typeof o[k]==='number'?rd(o[k]):o[k];}ops.push(c);});}
+    drawOrder(B.ops).forEach(o=>{const c={P:p-1};for(const k in o){if(k==='id'||k==='k'||k==='z')continue;c[k]=typeof o[k]==='number'?rd(o[k]):o[k];}ops.push(c);});}
   const D={W,H,n,cmyk:!!d.cmyk,hasImg:ops.some(o=>o.t==='img'),fb:[d.psBold.trim()].concat(F.fb),fr:[d.psReg.trim()].concat(F.fr),ops};
   return $('#jsxT').textContent.replace('/*DATA*/',()=>JSON.stringify(D)).replace(/[\u0080-￿]/g,c=>'\\u'+('000'+c.charCodeAt(0).toString(16)).slice(-4));}
 $('#bJsx').addEventListener('click',()=>download(baseName()+'.jsx',genJSX(),'application/javascript'));
@@ -1375,13 +1469,18 @@ function renderTexts(){tlist.innerHTML=S.texts.map(t=>`<div class="it" data-id="
 const textOf=el=>{const d=el.closest('.it');return d&&S.texts.find(t=>t.id===d.dataset.id);};
 tlist.addEventListener('input',e=>{const f=e.target.dataset.f,t=textOf(e.target);if(!f||!t)return;t[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;schedule();});
 tlist.addEventListener('click',e=>{const a=e.target.dataset.a,t=textOf(e.target);if(!a||!t)return;
-  if(a==='del'){S.texts.splice(S.texts.indexOf(t),1);delete S.design.free['t:'+t.id];if(sel==='t:'+t.id)sel=null;renderTexts();}
+  if(a==='del'){S.texts.splice(S.texts.indexOf(t),1);['free','hid','lock'].forEach(f=>{delete S.design[f]['t:'+t.id];});if(sel==='t:'+t.id)sel=null;renderTexts();}
   if(a==='sel')sel='t:'+t.id;schedule();});
 $('#bTxtAdd').addEventListener('click',()=>{const t={id:uid(),s:'ここに文字',size:8,color:getTheme(S.design).ink,a:100,b:true,al:'l',pg:curPg};S.texts.push(t);sel='t:'+t.id;renderTexts();schedule();
   const ta=$(`.it[data-id="${t.id}"] textarea`,tlist);ta.focus();ta.select();});
 
 /* ---------- PSD書き出し（レイヤー分け・ラスター） ---------- */
 const LNAMES=['背景','装飾','画像','テキスト','最前面'];
+// 表示している箱どうしが重なっているか（影付きの影の分だけ少し広めに見る）
+function boxesOverlap(B){const hs=B.hits.filter(h=>!h.hid),e=1.5*Math.min(B.W,B.H)/210;
+  for(let i=0;i<hs.length;i++)for(let j=i+1;j<hs.length;j++){const a=hs[i],b=hs[j];
+    if(a.x<b.x+b.w+e&&b.x<a.x+a.w+e&&a.y<b.y+b.h+e&&b.y<a.y+a.h+e&&!(a.key.startsWith('sec:')&&b.key.startsWith('sec:')))return true;}
+  return false;}
 // 1チャンネル分を PackBits（RLE）で圧縮。d は RGBA の並び、off がチャンネル位置
 function packPlane(d,off,W,H){const out=new Uint8Array(H*(W+Math.ceil(W/128)+2)),cnt=new Uint8Array(H*2);let o=0;
   for(let y=0;y<H;y++){const s0=o,base=off+y*W*4;let i=0;
@@ -1408,9 +1507,13 @@ async function makePSD(B,sc,dpi,sp){
     x0=Math.max(0,Math.floor(x0));y0=Math.max(0,Math.floor(y0));x1=Math.min(PW,Math.ceil(x1));y1=Math.min(PH,Math.ceil(y1));const w=x1-x0,h=y1-y0;if(w<1||h<1)return;
     sm.width=w;sm.height=h;sg.setTransform(1,0,0,1,-x0,-y0);render(sg,{ops},sc,f);sg.setTransform(1,0,0,1,0,0);
     const d=sg.getImageData(0,0,w,h).data;layers.push({name,x:x0,y:y0,w,h,chs:[3,0,1,2].map(ch=>packPlane(d,ch,w,h))});};
-  for(let L=0;L<5;L++){let run=null,n=0; // 重なり順を保つため、描画順に並んだ同じまとまりを1レイヤーにしていく
-    for(const o of B.ops){if(o.L!==L)continue;const split=sp[cls(o)],key=split?cls(o)+'|'+(o.g||''):'*';
-      if(!run||run.key!==key){if(run){add(run.name,run.ops);if(++n%6===0)await tick();}run={key,name:split?(o.g||LNAMES[L]):LNAMES[L],ops:[]};}
+  // 重なり順を保つため、描く順に並んだ同じまとまりを1レイヤーにしていく。
+  // 箱が重なっていなければ、従来どおり「背景 / 装飾 / 画像 / テキスト / 最前面」ごとにまとめる（見た目は同じで、レイヤー数が少なくて済む）。
+  // 重なっている箱があれば、画面と同じ重なりになるよう、箱の重なり順のとおりに並べる
+  const ov=boxesOverlap(B),seq=ov?[drawOrder(B.ops)]:[0,1,2,3,4].map(L=>B.ops.filter(o=>o.L===L));let n=0;
+  for(const list of seq){let run=null;
+    for(const o of list){const split=sp[cls(o)],key=split?cls(o)+'|'+(o.g||''):'*'+o.L;
+      if(!run||run.key!==key){if(run){add(run.name,run.ops);if(++n%6===0)await tick();}run={key,name:split?(o.g||LNAMES[o.L]):LNAMES[o.L],ops:[]};}
       run.ops.push(o);}
     if(run)add(run.name,run.ops);await tick();}
   g.clearRect(0,0,PW,PH);g.fillStyle='#ffffff';g.fillRect(0,0,PW,PH);render(g,B,sc,f);
@@ -1439,6 +1542,106 @@ $('#bPsd').addEventListener('click',async e=>{const btn=e.target,v=$('#selRes').
       download(baseName()+(n>1?'_p'+p:'')+'.psd',await makePSD(B,sc,Math.round(sc*25.4),{text:$('#psdText').checked,box:$('#psdBox').checked,img:$('#psdImg').checked,bg:$('#psdBg').checked}));await new Promise(r=>setTimeout(r,600));}}
   catch(x){setErr('PSDを書き出せませんでした（解像度を下げて試してください）');}
   btn.disabled=false;btn.textContent=label;});
+
+/* ---------- レイヤー一覧（配置している箱の一覧：選択・強調・重なり順・非表示・ロック） ---------- */
+// 並びは描く順の逆（上にあるほど前面）。まとまり（自由テキスト・種別ごと）は build が返す groups（前面→背面）をそのまま使う。
+// 一覧は表示中のときだけ、中身が変わったときだけ書き換える（ドラッグ中に毎フレーム作り直さない）
+let hoverKey=null,lySig='',lySel=null,lyDrag=null;const lyClosed=new Set();
+const lyEl=$('#layers'),lyTool=$('#lyTool');
+const SVG=(p)=>`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={eye:SVG('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+  eyeOff:SVG('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><path d="M3 3l18 18"/>'),
+  lock:SVG('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'),
+  unlock:SVG('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.7"/>')};
+function layerModel(){const B=lastB,d=S.design;if(!B||!B.groups)return null;
+  const hm={};B.hits.forEach(h=>{hm[h.key]=h;});
+  const row=k=>{const h=hm[k],it=S.items.find(i=>i.id===k),t=k.startsWith('t:')&&S.texts.find(x=>'t:'+x.id===k);
+    const name=it?(String(it.title||'').trim().split('\n')[0]||'（無題）'):t?(String(t.s||'').trim().split('\n')[0]||'（文字）'):'';
+    return{key:k,name,man:!!d.free[k],sold:!!(it&&it.sold),kind:it?kOf(d,it.kind):null,hid:!!(h&&h.hid),lock:!!(h&&h.lock),w:h?Math.round(h.w):0,h:h?Math.round(h.h):0};};
+  const groups=B.groups.map(g=>{const K=g.head?kOf(d,g.head.slice(4)):null;
+    return{id:g.id,head:g.head?row(g.head):null,kind:K,label:g.id==='texts'?'自由テキスト':K?kName(K):'頒布物',rows:g.keys.map(row)};});
+  const fixed=['ヘッダー'];if(B.ops.some(o=>o.g==='フッター帯'))fixed.push('フッター');fixed.push(B.ops.some(o=>o.g==='背景画像')?'背景（画像）':'背景');
+  return{groups,fixed};}
+// まとまりの全員（見出し＋中身）
+const gMembers=g=>(g.head?[g.head.key]:[]).concat(g.rows.map(r=>r.key));
+function renderLayers(force){if(!force&&!$('#t6').classList.contains('on'))return;const m=layerModel();if(!m)return;
+  if(sel!==lySel&&sel){const g=m.groups.find(g=>(g.head&&g.head.key===sel)||g.rows.some(r=>r.key===sel));if(g)lyClosed.delete(g.id);} // 選んだ箱が閉じたまとまりの中なら開く
+  const sig=JSON.stringify([m,sel,[...lyClosed],curPg]);if(!force&&sig===lySig)return;lySig=sig;
+  const chip=K=>{const T=getTheme(S.design),c=K.c||kDef(K.id,T);return`<span class="kd" style="background:${c};color:${on(c)}">${esc(kName(K))}</span>`;};
+  const vis=(k,hid,lab)=>`<button type="button" class="ic${hid?' off':''}" data-hid="${esc(k)}" aria-pressed="${hid}" title="${hid?'表示する':'非表示にする'}" aria-label="${esc(lab)}を${hid?'表示する':'非表示にする'}">${hid?IC.eyeOff:IC.eye}</button>`;
+  const lck=(k,lock,lab)=>`<button type="button" class="ic${lock?' on':''}" data-lock="${esc(k)}" aria-pressed="${lock}" title="${lock?'ロックを外す':'ロックする'}" aria-label="${esc(lab)}を${lock?'ロック解除':'ロック'}">${lock?IC.lock:IC.unlock}</button>`;
+  const tags=r=>(r.sold?'<span class="tg sd">完売</span>':'')+`<span class="tg${r.man?' mn':''}">${r.man?'手動':'自動'}</span>`;
+  const rs=r=>r.man&&!r.lock?`<button type="button" class="rs" data-reset="${esc(r.key)}" title="自動配置に戻す" aria-label="${esc(r.name||'見出し')}を自動配置に戻す">↺</button>`:'';
+  let h='';
+  m.groups.forEach(g=>{const closed=lyClosed.has(g.id),hd=g.head,mem=gMembers(g),all=k=>mem.every(x=>(S.design[k]||{})[x]);
+    const gh=all('hid'),gl=all('lock'),lab=g.label+'（まとまり）';
+    h+=`<div class="lg${hd&&sel===hd.key?' sel':''}${gh?' hd':''}" data-gid="${esc(g.id)}" ${hd?`data-key="${esc(hd.key)}"`:''}>`+
+      `<button type="button" class="tw" data-tw="${esc(g.id)}" aria-expanded="${!closed}" aria-label="${esc(g.label)}を${closed?'開く':'閉じる'}">${closed?'▸':'▾'}</button>`+
+      `<span class="dh" title="ドラッグで重なり順を変更" aria-hidden="true">⋮⋮</span>`+
+      `<span class="icg" data-g="${esc(g.id)}">${vis('g:'+g.id,gh,lab)}${lck('g:'+g.id,gl,lab)}</span>`+
+      `${g.kind?chip(g.kind):''}<span class="ln">${g.kind?'見出しと頒布物':esc(g.label)}</span><span class="sz">${g.rows.length}点</span>${hd?tags(hd)+rs(hd):''}</div>`;
+    if(!closed)g.rows.forEach(r=>{h+=`<div class="lr${sel===r.key?' sel':''}${r.hid?' hd':''}" data-key="${esc(r.key)}" data-gid="${esc(g.id)}" role="button" tabindex="0">`+
+      `<span class="dh" title="ドラッグで重なり順を変更" aria-hidden="true">⋮⋮</span>${vis(r.key,r.hid,r.name)}${lck(r.key,r.lock,r.name)}`+
+      `${r.kind?chip(r.kind):''}<span class="ln">${esc(r.name)}</span>${tags(r)}<span class="sz">${r.w}×${r.h}</span>${rs(r)}</div>`;});});
+  if(!m.groups.length)h+='<div class="em">このページに置いている箱はありません</div>';
+  m.fixed.forEach(n=>{h+=`<div class="lg fx"><span class="tw" aria-hidden="true">${IC.lock}</span><span class="ln">${n}</span><span class="tg">固定</span></div>`;});
+  lyEl.innerHTML=h+'<div id="lyInd" hidden></div>';
+  updLyTool(m);
+  if(sel!==lySel){lySel=sel;const e=sel&&lyEl.querySelector('.sel');if(e)e.scrollIntoView({block:'nearest'});}
+  if(hoverKey&&!lyEl.querySelector(`[data-key="${CSS.escape(hoverKey)}"]`)){hoverKey=null;schedule();}}
+// 重なり順の変更：選択中の箱を、まとまりの中で動かす（見出しを選んでいるときは、まとまりごと動かす）
+function zWhere(key){const G=lastB&&lastB.groups;if(!G||!key)return null;
+  const gi=G.findIndex(g=>g.head===key);if(gi>=0)return{list:G.map(g=>g.id),i:gi,save:a=>{S.design.lo.g=a;}};
+  const g=G.find(g=>g.keys.includes(key));if(!g)return null;return{list:g.keys.slice(),i:g.keys.indexOf(key),save:a=>{S.design.lo.i[g.id]=a;}};}
+function zMove(key,how){const w=zWhere(key);if(!w)return;const a=w.list,i=w.i,n=a.length;
+  const t=how==='top'?0:how==='bottom'?n-1:how==='up'?Math.max(0,i-1):Math.min(n-1,i+1);if(t===i)return;
+  a.splice(t,0,a.splice(i,1)[0]);w.save(a);schedule();}
+function updLyTool(){const w=zWhere(sel),n=w?w.list.length:0,i=w?w.i:-1;
+  $$('button[data-z]',lyTool).forEach(b=>{const z=b.dataset.z;b.disabled=!w||n<2||((z==='top'||z==='up')&&i===0)||((z==='bottom'||z==='down')&&i===n-1);});
+  $('#lyWhat').textContent=!w?'箱を選ぶと重なり順を変えられます':sel.startsWith('sec:')?'まとまりごと動かします':'まとまりの中で動かします';}
+lyTool.addEventListener('click',e=>{const z=e.target.closest('[data-z]');if(z&&sel)zMove(sel,z.dataset.z);});
+// 非表示・ロックの切り替え（g: で始まるものは、まとまりの全員をまとめて切り替える）
+function toggleFlag(f,key){const d=S.design,o=d[f];
+  if(key.startsWith('g:')){const g=layerModel().groups.find(g=>g.id===key.slice(2));if(!g)return;const mem=gMembers(g),on=!mem.every(k=>o[k]);mem.forEach(k=>{if(on)o[k]=true;else delete o[k];});}
+  else{if(o[key])delete o[key];else o[key]=true;}
+  schedule();}
+lyEl.addEventListener('click',e=>{if(lyDrag)return;
+  const tw=e.target.closest('[data-tw]');if(tw){const id=tw.dataset.tw;lyClosed.has(id)?lyClosed.delete(id):lyClosed.add(id);renderLayers(true);return;}
+  const hb=e.target.closest('[data-hid]');if(hb){toggleFlag('hid',hb.dataset.hid);return;}
+  const lb=e.target.closest('[data-lock]');if(lb){toggleFlag('lock',lb.dataset.lock);return;}
+  const rs=e.target.closest('[data-reset]');if(rs){delete S.design.free[rs.dataset.reset];schedule();return;}
+  if(e.target.closest('.dh'))return;
+  const r=e.target.closest('[data-key]');if(r){sel=r.dataset.key;schedule();}});
+lyEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.key){e.preventDefault();sel=e.target.dataset.key;schedule();}});
+lyEl.addEventListener('pointerover',e=>{if(e.pointerType==='touch'||lyDrag)return;const r=e.target.closest('[data-key]'),k=r?r.dataset.key:null;if(k!==hoverKey){hoverKey=k;schedule();}});
+lyEl.addEventListener('pointerleave',()=>{if(hoverKey){hoverKey=null;schedule();}});
+// ドラッグで重なり順を入れ替える（⋮⋮ をつかむ。行はまとまりの中で、まとまりの行はまとまりごと）。指でも使える
+lyEl.addEventListener('pointerdown',e=>{const dh=e.target.closest('.dh');if(!dh)return;e.preventDefault();
+  const row=dh.closest('[data-gid]'),isG=row.classList.contains('lg'),gid=row.dataset.gid;
+  const els=isG?$$('.lg[data-gid]',lyEl):$$(`.lr[data-gid="${CSS.escape(gid)}"]`,lyEl);if(els.length<2)return;
+  dh.setPointerCapture(e.pointerId);row.classList.add('drg');hoverKey=null;
+  lyDrag={isG,gid,row,els,from:els.indexOf(row),to:els.indexOf(row),dh,moved:false};});
+// まとまりの範囲（見出しの行から次のまとまりの手前まで）
+const lyBlock=(el,isG)=>{const r=el.getBoundingClientRect();if(!isG)return{top:r.top,bottom:r.bottom};
+  let b=r.bottom,n=el.nextElementSibling;while(n&&n.classList.contains('lr')){b=n.getBoundingClientRect().bottom;n=n.nextElementSibling;}return{top:r.top,bottom:b};};
+lyEl.addEventListener('pointermove',e=>{if(!lyDrag)return;const D=lyDrag,y=e.clientY,box=lyEl.getBoundingClientRect(),ind=$('#lyInd');D.moved=true;
+  const sc=lyEl.closest('.tab'),sr=sc.getBoundingClientRect();if(y<sr.top+36)sc.scrollTop-=10;else if(y>sr.bottom-36)sc.scrollTop+=10; // 端に近づいたら自動でスクロール
+  const others=D.els.filter(x=>x!==D.row);let to=others.length;
+  for(let i=0;i<others.length;i++){const bl=lyBlock(others[i],D.isG);if(y<(bl.top+bl.bottom)/2){to=i;break;}}
+  D.to=to;const ref=to<others.length?lyBlock(others[to],D.isG).top:lyBlock(others[others.length-1],D.isG).bottom;
+  ind.hidden=false;ind.style.top=(ref-box.top+lyEl.scrollTop-1)+'px';});
+const lyEnd=e=>{const D=lyDrag;if(!D)return;lyDrag=null;D.row.classList.remove('drg');const ind=$('#lyInd');if(ind)ind.hidden=true;
+  try{D.dh.releasePointerCapture(e.pointerId);}catch(x){}
+  if(!D.moved||e.type==='pointercancel'){renderLayers(true);return;}
+  const G=lastB.groups,list=D.isG?G.map(g=>g.id):(G.find(g=>g.id===D.gid)||{keys:[]}).keys.slice(),mine=D.isG?D.gid:D.row.dataset.key;
+  const i=list.indexOf(mine);if(i<0)return;list.splice(i,1);list.splice(D.to,0,mine);
+  if(D.isG)S.design.lo.g=list;else S.design.lo.i[D.gid]=list;
+  if(!D.isG)sel=mine;schedule();renderLayers(true);};
+lyEl.addEventListener('pointerup',lyEnd);lyEl.addEventListener('pointercancel',lyEnd);
+// キーボード：Ctrl+] 前面へ / Ctrl+[ 背面へ（Shift で最前面・最背面）。入力欄の中では使わない
+document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!sel||/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||''))return;
+  const k=e.key,fw=k===']'||k==='}',bw=k==='['||k==='{';if(!fw&&!bw)return;e.preventDefault();
+  zMove(sel,fw?(e.shiftKey?'top':'up'):(e.shiftKey?'bottom':'down'));});
 
 /* ---------- ヘルプ ---------- */
 const help=$('#help');
