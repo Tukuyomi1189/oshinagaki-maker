@@ -69,7 +69,8 @@ h2:first-child{margin-top:0}
 #tsgrid{display:grid;grid-template-columns:1fr 54px 64px 34px;gap:5px 6px;align-items:center;margin-bottom:10px;font-size:12px}
 #tsgrid input{margin:0}#tsgrid input[type=color]{height:28px}#tsgrid button{padding:2px 0;font-size:11px}#tsgrid .hd{color:var(--sub);font-size:11px}
 #tlist .body{padding:10px}
-#pgmap{flex-wrap:wrap}#pgmap label{flex:1 0 28%}#bsKinds{flex-wrap:wrap}#bsKinds label{flex:1 0 40%}.kd.k-set{background:var(--ac2)}
+#pgmap{flex-wrap:wrap}#pgmap label{flex:1 0 28%}#bsKinds{flex-wrap:wrap}#bsKinds label{flex:1 0 40%}
+label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk select{width:auto;flex:1;margin:0}.kd.k-set{background:var(--ac2)}
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
 .imgrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
@@ -181,6 +182,7 @@ body.view #cv{touch-action:auto}
       <label class="fbtn">CSV読込<input type="file" id="fCsv" accept=".csv,text/csv"></label>
       <button id="bCsv">CSV保存</button>
     </div>
+    <label class="bk">画像からまとめて追加するときの種別<select id="selBulkKind"></select></label>
     <div id="list"></div>
     <p class="note">表紙画像は PNG / JPG / PSD（PSB）。Illustrator へ書き出す場合は<b>元ファイル名</b>で再リンクするので、画像を1つのフォルダにまとめておくと楽です。<br>CSV列：種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名</p>
   </div>
@@ -465,7 +467,7 @@ body.view #cv{touch-action:auto}
 
 <h3 id="h-bulk">まとめて登録</h3>
 <ul>
-<li><b>画像からまとめて追加</b>：表紙画像を複数選ぶと、ファイル名をタイトルにして一括登録</li>
+<li><b>画像からまとめて追加</b>：表紙画像を複数選ぶと、ファイル名をタイトルにして一括登録。種別はボタンの下の「画像からまとめて追加するときの種別」で選べます（初期値は新刊）</li>
 <li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名」。フラグ列は 1 や ○ でオン。種別は名前で書きます。一覧に無い名前はその名前の種別として自動で追加され、空欄は「既刊」になります</li>
 <li><b>CSV保存</b>：出力したファイルがそのままひな形になります</li>
 </ul>
@@ -1069,7 +1071,7 @@ $('#pReset').addEventListener('click',()=>{if(sel){delete S.design.free[sel];sch
 $('#bFree').addEventListener('click',()=>{S.design.free={};sel=null;schedule();});
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
 // 2枚構成：種別ごとに載せるページ（種別の一覧から作る）
-function renderPgmap(){if(typeof renderBsKinds==='function'&&$('#selBs').options.length)renderBsKinds();const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
+function renderPgmap(){if(typeof renderBsKinds==='function'&&$('#selBs').options.length){renderBsKinds();renderBulkKind();}const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
 renderPgmap();
 // 箱のデザイン：全体の選択肢と、種別ごとの上書き（種別の id で持つので、並べ替えても崩れない）
 $('#selBs').innerHTML=BOX_STYLES.map(b=>`<option value="${b[0]}">${b[1]}</option>`).join('');
@@ -1240,7 +1242,14 @@ async function readImg(file){
       if(Math.max(im.width,im.height)<=1800&&file.size<1.5e6)return res(fr.result);
       res(shrink(im,im.width,im.height,file.type==='image/png'?'image/png':'image/jpeg'));};
      im.onerror=bad;im.src=fr.result;};fr.onerror=bad;fr.readAsDataURL(file);});}
-$('#fBulk').addEventListener('change',async e=>{for(const f of e.target.files){try{S.items.push(newItem({title:f.name.replace(/\.[^.]+$/,''),img:await readImg(f),imgName:f.name}));}catch(x){setErr(f.name+'：'+((x&&x.message)||'読めませんでした'));}}
+// 画像からまとめて追加するときの種別（初期は新刊。種別を増減・改名したら選択肢を作り直す）
+let bulkKind='';
+function renderBulkKind(){const K=S.design.kinds,el=$('#selBulkKind');if(!K.some(k=>k.id===bulkKind))bulkKind=K.some(k=>k.id==='new')?'new':K[0].id;
+  el.innerHTML=kindOpts(bulkKind);el.value=bulkKind;}
+renderBulkKind();
+$('#selBulkKind').addEventListener('change',e=>{bulkKind=e.target.value;});
+$('#fBulk').addEventListener('change',async e=>{const kind=S.design.kinds.some(k=>k.id===bulkKind)?bulkKind:undefined;
+  for(const f of e.target.files){try{S.items.push(newItem(Object.assign({title:f.name.replace(/\.[^.]+$/,''),img:await readImg(f),imgName:f.name},kind?{kind}:{})));}catch(x){setErr(f.name+'：'+((x&&x.message)||'読めませんでした'));}}
   e.target.value='';renderList();schedule();});
 
 /* ---------- 種別の管理（デザインタブ） ---------- */
@@ -1258,7 +1267,7 @@ function renderKinds(){const d=S.design,T=getTheme(d),n=d.kinds.length;
 <button type="button" data-ka="del" ${n>1?'':'disabled'}>削除</button></div>`).join('');
   $('#bKindBack').hidden=DEF_KINDS.every(([id])=>d.kinds.some(k=>k.id===id));nkLabel();}
 // 種別が変わったら、頒布物タブ・ページ分け・プレビューにも反映する（追加・削除・並べ替えは作り直し、名前・色は書き換えだけ）
-function kindsChanged(rebuild){renderBsKinds();
+function kindsChanged(rebuild){renderBsKinds();renderBulkKind();
   if(rebuild){renderKinds();renderList();}
   else{$$('details.it',list).forEach(dt=>{const it=S.items.find(i=>i.id===dt.dataset.id);if(it)paintChip($('.kd',dt),it.kind);
       $$('select[data-f=kind] option',dt).forEach(o=>{o.textContent=kName(kOf(S.design,o.value));});});nkLabel();}
