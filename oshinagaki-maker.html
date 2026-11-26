@@ -101,17 +101,35 @@ dialog::backdrop{background:rgba(20,22,35,.5)}
 .hb th,.hb td{border:1px solid var(--ln);padding:5px 9px;text-align:left;vertical-align:top}
 .hb th{background:#f1eee9;white-space:nowrap;font-weight:700;width:38%}
 kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid #bbb;border-bottom-width:2px;border-radius:4px;padding:2px 5px;white-space:nowrap}
-@media(max-width:760px){main{flex-direction:column-reverse}aside{width:auto;max-width:none;height:55%;border-right:0;border-top:1px solid var(--ln)}}
+/* 確認モード：入力パネルを隠してプレビューを最大にする（編集はしない） */
+#split{display:none}
+#bEdit{display:none;position:fixed;right:12px;bottom:52px;z-index:6;background:var(--ac2);color:#fff;border-color:var(--ac2);border-radius:99px;padding:8px 16px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+body.view header,body.view aside,body.view #split,body.view #props,body.view #al{display:none!important}
+body.view #bEdit{display:block}
+body.view #cv{touch-action:auto}
+/* スマホ：上がプレビュー、下が入力パネル。境目をドラッグして比率を変える（--ah＝入力パネルの高さ） */
+@media(max-width:760px){
+  header{padding:6px 8px;gap:4px}header h1{font-size:13px;letter-spacing:0}header h1 small,header .pc{display:none}
+  header button,header .fbtn{padding:3px 6px;font-size:12px;margin:0}
+  main{flex-direction:column-reverse}
+  aside{width:auto;max-width:none;height:var(--ah,75%);flex:none;border-right:0}
+  #split{display:flex;flex:none;height:20px;align-items:center;justify-content:center;background:var(--pn);border-top:1px solid var(--ln);cursor:row-resize;touch-action:none;user-select:none;-webkit-user-select:none}
+  #split::before{content:"";width:48px;height:5px;border-radius:3px;background:var(--sub);opacity:.45}
+  #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
+  #split:focus-visible{outline:none}
+  footer{flex-wrap:wrap;gap:4px 10px;padding:4px 10px}
+}
 </style>
 </head>
 <body>
 <header>
   <h1>お品書きメーカー<small>入力 → 自動レイアウト → PNG / PSD / Illustrator</small></h1>
-  <button id="bSave">プロジェクト保存</button>
+  <button id="bView" title="入力パネルを隠してプレビューを最大にします">確認</button>
+  <button id="bSave"><span class="pc">プロジェクト</span>保存</button>
   <label class="fbtn">開く<input type="file" id="fOpen" accept=".json,application/json"></label>
   <button id="bSample">サンプル</button>
   <button id="bNew">新規</button>
-  <button id="bHelp" aria-haspopup="dialog">？ ヘルプ</button>
+  <button id="bHelp" aria-haspopup="dialog" aria-label="ヘルプ">？<span class="pc"> ヘルプ</span></button>
 </header>
 <main>
 <aside>
@@ -294,15 +312,17 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
   <button type="button" id="pTxt" style="margin-bottom:6px">この箱の色・文字・画像の設定を戻す</button>
   <button type="button" id="pReset">この箱を自動配置に戻す</button>
 </div>
+<div id="split" role="separator" tabindex="0" aria-orientation="horizontal" aria-valuemin="15" aria-valuemax="85" aria-label="プレビューと入力パネルの境目。上下にドラッグ、または矢印キーで比率を変更。ダブルクリックで 1:3 に戻す" title="ドラッグで比率を変更／ダブルクリックで 1:3 に戻す"></div>
 <section id="stage"><canvas id="cv" tabindex="0" aria-label="お品書きプレビュー。箱を選んで矢印キーで移動、Shift＋矢印でサイズ変更、Deleteで自動配置に戻す"></canvas></section>
 </main>
+<button type="button" id="bEdit">調整に戻る</button>
 <footer><span id="pgs" hidden><button type="button" data-p="1">1枚目</button> <button type="button" data-p="2">2枚目</button></span><span id="al" hidden>選択中の箱：<button type="button" data-al="l">左揃え</button> <button type="button" data-al="c">左右中央</button> <button type="button" data-al="r">右揃え</button> <button type="button" data-al="w">幅いっぱい</button></span><span id="stat"></span><span id="warn"></span>
   <label>表示倍率<input type="range" id="zoom" min="1" max="3" step="0.25" value="1"></label></footer>
 
 <dialog id="help" aria-labelledby="helpT">
 <div class="hh"><h2 id="helpT">お品書きメーカーの使い方</h2><button type="button" id="bHelpX">閉じる</button></div>
 <div class="hb">
-<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-faq">困ったとき</a></div>
+<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
 
 <h3 id="h-flow">基本の流れ</h3>
 <ol>
@@ -419,6 +439,14 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 <li>確実に残すには右上の「プロジェクト保存」で JSON にし、「開く」で読み込みます</li>
 <li>「新規」は2回押すと全消去、「サンプル」は見本データに置き換えます</li>
 </ul>
+
+<h3 id="h-view">確認モードと調整モード（スマホでの使い方）</h3>
+<table>
+<tr><th>右上の「確認」</th><td>入力パネルを隠してプレビューを画面いっぱいに表示します。うっかり箱を動かさないよう、確認モードでは箱を動かせません</td></tr>
+<tr><th>「調整に戻る」（または <kbd>Esc</kbd>）</th><td>入力パネルを戻して、編集できる状態に戻ります</td></tr>
+<tr><th>境目のつまみ（スマホ）</th><td>プレビューと入力パネルの間のつまみを上下にドラッグして比率を変えます。初期値はプレビュー 1：入力パネル 3。ダブルタップで 1:3 に戻ります</td></tr>
+</table>
+<p class="note">モードと境目の位置は、この端末のブラウザに記憶されます（プロジェクトの JSON には入りません）。</p>
 
 <h3 id="h-faq">困ったとき</h3>
 <table>
@@ -870,10 +898,10 @@ const pageM=B=>8*Math.min(B.W,B.H)/210;
 const guideLines=key=>{const B=lastB,m=pageM(B),xs=[m,B.W/2,B.W-m],ys=[B.H/2];
   for(const h of B.hits){if(h.key===key)continue;xs.push(h.x,h.x+h.w/2,h.x+h.w);ys.push(h.y,h.y+h.h/2,h.y+h.h);}return{xs,ys};};
 const snap1=(pts,lines)=>{let b=null;for(const p of pts)for(const l of lines){const d=l-p;if(Math.abs(d)<1.5&&(!b||Math.abs(d)<Math.abs(b.d)))b={d,l};}return b;};
-cv.addEventListener('pointerdown',e=>{if(!lastB)return;const p=toMM(e),h=hitAt(p);sel=h?h.key:null;
+cv.addEventListener('pointerdown',e=>{if(!lastB||UI.view)return;const p=toMM(e),h=hitAt(p);sel=h?h.key:null;
   if(h){drag={key:h.key,mode:dirAt(h,p)||'mv',p,o:{x:h.x,y:h.y,w:h.w,h:h.h},moved:false};cv.setPointerCapture(e.pointerId);}
   cv.focus({preventScroll:true});schedule();});
-cv.addEventListener('pointermove',e=>{if(!lastB)return;const p=toMM(e);
+cv.addEventListener('pointermove',e=>{if(!lastB||UI.view)return;const p=toMM(e);
   if(!drag){const h=hitAt(p);cv.style.cursor=h?(CUR[dirAt(h,p)]||'move'):'default';return;}
   const dx=p.x-drag.p.x,dy=p.y-drag.p.y,o=drag.o;
   if(!drag.moved&&Math.hypot(dx,dy)<1)return;drag.moved=true;let f;const G=e.altKey?{xs:[],ys:[]}:guideLines(drag.key),gl=[];
@@ -892,8 +920,8 @@ cv.addEventListener('pointermove',e=>{if(!lastB)return;const p=toMM(e);
     if(c)gl.push(['x',cx2/2],['y',cy2/2]);}
   guides=gl;S.design.free[drag.key]=f;schedule();});
 const endDrag=()=>{drag=null;guides=[];schedule();};cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
-cv.addEventListener('dblclick',e=>{const h=hitAt(toMM(e));if(h){delete S.design.free[h.key];schedule();}});
-cv.addEventListener('keydown',e=>{const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h)return;
+cv.addEventListener('dblclick',e=>{if(UI.view)return;const h=hitAt(toMM(e));if(h){delete S.design.free[h.key];schedule();}});
+cv.addEventListener('keydown',e=>{if(UI.view)return;const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h)return;
   if(e.key==='Escape'||e.key==='Delete'||e.key==='Backspace'){delete S.design.free[sel];e.preventDefault();schedule();return;}
   const mv={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!mv)return;e.preventDefault();
   const n=(e.ctrlKey||e.metaKey)?.5:1,f={x:h.x,y:h.y,w:h.w,h:h.h};
@@ -946,6 +974,33 @@ function renderPgmap(){const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<l
 renderPgmap();
 $('#zoom').addEventListener('input',e=>{zoom=+e.target.value;schedule();});
 window.addEventListener('resize',schedule);
+// プレビュー枠の大きさが変わったら描き直す（境目のドラッグ、確認モードの切り替えなど）
+if(window.ResizeObserver)new ResizeObserver(schedule).observe($('#stage'));
+
+/* ---------- 画面の使い方：確認モード／調整モード、スマホの境目の位置 ---------- */
+// 作品データとは別に、この端末の画面の好みとして保存する
+const UI_LS='oshinagaki-ui',AH_DEF=75; // 入力パネルの高さ％（初期値 75％＝プレビュー 1：入力パネル 3）
+const UI={view:false,ah:AH_DEF};
+try{const j=JSON.parse(localStorage.getItem(UI_LS));if(j){UI.view=!!j.view;if(isFinite(j.ah))UI.ah=+j.ah;}}catch(e){}
+const saveUI=()=>{try{localStorage.setItem(UI_LS,JSON.stringify(UI));}catch(e){}};
+const mainEl=$('main'),split=$('#split');
+function applyUI(){document.body.classList.toggle('view',UI.view);mainEl.style.setProperty('--ah',UI.ah+'%');
+  split.setAttribute('aria-valuenow',100-UI.ah);split.setAttribute('aria-valuetext','プレビュー '+(100-UI.ah)+'％');}
+const setAh=v=>{UI.ah=Math.round(Math.min(85,Math.max(15,v)));applyUI();};
+const setView=v=>{UI.view=v;if(v){sel=null;drag=null;guides=[];}applyUI();saveUI();schedule();
+  (v?$('#bEdit'):$('#bView')).focus({preventScroll:true});};
+$('#bView').addEventListener('click',()=>setView(true));
+$('#bEdit').addEventListener('click',()=>setView(false));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.view&&!document.querySelector('dialog[open]')){e.preventDefault();setView(false);}});
+split.addEventListener('pointerdown',e=>{e.preventDefault();split.setPointerCapture(e.pointerId);split.classList.add('on');});
+split.addEventListener('pointermove',e=>{if(!split.hasPointerCapture(e.pointerId))return;const r=mainEl.getBoundingClientRect();
+  setAh((r.bottom-e.clientY-split.offsetHeight/2)/r.height*100);});
+const endSplit=e=>{if(split.hasPointerCapture(e.pointerId))split.releasePointerCapture(e.pointerId);split.classList.remove('on');saveUI();};
+split.addEventListener('pointerup',endSplit);split.addEventListener('pointercancel',endSplit);
+split.addEventListener('dblclick',()=>{setAh(AH_DEF);saveUI();});
+split.addEventListener('keydown',e=>{const d={ArrowUp:5,ArrowDown:-5}[e.key];
+  if(d){e.preventDefault();setAh(UI.ah+d);saveUI();}else if(e.key==='Home'||e.key==='End'){e.preventDefault();setAh(AH_DEF);saveUI();}});
+applyUI();
 
 /* ---------- 頒布物リスト ---------- */
 const list=$('#list');
