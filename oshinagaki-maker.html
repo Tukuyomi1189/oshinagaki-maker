@@ -100,6 +100,14 @@ h2:first-child{margin-top:0}
 #lyInd{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;pointer-events:none;z-index:2}
 #lyTool{align-items:center}#lyTool button{padding:3px 8px;font-size:12px}#lyTool button:disabled{opacity:.4;cursor:default}
 .lyw{font-size:11px;color:var(--sub);flex-basis:100%}
+/* 頒布物の一覧：種別ごとのまとまりと、並べ替えのつまみ */
+#list{position:relative}
+.ig{margin-bottom:12px}
+.igh{display:flex;align-items:center;gap:8px;padding:2px 2px 6px;font-size:13px}
+.igh .sp{margin-left:auto}
+#list .dh{cursor:grab;color:#b3aba0;touch-action:none;user-select:none;-webkit-user-select:none;flex:none;font-size:15px;letter-spacing:-3px;line-height:1;padding:4px 6px 4px 0}
+#list .drg{opacity:.45}
+#liInd{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;pointer-events:none;z-index:2}
 label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk select{width:auto;flex:1;margin:0}.kd.k-set{background:var(--ac2)}
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -242,7 +250,7 @@ body.view #cv{touch-action:auto}
     <h2>種別</h2>
     <div id="kinds"></div>
     <div class="bar"><button type="button" id="bKindAdd">＋ 種別を追加</button><button type="button" id="bKindBack" hidden>消した初期の種別を戻す</button></div>
-    <p class="note">上から順に見出しが並びます（↑↓で入れ替え）。名前を変えると、見出し・バッジ・頒布物タブの選択肢・CSV に反映されます。<b>色</b>はその種別のバッジと見出しの色です（「戻」でテーマの色に戻す）。<br>初期の「新刊」は名前や色を変えても、強調表示（箱の枠）・「新刊を大きく」・新刊の列数がそのまま効きます。<br>種別を削除すると、その種別の頒布物は「既刊」に移ります。CSVで一覧に無い種別名を読み込むと、その名前の種別が自動で追加されます。</p>
+    <p class="note">上から順に見出しが並びます（↑↓で入れ替え。頒布物タブで種別の見出しをドラッグしても入れ替えられます）。名前を変えると、見出し・バッジ・頒布物タブの選択肢・CSV に反映されます。<b>色</b>はその種別のバッジと見出しの色です（「戻」でテーマの色に戻す）。<br>初期の「新刊」は名前や色を変えても、強調表示（箱の枠）・「新刊を大きく」・新刊の列数がそのまま効きます。<br>種別を削除すると、その種別の頒布物は「既刊」に移ります。CSVで一覧に無い種別名を読み込むと、その名前の種別が自動で追加されます。</p>
     <h2>箱の手動調整</h2>
     <p class="note">プレビュー上で箱を<b>ドラッグ</b>して移動、<b>辺や角</b>をドラッグして大きさ変更（上下左右の辺はその方向だけ、角は縦横同時）（中の文字も追従）。見出しも動かせます。<br>ドラッグ中は、ほかの箱の端・中心や用紙の中央・余白に吸着し、<b>ピンクの目安線</b>が出ます（<b>Alt</b>で無効）。<b>Shift</b>を押しながら辺や角をドラッグすると、中心を保ったまま大きさが変わります。箱を選ぶと画面下に揃えボタンが出ます。矢印キーで1mm移動、<b>Shift＋矢印</b>でサイズ変更、<b>Ctrl</b>併用で0.5mm。<br><b>ダブルクリック</b>か <b>Delete</b> でその箱だけ自動配置に戻ります。用紙サイズを変えると箱の手動配置はリセットされます（自由テキストは新しい用紙のほぼ同じ位置に移ります）。</p>
     <div class="chk"><label><input type="checkbox" data-k="design.showProps">プロパティパネルを表示（選択中の箱の名前・位置・大きさ。数値入力可。スマホでは箱をタップすると自動で表示）</label></div>
@@ -424,7 +432,8 @@ body.view #cv{touch-action:auto}
 <tr><th>R18 / 残りわずか / 完売</th><td>バッジで表示。完売は箱全体に重ねて表示</td></tr>
 <tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）。「表紙画像の大きさ ％」で、その箱の中での画像の大きさを 20〜200% で変えられます（プロパティパネルの「画」と同じ）。大きくできるのは箱に収まるところまでなので、もっと大きくしたいときは箱も広げてください。画像の大きさを変えたときに文字の大きさまで変わってほしくない場合は、デザインタブの「表紙画像の大きさを変えても文字の大きさを変えない」をオンにします</td></tr>
 <tr><th>この頒布物の文字サイズ ％</th><td>その頒布物だけ、タイトル / 価格 / 仕様 / 説明 の大きさを別々に 50〜200% で変えられます（例：タイトル 120・価格 100・仕様 80）。文字タブの「文字サイズ（％）」との掛け算です。プロパティパネルの「題・価・仕・説」と同じ</td></tr>
-<tr><th>↑ ↓ / 複製 / 削除</th><td>並べ替えと複製・削除</td></tr>
+<tr><th>⋮⋮ をドラッグ</th><td>種別の見出しの ⋮⋮ で種別まるごと（お品書きの見出しの順番）、頒布物の ⋮⋮ でその種別の中を並べ替え。指でも操作できます</td></tr>
+<tr><th>↑ ↓ / 複製 / 削除</th><td>その種別の中で1つずつ移動、複製・削除。種別をまたいで動かすときは「種別」を変えます</td></tr>
 </table>
 
 <h3 id="h-box">箱の調整（プレビュー上の操作）</h3>
@@ -1059,7 +1068,7 @@ function paperChanged(prev){const A=PAPERS[prev],P=PAPERS[S.design.paper],F=S.de
 document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
   const t=e.target,prevPaper=S.design.paper;setP(k,t.type==='checkbox'?t.checked:t.type==='number'?Math.max(t.min===''?1:+t.min,Math.min(+t.max||9,t.value===''||isNaN(+t.value)?(t.min===''?1:+t.min):+t.value)):t.value);
   if(k==='design.paper'&&S.design.paper!==prevPaper)paperChanged(prevPaper);
-  if(k==='design.yen')renderList();schedule();});
+  if(k==='design.yen'||k==='design.group')renderList();schedule();});
 $('#selPaper').innerHTML=Object.keys(PAPERS).map(k=>`<option value="${k}">${PAPERS[k].n}</option>`).join('');
 $('#selFont').innerHTML=Object.keys(FONTS).map(k=>`<option value="${k}">${FONTS[k].n}</option>`).join('');
 $('#themes').innerHTML=Object.keys(THEMES).map(k=>{const t=THEMES[k];
@@ -1261,10 +1270,16 @@ const list=$('#list');
 const chipCss=id=>{const k=kOf(S.design,id);return k.c?`background:${k.c};color:${on(k.c)}`:'';};
 const paintChip=(el,id)=>{const k=kOf(S.design,id);el.className='kd k-'+k.id;el.textContent=kName(k);el.style.cssText=chipCss(id);};
 const kindOpts=cur=>S.design.kinds.map(k=>`<option value="${k.id}" ${k.id===cur?'selected':''}>${esc(kName(k))}</option>`).join('');
+// 頒布物の一覧：「種別ごとに見出しで分ける」がオンなら、お品書きと同じ種別の順でまとめて表示する（⋮⋮ のドラッグで、種別まるごと・種別の中を並べ替え）
+function listGroups(){const d=S.design;if(!d.group)return[{K:null,its:S.items.slice()}];
+  return d.kinds.map(K=>({K,its:S.items.filter(i=>kOf(d,i.kind).id===K.id)})).filter(g=>g.its.length);}
 function renderList(openId){
-  const open=new Set($$('details[open]',list).map(d=>d.dataset.id));if(openId)open.add(openId);
-  list.innerHTML=S.items.map(it=>`<details class="it" data-id="${it.id}" ${open.has(it.id)?'open':''}>
-<summary><span class="kd k-${kOf(S.design,it.kind).id}" style="${chipCss(it.kind)}">${esc(kName(kOf(S.design,it.kind)))}</span><b class="st">${esc(String(it.title||'').trim())||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
+  const open=new Set($$('details[open]',list).map(d=>d.dataset.id));if(openId)open.add(openId);renderList.open=open;
+  const gs=listGroups();
+  list.innerHTML=gs.map(g=>`<section class="ig" data-kind="${g.K?esc(g.K.id):''}">`+(g.K?`<div class="igh"><span class="dh" title="ドラッグで種別の順番を変更" aria-hidden="true">⋮⋮</span><span class="kd k-${g.K.id}" style="${chipCss(g.K.id)}">${esc(kName(g.K))}</span><span class="sp">${g.its.length}点</span></div>`:'')+
+    g.its.map(itemHtml).join('')+'</section>').join('')+'<div id="liInd" hidden></div>';}
+const itemHtml=it=>`<details class="it" data-id="${it.id}" ${renderList.open&&renderList.open.has(it.id)?'open':''}>
+<summary><span class="dh" title="ドラッグで並べ替え" aria-hidden="true">⋮⋮</span><span class="kd k-${kOf(S.design,it.kind).id}" style="${chipCss(it.kind)}">${esc(kName(kOf(S.design,it.kind)))}</span><b class="st">${esc(String(it.title||'').trim())||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
 <div class="body">
 <div class="row"><label>種別<select data-f="kind">${kindOpts(kOf(S.design,it.kind).id)}</select></label>
 <label>価格（数字 / 自由記入）<input data-f="price" value="${esc(it.price)}" placeholder="500"></label></div>
@@ -1282,15 +1297,14 @@ ${it.img?`<div class="row"><label title="20〜200％">表紙画像の大きさ �
 <div class="row">${[['fsT','タイトル'],['fsP','価格'],['fsS','仕様'],['fsD','説明']].map(([f,n])=>`<label>${n}<input type="number" min="50" max="200" step="5" data-f="${f}" value="${+it[f]||100}"></label>`).join('')}</div>
 <div class="acts"><button type="button" data-a="up" aria-label="上へ">↑</button><button type="button" data-a="down" aria-label="下へ">↓</button>
 <button type="button" data-a="dup">複製</button><button type="button" data-a="del">削除</button></div>
-</div></details>`).join('');
-}
+</div></details>`;
 const itemOf=el=>{const d=el.closest('details');return d&&S.items.find(i=>i.id===d.dataset.id);};
 list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.target);if(!f||!it)return;
   if(f==='img'){const file=e.target.files[0];if(!file)return;try{it.img=await readImg(file);it.imgName=file.name;}catch(x){setErr((x&&x.message)||'画像を読めませんでした');}renderList();schedule();return;}
   if(PCT[f]){const v=+e.target.value;if(v)it[f]=Math.max(PCT[f][0],Math.min(PCT[f][1],v));schedule();return;} // 表紙画像の大きさ・文字サイズ（％）
   it[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;
   const d=e.target.closest('details');
-  if(f==='kind')paintChip($('.kd',d),it.kind);
+  if(f==='kind'){if(S.design.group){renderList();schedule();return;}paintChip($('summary .kd',d),it.kind);}
   if(f==='title')$('.st',d).textContent=String(it.title||'').trim()||'（無題）';
   if(f==='price')$('.sp',d).textContent=priceStr(it.price,S.design);
   schedule();});
@@ -1298,10 +1312,31 @@ list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target)
   const i=S.items.indexOf(it);
   if(a==='del'){S.items.splice(i,1);['free','hid','lock'].forEach(f=>{delete S.design[f][it.id];});if(sel===it.id)sel=null;}
   if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid()}));
-  if(a==='up'&&i>0)S.items.splice(i-1,0,S.items.splice(i,1)[0]);
-  if(a==='down'&&i<S.items.length-1)S.items.splice(i+1,0,S.items.splice(i,1)[0]);
+  if(a==='up'||a==='down'){const same=S.items.filter(x=>!S.design.group||kOf(S.design,x.kind).id===kOf(S.design,it.kind).id),k=same.indexOf(it),t=a==='up'?k-1:k+1; // 種別の中で入れ替え
+    if(t>=0&&t<same.length){const o=same[t],io=S.items.indexOf(o);S.items[i]=o;S.items[io]=it;}}
   if(a==='noimg'){it.img='';it.imgName='';}
   renderList();schedule();});
+// ⋮⋮ をドラッグして並べ替え：種別の見出し → 種別の順番（デザインタブの種別の順）、頒布物 → その種別の中の順。指でも使える
+let liDrag=null;
+list.addEventListener('click',e=>{if(e.target.closest('.dh'))e.preventDefault();},true); // つまみを押しても開閉しない
+list.addEventListener('pointerdown',e=>{const dh=e.target.closest('.dh');if(!dh)return;e.preventDefault();
+  const isG=!!dh.closest('.igh'),el=isG?dh.closest('.ig'):dh.closest('details'),els=isG?$$('.ig',list):$$('details.it',el.parentElement);if(els.length<2)return;
+  dh.setPointerCapture(e.pointerId);el.classList.add('drg');liDrag={isG,el,els,to:els.indexOf(el),dh,moved:false};});
+list.addEventListener('pointermove',e=>{const D=liDrag;if(!D)return;D.moved=true;const y=e.clientY,box=list.getBoundingClientRect(),ind=$('#liInd');
+  const sc=list.closest('.tab'),sr=sc.getBoundingClientRect();if(y<sr.top+36)sc.scrollTop-=10;else if(y>sr.bottom-36)sc.scrollTop+=10; // 端に近づいたら自動でスクロール
+  const others=D.els.filter(x=>x!==D.el);let to=others.length;
+  for(let i=0;i<others.length;i++){const r=others[i].getBoundingClientRect();if(y<(r.top+r.bottom)/2){to=i;break;}}
+  D.to=to;const ref=to<others.length?others[to].getBoundingClientRect().top-(D.isG?6:4):others[others.length-1].getBoundingClientRect().bottom+(D.isG?2:2);
+  ind.hidden=false;ind.style.top=(ref-box.top)+'px';});
+const liEnd=e=>{const D=liDrag;if(!D)return;liDrag=null;D.el.classList.remove('drg');$('#liInd').hidden=true;try{D.dh.releasePointerCapture(e.pointerId);}catch(x){}
+  if(!D.moved||e.type==='pointercancel')return;
+  const ids=D.els.map(x=>D.isG?x.dataset.kind:x.dataset.id),mine=D.isG?D.el.dataset.kind:D.el.dataset.id,from=ids.indexOf(mine);ids.splice(from,1);ids.splice(D.to,0,mine);
+  if(ids.indexOf(mine)===from)return;
+  // 並べ替えた分だけを、もとの場所（枠）に入れ直す（一覧にない種別・ほかの種別の頒布物の位置は変えない）
+  const refill=(arr,key,order)=>{const set=new Set(order),by={};arr.forEach(x=>{by[key(x)]=x;});let j=0;return arr.map(x=>set.has(key(x))?by[order[j++]]:x);};
+  if(D.isG){S.design.kinds=refill(S.design.kinds,k=>k.id,ids);kindsChanged(true);}
+  else{S.items=refill(S.items,i=>i.id,ids);renderList();schedule();}};
+list.addEventListener('pointerup',liEnd);list.addEventListener('pointercancel',liEnd);
 const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:''},o);
 $('#bAdd').addEventListener('click',()=>{const it=newItem(addKind());S.items.push(it);renderList(it.id);schedule();
   const d=$(`details[data-id="${it.id}"]`,list);d.scrollIntoView({block:'nearest'});$('[data-f=title]',d).focus();});
@@ -1374,7 +1409,8 @@ function renderKinds(){const d=S.design,T=getTheme(d),n=d.kinds.length;
 // 種別が変わったら、頒布物タブ・ページ分け・プレビューにも反映する（追加・削除・並べ替えは作り直し、名前・色は書き換えだけ）
 function kindsChanged(rebuild){renderBsKinds();renderBulkKind();
   if(rebuild){renderKinds();renderList();}
-  else{$$('details.it',list).forEach(dt=>{const it=S.items.find(i=>i.id===dt.dataset.id);if(it)paintChip($('.kd',dt),it.kind);
+  else{$$('.ig[data-kind]',list).forEach(g=>{const c=$('.igh .kd',g);if(c&&g.dataset.kind)paintChip(c,g.dataset.kind);}); // まとまりの見出しの札
+    $$('details.it',list).forEach(dt=>{const it=S.items.find(i=>i.id===dt.dataset.id);if(it)paintChip($('summary .kd',dt),it.kind);
       $$('select[data-f=kind] option',dt).forEach(o=>{o.textContent=kName(kOf(S.design,o.value));});});nkLabel();}
   renderPgmap();schedule();}
 kindsEl.addEventListener('input',e=>{const f=e.target.dataset.kf,r=e.target.closest('.kr'),k=r&&S.design.kinds.find(x=>x.id===r.dataset.id);if(!f||!k)return;
