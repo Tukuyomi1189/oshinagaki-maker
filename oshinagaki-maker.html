@@ -112,6 +112,12 @@ label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk sel
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
 .imgrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
+/* 頒布物の表紙画像（4枚まで） */
+.ims{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:9px}
+.imc{width:74px;font-size:11px;text-align:center}
+.imc img{width:74px;height:98px;object-fit:contain;background:#f1eee9;border:1px solid var(--ln);border-radius:4px;display:block}
+.imc .nm{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub);margin:2px 0}
+.imc .imb{display:flex;gap:3px;justify-content:center}.imc .imb button{padding:0 7px;font-size:11px}
 .imgrow img{width:44px;height:60px;object-fit:contain;background:#f1eee9;border:1px solid var(--ln);border-radius:4px}
 .imgrow .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub)}
 .acts{display:flex;gap:6px;justify-content:flex-end}
@@ -432,7 +438,7 @@ body.view #cv{touch-action:auto}
 <tr><th>タイトル</th><td>改行できます（Enter）。2行まで表示し、改行した位置で折り返します。長い行は自動でも折り返し、入りきらない分は「…」で省略</td></tr>
 <tr><th>仕様・説明</th><td>箱に余白がある分だけ表示されます</td></tr>
 <tr><th>R18 / 残りわずか / 完売</th><td>バッジで表示。完売は箱全体に重ねて表示</td></tr>
-<tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）。「表紙画像の大きさ ％」で、その箱の中での画像の大きさを 20〜200% で変えられます（プロパティパネルの「画」と同じ）。大きくできるのは箱に収まるところまでなので、もっと大きくしたいときは箱も広げてください。画像の大きさを変えたときに文字の大きさまで変わってほしくない場合は、デザインタブの「表紙画像の大きさを変えても文字の大きさを変えない」をオンにします</td></tr>
+<tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）。1点につき4枚まで選べ、2枚以上は箱の中に並べます（並べ方は「横に並べる / 少し重ねる」）。◀ で順番を前へ、✕ で外します。「表紙画像の大きさ ％」で、その箱の中での画像の大きさを 20〜200% で変えられます（プロパティパネルの「画」と同じ）。大きくできるのは箱に収まるところまでなので、もっと大きくしたいときは箱も広げてください。画像の大きさを変えたときに文字の大きさまで変わってほしくない場合は、デザインタブの「表紙画像の大きさを変えても文字の大きさを変えない」をオンにします</td></tr>
 <tr><th>この頒布物の文字サイズ ％</th><td>その頒布物だけ、タイトル / 価格 / 仕様 / 説明 の大きさを別々に 50〜200% で変えられます（例：タイトル 120・価格 100・仕様 80）。文字タブの「文字サイズ（％）」との掛け算です。プロパティパネルの「題・価・仕・説」と同じ</td></tr>
 <tr><th>⋮⋮ をドラッグ</th><td>種別の見出しの ⋮⋮ で種別まるごと（お品書きの見出しの順番）、頒布物の ⋮⋮ でその種別の中を並べ替え。指でも操作できます</td></tr>
 <tr><th>↑ ↓ / 複製 / 削除</th><td>その種別の中で1つずつ移動、複製・削除。種別をまたいで動かすときは「種別」を変えます</td></tr>
@@ -542,7 +548,7 @@ body.view #cv{touch-action:auto}
 <h3 id="h-bulk">まとめて登録</h3>
 <ul>
 <li><b>画像からまとめて追加</b>：表紙画像を複数選ぶと、ファイル名をタイトルにして一括登録。種別はボタンの下の「追加するときの種別」で選べます（初期値は新刊）</li>
-<li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名」。フラグ列は 1 や ○ でオン。種別は名前で書きます。一覧に無い名前はその名前の種別として自動で追加され、空欄は「既刊」になります</li>
+<li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名」。画像が複数あるときはファイル名を「|」で区切ります（例：<code>vol1.png|vol2.png</code>）。フラグ列は 1 や ○ でオン。種別は名前で書きます。一覧に無い名前はその名前の種別として自動で追加され、空欄は「既刊」になります</li>
 <li><b>CSV保存</b>：出力したファイルがそのままひな形になります</li>
 </ul>
 
@@ -722,6 +728,11 @@ const BSID=new Set(BOX_STYLES.map(b=>b[0]));
 // 種別の指定 → 全体の指定。透過素材が未設定なら標準で描く
 const boxStyleOf=(d,K)=>{const v=(K&&BSID.has(K.bs)?K.bs:'')||d.bs||'std';return v==='frame'&&!(d.bframe&&d.bframe.img)?'std':v;};
 let uidN=Date.now();const uid=()=>'i'+(uidN++).toString(36);
+// 表紙画像：1枚目は従来どおり it.img / it.imgName、2〜4枚目は it.more（[{img,name}]）。並べ方は it.iarr（row＝横に並べる / fan＝少し重ねる）
+const IMG_MAX=4;
+const imgsOf=it=>(it.img?[{img:it.img,name:it.imgName||''}]:[]).concat((it.more||[]).filter(m=>m&&m.img));
+const setImgs=(it,a)=>{a=a.slice(0,IMG_MAX);it.img=a[0]?a[0].img:'';it.imgName=a[0]?a[0].name:'';it.more=a.slice(1).map(m=>({img:m.img,name:m.name||''}));};
+const imgId=(it,k)=>k?it.id+'~'+k:it.id; // 画像の読み込み・縦横比を覚えておく名前（1枚目は頒布物の id）
 
 const CATS=[['circle','サークル名'],['event','イベント名・日付'],['pen','ペンネーム'],['space','スペース番号'],['sec','種別の見出し'],['badge','バッジ'],['title','タイトル'],['spec','仕様'],['desc','説明'],['price','価格'],['foot','フッター（支払い・お知らせ）'],['sns','SNS / 連絡先']];
 const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
@@ -745,7 +756,8 @@ function sample(){const s=blank();
   return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem(LS));if(j&&j.items)return norm(j);}catch(e){}return sample();}
 function norm(j){const b=blank();
-  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:''},i))};
+  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:'',more:[],iarr:'row'},i))};
+  s.items.forEach(i=>{i.more=(Array.isArray(i.more)?i.more:[]).filter(m=>m&&m.img).slice(0,IMG_MAX-1).map(m=>({img:String(m.img),name:String(m.name||'')}));if(i.iarr!=='fan')i.iarr='row';});
   if(!s.design.free||typeof s.design.free!=='object')s.design.free={};
   // レイヤー：重なり順（lo.g＝まとまりの順、lo.i＝まとまりの中の順。どちらも前面→背面）、非表示、ロック
   {const lo=s.design.lo&&typeof s.design.lo==='object'?s.design.lo:{};s.design.lo={g:Array.isArray(lo.g)?lo.g:[],i:lo.i&&typeof lo.i==='object'?lo.i:{}};
@@ -777,7 +789,7 @@ let saveT=0;
 function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
 function saveNow(){clearTimeout(saveT);saveT=0;
   try{localStorage.setItem(LS,JSON.stringify(S));}
-  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),bframe:Object.assign({},S.design.bframe,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:''}))})));}catch(e2){}}}
+  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),bframe:Object.assign({},S.design.bframe,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:'',more:(i.more||[]).map(m=>Object.assign({},m,{img:''}))}))})));}catch(e2){}}}
 const flushSave=()=>{if(saveT)saveNow();};
 addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave();});
 
@@ -910,7 +922,21 @@ function build(S,M,page){
     // 箱のデザイン（種別ごとの指定 → 全体の指定）。ins：デザインのぶん中身を内側へ寄せる量（左・上・右・下）
     const r=boxDraw(boxStyleOf(d,K),x,y,w,h,bc,kc,isNew,'箱：'+nm),ins=r.ins;
     const p=Math.min(w,h)*.06+1.2*u;let tx=x+p+ins[0],ty=y+p+ins[1],tw=w-2*p-ins[0]-ins[2],th=h-2*p-ins[1]-ins[3],kw=0,kh=0; // kw/kh：表紙が100％のときの文字の場所（文字サイズ固定モード用）
-    if(it.img){
+    const ims=imgsOf(it);
+    if(ims.length>1){
+      // 表紙が2枚以上：横に並べる（row）か、少しずつずらして重ねる（fan）。大きさ（％）は並び全体に掛かり、入りきらなければ全体を縮める
+      const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),hit=hits[hits.length-1],fan=it.iarr==='fan',n=ims.length,asps=ims.map((m,k)=>imgAsp(imgId(it,k))||.74);
+      const wideC=w/h>1.25,gap=p*.5,dy=fan?.06:0,step=.45; // 重ねるときは、次の画像を幅の45％ずつ右・高さの6％ずつ下へ
+      const totW=hh=>fan?asps.slice(0,-1).reduce((t,a)=>t+hh*a*step,0)+hh*asps[n-1]:asps.reduce((t,a)=>t+hh*a,0)+gap*(n-1);
+      const fitH=sc=>{let hh=(wideC?th*Math.min(1,sc):Math.min(th*.6*sc,th*.8))/(1+dy*(n-1));const mw=wideC?tw*(sc>1?.8:.62):tw,t=totW(hh);return t>mw?hh*mw/t:hh;};
+      const hh=fitH(s),h1=fitH(1),bw=totW(hh),bh=hh*(1+dy*(n-1));let x0=wideC?tx:tx+(tw-bw)/2;const y0=wideC?ty+(th-bh)/2:ty;
+      ims.forEach((m,k)=>{const iw=hh*asps[k],yy=y0+hh*dy*k,g='表紙：'+nm+'（'+(k+1)+'）';
+        if(fan){const e=.5*u;R(x0-e,yy-e,iw+2*e,hh+2*e,'#ffffff',{stroke:T.line,sw:.25*u,L:2,g});} // 重ねるときは白い縁で区切る
+        put({t:'img',x:x0,y:yy,w:iw,h:hh,id:imgId(it,k),name:m.name,L:2,g});x0+=fan?iw*step:iw+gap;});
+      if(wideC){kw=tw-(totW(h1)+p);kh=th;tx+=bw+p;tw-=bw+p;}
+      else{kw=tw;kh=th-(h1*(1+dy*(n-1))+p*.7);ty+=bh+p*.7;th-=bh+p*.7;}
+      hit.icap=s>1&&hh/h1<s-.005?Math.floor(hh/h1*100+.001):0;}
+    else if(it.img){
       // 表紙の大きさ（箱ごと・％）。100％未満は縦横とも縮小。100％超は画像の縦横比と箱の中身の大きさが上限（文字の場所を2割は残す）
       const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),asp=imgAsp(it.id)||.74,io={id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm},hit=hits[hits.length-1];let got;
       if(w/h>1.25){const b0=Math.min(th*.74,tw*.45),iw=s>1?Math.max(b0,Math.min(b0*s,th*asp,tw*.8)):b0*s,ih=th*Math.min(1,s);
@@ -978,7 +1004,7 @@ const dropImg=c=>{if(c&&c.bm&&c.bm.close)c.bm.close();};
 function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
 // 読み込み済みの画像の縦横比（幅÷高さ）。まだなら 0
 function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
-function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
+function syncImgs(){const want=new Map();S.items.forEach(i=>imgsOf(i).forEach((m,k)=>want.set(imgId(i,k),m.img)));want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
   for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
   want.forEach((data,id)=>{if(!data)return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
     const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
@@ -1312,17 +1338,23 @@ const itemHtml=(it,isOpen)=>`<details class="it" data-id="${it.id}" ${isOpen?'op
 <label><input type="checkbox" data-f="few" ${it.few?'checked':''}>残りわずか</label>
 <label><input type="checkbox" data-f="sold" ${it.sold?'checked':''}>完売</label></div>
 <label>載せるページ（2枚に分けるとき）<select data-f="pg"><option value="">種別の設定に従う</option><option value="1" ${it.pg==1?'selected':''}>1枚目</option><option value="2" ${it.pg==2?'selected':''}>2枚目</option></select></label>
-<div class="imgrow">${it.img?`<img src="${it.img}" alt="">`:''}<span class="nm">${esc(it.imgName)||'表紙画像なし'}</span>
-<label class="fbtn">画像<input type="file" accept="image/*,.psd,.psb" data-f="img"></label>${it.img?'<button type="button" data-a="noimg">外す</button>':''}</div>
-${it.img?`<div class="row"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label><span class="isn" data-id="${it.id}"></span></div>`:''}
+${imgsHtml(it)}
 <div class="cap">この頒布物の文字サイズ ％（文字タブの％との掛け算）</div>
 <div class="row">${[['fsT','タイトル'],['fsP','価格'],['fsS','仕様'],['fsD','説明']].map(([f,n])=>`<label>${n}<input type="number" min="50" max="200" step="5" data-f="${f}" value="${+it[f]||100}"></label>`).join('')}</div>
 <div class="acts"><button type="button" data-a="up" aria-label="上へ">↑</button><button type="button" data-a="down" aria-label="下へ">↓</button>
 <button type="button" data-a="dup">複製</button><button type="button" data-a="del">削除</button></div>
 </div></details>`;
+// 表紙画像の欄：画像の一覧（◀ で前へ、✕ で外す）、追加、大きさ、2枚以上なら並べ方
+const imgsHtml=it=>{const ims=imgsOf(it);
+  return `<div class="cap">表紙画像（${IMG_MAX}枚まで。2枚以上は箱の中に並べます）</div><div class="ims">`+ims.map((m,k)=>`<div class="imc"><img src="${m.img}" alt=""><span class="nm" title="${esc(m.name)}">${esc(m.name)||'（名前なし）'}</span><span class="imb">${k?`<button type="button" data-a="imL" data-n="${k}" title="前へ" aria-label="${k+1}枚目を前へ">◀</button>`:''}<button type="button" data-a="imX" data-n="${k}" title="外す" aria-label="${k+1}枚目を外す">✕</button></span></div>`).join('')+
+    (ims.length<IMG_MAX?`<label class="fbtn imadd">${ims.length?'＋ 画像を追加':'画像を選ぶ'}<input type="file" accept="image/*,.psd,.psb" data-f="img" multiple></label>`:'')+'</div>'+
+    (ims.length?`<div class="row"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label>${ims.length>1?`<label>並べ方<select data-f="iarr"><option value="row" ${it.iarr!=='fan'?'selected':''}>横に並べる</option><option value="fan" ${it.iarr==='fan'?'selected':''}>少し重ねる</option></select></label>`:''}</div><span class="isn" data-id="${it.id}"></span>`:'');};
 const itemOf=el=>{const d=el.closest('details');return d&&S.items.find(i=>i.id===d.dataset.id);};
 list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.target);if(!f||!it)return;
-  if(f==='img'){const file=e.target.files[0];if(!file)return;try{it.img=await readImg(file);it.imgName=file.name;}catch(x){setErr((x&&x.message)||'画像を読めませんでした');}renderList();schedule();return;}
+  if(f==='img'){const files=[...e.target.files];e.target.value='';if(!files.length)return;const a=imgsOf(it); // 選んだ画像を後ろに足す（4枚まで）
+    for(const file of files){if(a.length>=IMG_MAX){setErr('表紙画像は1点につき'+IMG_MAX+'枚までです');break;}
+      try{a.push({img:await readImg(file),name:file.name});}catch(x){setErr(file.name+'：'+((x&&x.message)||'画像を読めませんでした'));}}
+    setImgs(it,a);renderList();schedule();return;}
   if(PCT[f]){const v=+e.target.value;if(v)it[f]=Math.max(PCT[f][0],Math.min(PCT[f][1],v));schedule();return;} // 表紙画像の大きさ・文字サイズ（％）
   it[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;
   const d=e.target.closest('details');
@@ -1333,17 +1365,17 @@ list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.t
 list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target);if(!a||!it)return;
   const i=S.items.indexOf(it);
   if(a==='del'){S.items.splice(i,1);forgetBox(it.id);}
-  if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid()}));
+  if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid(),more:(it.more||[]).map(m=>Object.assign({},m))}));
   if(a==='up'||a==='down'){const same=S.items.filter(x=>!S.design.group||kOf(S.design,x.kind).id===kOf(S.design,it.kind).id),k=same.indexOf(it),t=a==='up'?k-1:k+1; // 種別の中で入れ替え
     if(t>=0&&t<same.length){const o=same[t],io=S.items.indexOf(o);S.items[i]=o;S.items[io]=it;}}
-  if(a==='noimg'){it.img='';it.imgName='';}
+  if(a==='imX'||a==='imL'){const n=+e.target.dataset.n,m=imgsOf(it);if(a==='imX')m.splice(n,1);else if(n>0)m.splice(n-1,0,m.splice(n,1)[0]);setImgs(it,m);}
   renderList();schedule();});
 // ⋮⋮ のドラッグで並べ替え：種別の見出し → 種別の順番（デザインタブの種別の順）、頒布物 → その種別の中の順
 list.addEventListener('click',e=>{if(e.target.closest('.dh'))e.preventDefault();},true); // つまみを押しても開閉しない
 dragSort(list,dh=>{const g=dh.closest('.igh');return g?{el:g.closest('.ig'),els:$$('.ig',list),isG:true}:{el:dh.closest('details'),els:$$('details.it',dh.closest('.ig'))};},
   (d,order)=>{if(d.isG){S.design.kinds=refill(S.design.kinds,k=>k.id,order.map(x=>x.dataset.kind));kindsChanged(true);}
     else{S.items=refill(S.items,i=>i.id,order.map(x=>x.dataset.id));renderList();schedule();}});
-const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:''},o);
+const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:'',more:[],iarr:'row'},o);
 $('#bAdd').addEventListener('click',()=>{const it=newItem(addKind());S.items.push(it);renderList(it.id);schedule();
   const d=$(`details[data-id="${it.id}"]`,list);d.scrollIntoView({block:'nearest'});$('[data-f=title]',d).focus();});
 /* PSD / PSB：ファイル末尾の「統合画像」を読む（レイヤーは見ない）。大きい画像は間引いて展開する */
@@ -1469,12 +1501,12 @@ $('#fCsv').addEventListener('change',async e=>{const f=e.target.files[0];e.targe
   const added=[],kindOf=v=>{v=String(v||'').trim();const K=S.design.kinds;if(!v)return fbKind(S.design).id;
     let k=K.find(k=>k.id===v)||K.find(k=>kName(k)===v);
     if(!k){k={id:newKindId(),n:v,c:''};K.push(k);S.design.pg[k.id]=1;added.push(v);}return k.id;};
-  const byName={};S.items.forEach(i=>{if(i.imgName&&i.img)byName[i.imgName]=i.img;});
-  rows.forEach(r=>S.items.push(newItem({kind:kindOf(r[0]),title:r[1]||'',price:r[2]||'',spec:r[3]||'',desc:r[4]||'',r18:truthy(r[5]),sold:truthy(r[6]),few:truthy(r[7]),imgName:r[8]||'',img:byName[r[8]]||''})));
+  const byName={};S.items.forEach(i=>imgsOf(i).forEach(m=>{if(m.name)byName[m.name]=m.img;})); // 読み込み済みの画像はファイル名で使い回す
+  rows.forEach(r=>S.items.push(newItem(Object.assign({kind:kindOf(r[0]),title:r[1]||'',price:r[2]||'',spec:r[3]||'',desc:r[4]||'',r18:truthy(r[5]),sold:truthy(r[6]),few:truthy(r[7])},(()=>{const ns=String(r[8]||'').split('|').map(x=>x.trim()).filter(Boolean),o={imgName:ns[0]||'',img:byName[ns[0]]||''};o.more=ns.slice(1,IMG_MAX).filter(x=>byName[x]).map(x=>({img:byName[x],name:x}));return o;})()))));
   if(added.length){renderKinds();kindViews();setErr('CSVにあった種別を追加しました：'+added.join('、'));}
   renderList();schedule();});
 $('#bCsv').addEventListener('click',()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const rows=[CSVH].concat(S.items.map(i=>[kName(kOf(S.design,i.kind)),i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',i.imgName]));
+  const rows=[CSVH].concat(S.items.map(i=>[kName(kOf(S.design,i.kind)),i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',[i.imgName].concat((i.more||[]).map(m=>m.name)).filter(Boolean).join('|')]));
   download(baseName()+'.csv','﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n'),'text/csv');});
 
 /* ---------- 書き出し ---------- */
