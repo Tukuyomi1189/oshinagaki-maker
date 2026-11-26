@@ -278,6 +278,20 @@ body.view #cv{touch-action:auto}
       <label><input type="checkbox" data-k="design.showDesc">説明文を表示</label>
       <label><input type="checkbox" data-k="design.frame">ヘッダー下ライン</label>
       <label><input type="checkbox" data-k="design.imgFix">表紙画像の大きさを変えても文字の大きさを変えない</label>
+      <label><input type="checkbox" data-k="design.cvb.on">表紙のまわりに枠を付ける</label>
+    </div>
+    <div class="row">
+      <label>表紙の枠の色<input type="color" data-k="design.cvb.c"></label>
+      <label>表紙の枠の太さ mm<input type="number" min="0.1" max="5" step="0.1" data-k="design.cvb.w"></label>
+    </div>
+    <div class="chk"><label><input type="checkbox" data-k="design.cvs.on">表紙に影を付ける（ドロップシャドウ）</label></div>
+    <div class="row">
+      <label>影の色<input type="color" data-k="design.cvs.c"></label>
+      <label>影の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.cvs.a"></label>
+    </div>
+    <div class="row">
+      <label title="右下へずらす量。0 なら真後ろ（まわりにぼんやり広がる）">影のずれ mm<input type="number" min="0" max="10" step="0.1" data-k="design.cvs.d"></label>
+      <label title="0 ならくっきりした影">影のぼかし mm<input type="number" min="0" max="10" step="0.1" data-k="design.cvs.b"></label>
     </div>
     <h2>種別</h2>
     <div id="kinds"></div>
@@ -285,7 +299,7 @@ body.view #cv{touch-action:auto}
     <p class="note">上から順に見出しが並びます（↑↓で入れ替え。頒布物タブで種別の見出しをドラッグしても入れ替えられます）。名前を変えると、見出し・バッジ・頒布物タブの選択肢・CSV に反映されます。<b>色</b>はその種別のバッジと見出しの色です（「戻」でテーマの色に戻す）。<br>初期の「新刊」は名前や色を変えても、強調表示（箱の枠）・「新刊を大きく」・新刊の列数がそのまま効きます。<br>種別を削除すると、その種別の頒布物は「既刊」に移ります。CSVで一覧に無い種別名を読み込むと、その名前の種別が自動で追加されます。</p>
     <h2>種別ごとの並べ方</h2>
     <div id="kindLay"></div>
-    <p class="note"><b>画像だけ</b>をオンにすると、その種別は表紙だけを並べ、価格は見出しの右の<b>まとめ価格</b>で示します（数字なら「ALL ¥500」、文字ならそのまま）。<b>タイトルも</b>で表紙の下に小さくタイトルを出します。表紙のない頒布物はタイトルの札になります。</p>
+    <p class="note"><b>画像だけ</b>をオンにすると、その種別は表紙だけを並べ、価格は見出しの右の<b>まとめ価格</b>で示します（数字なら「ALL ¥500」、文字ならそのまま）。<b>タイトルも</b>で表紙の下に小さくタイトルを出します。表紙のない頒布物はタイトルの札になります。<br><b>上の種別の横に並べる</b>をオンにすると、その種別を1つ上の種別の右に並べます（見出しごと。続けてオンにすれば3つ以上も並びます）。幅は箱の数で分けるので、並んだ箱は同じ幅になります。点数の少ない種別をまとめたいときに。</p>
     <h2>委託</h2>
     <div class="chk"><label><input type="checkbox" data-k="design.csHead">委託元ごとに小見出しを付ける</label><label><input type="checkbox" data-k="design.csMark">委託の箱を目立たせる</label></div>
     <p class="note">頒布物タブの<b>委託元</b>にサークル名・作家名を入れると、その種別の中で「委託：〇〇」の小見出しごとに分かれます。種別が「委託」の頒布物と、委託元が入っている頒布物を委託として扱い、<b>目立たせる</b>がオンなら種別の色の枠とうっすらした色にします（ほかの種別なら「委託」のバッジも付けます）。</p>
@@ -316,7 +330,7 @@ body.view #cv{touch-action:auto}
     <label>全体のデザイン<select data-k="design.bs" id="selBs"></select></label>
     <div class="cap">種別ごとに変える（「全体と同じ」以外を選ぶと、その種別だけ変わります）</div>
     <div class="row" id="bsKinds"></div>
-    <div class="cap">透過素材（「透過素材」を選んだ箱の枠になります）</div>
+    <div class="cap">透過素材（「透過素材」を選んだ箱の枠になります。1つの箱だけ別の素材・背景画像にするときは頒布物タブの「箱の画像」で）</div>
     <div class="imgrow"><span class="nm" id="frName">透過素材なし</span>
       <label class="fbtn">素材を選ぶ<input type="file" id="fFrame" accept="image/png,image/*,.psd,.psb"></label><button type="button" id="bFrX">外す</button></div>
     <div class="row">
@@ -324,7 +338,16 @@ body.view #cv{touch-action:auto}
       <label>角の大きさ<input type="number" min="1" max="30" step="0.5" data-k="design.bframe.cm"></label>
       <label>素材の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.bframe.a"></label>
     </div>
-    <div class="chk"><label><input type="checkbox" data-k="design.bframe.fill">素材の下に箱の色を塗る</label></div>
+    <div class="chk"><label><input type="checkbox" data-k="design.bframe.fill">素材の下に箱の色を塗る</label>
+      <label><input type="checkbox" data-k="design.bsh.on">透過素材・箱の画像の箱に影を付ける（ドロップシャドウ）</label></div>
+    <div class="row">
+      <label>箱の影の色<input type="color" data-k="design.bsh.c"></label>
+      <label>箱の影の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.bsh.a"></label>
+    </div>
+    <div class="row">
+      <label title="右下へずらす量。0 なら真後ろ（まわりにぼんやり広がる）">箱の影のずれ mm<input type="number" min="0" max="10" step="0.1" data-k="design.bsh.d"></label>
+      <label title="0 ならくっきりした影">箱の影のぼかし mm<input type="number" min="0" max="10" step="0.1" data-k="design.bsh.b"></label>
+    </div>
     <p class="note">透過素材は、四隅の形を保ったまま辺と中央だけを伸ばして箱に合わせます（9スライス）。<b>素材の角の範囲</b>は、素材の短い辺のうち何％を角として扱うか、<b>角の大きさ</b>は箱に描く角の大きさ、<b>素材の濃さ</b>を下げると素材が淡くなります（Illustrator では不透明度として入るので、あとから変えられます）。透過を活かすには PNG を使ってください。Illustrator 用スクリプトでは、素材を箱の大きさに引き伸ばして配置します。<br>配布素材を使うときは、同人誌・お品書きでの使用や加工が利用規約で認められているか確認してください。</p>
     <h2>背景画像</h2>
     <div class="imgrow"><span class="nm" id="bgName">背景画像なし</span>
@@ -465,9 +488,10 @@ body.view #cv{touch-action:auto}
 <table>
 <tr><th>種別</th><td>初期は 新刊 / 準新刊 / セット / 既刊 / 委託 / グッズ。デザインタブの「種別」で、追加・名前の変更・色・並べ替え・削除ができ、その並び順で見出しが区切られます</td></tr>
 <tr><th>価格</th><td>数字は「¥500」形式に整形。0 は「無料」。文字を入れるとそのまま表示（例：応相談）</td></tr>
-<tr><th>タイトル</th><td>改行できます（Enter）。2行まで表示し、改行した位置で折り返します。長い行は自動でも折り返し、入りきらない分は「…」で省略</td></tr>
+<tr><th>タイトル</th><td>改行できます（Enter）。改行した位置で折り返し、長い行は自動でも折り返します。ふつうは2行までですが、2行に収まらず箱の価格の上に余白があれば、その余白に入るだけ行を増やします（仕様の1行は残し、説明文より優先）。それでも入りきらない分は「…」で省略</td></tr>
 <tr><th>仕様・説明</th><td>箱に余白がある分だけ表示されます</td></tr>
 <tr><th>R18 / 残りわずか / 完売</th><td>バッジで表示。完売は箱全体に重ねて表示</td></tr>
+<tr><th>箱の画像</th><td>その頒布物の箱だけに使う画像。選ぶと、デザインタブの「箱のデザイン」（全体・種別ごと）に関係なく、その箱はこの画像を使います。<b>使い方</b>は2種類：<b>枠（9スライス）</b>は透過素材（PNG 推奨）の四隅の形を保ったまま辺と中央を伸ばして枠にします。<b>背景（箱いっぱいに敷く）</b>は縦横比を保ったまま箱いっぱいに広げ、はみ出した分は切ります（模様や写真向き。9スライスだと継ぎ目が出る画像はこちら）。<b>濃さ ％</b>はその箱の画像だけの濃さで、下げると淡くなり上の文字が読みやすくなります（Illustrator では不透明度）。「素材の下に箱の色を塗る」（枠のときは角の範囲・角の大きさも）はデザインタブの透過素材の設定を使います。✕ で外すと元のデザインに戻ります。画像だけで並べる種別の箱には使われません</td></tr>
 <tr><th>おまけ</th><td>セットの特典本など。<b>おまけの名前</b>か<b>おまけの表紙</b>を入れると、表紙の横に「＋おまけ」の札が付いた点線の枠で出します（表紙があれば表紙、なければ名前）。どの種別でも使えます</td></tr>
 <tr><th>添え書き</th><td>箱の中に目立つ札で出す短い文字（例：+特典！、+ペーパー）</td></tr>
 <tr><th>委託元</th><td>委託を受けた頒布物のサークル名・作家名。入れると「委託：〇〇」の小見出しで分かれ、委託の箱が目立ちます（デザインタブの「委託」で切り替え）</td></tr>
@@ -496,6 +520,7 @@ body.view #cv{touch-action:auto}
 <ul>
 <li>箱が重なっているときは、選択中（青い点線）の箱が優先されます</li>
 <li>動かしていない箱は自動配置のまま。動かした箱は頒布物を増減しても位置が変わりません</li>
+<li>種別の中に動かした箱（大きさを変えた箱も含む）があると、見出し・小見出しの線はその種別の箱の右端までになります（箱を狭めても線だけ長く残りません）</li>
 <li>デザインタブの「すべて自動配置に戻す」で一括リセット。用紙サイズを変えたときも箱はリセットされます（自由テキストは位置を保ちます）</li>
 <li>デザインタブの「目安線を常に表示」で、余白と中央の線（水色）を出しっぱなしにできます。書き出しには出ません</li>
 <li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）。パネル右上の「▾」で折りたたむと、箱の名前だけの 1 行になります。スマホではこの設定に関係なく、箱をタップすると画面下からシートで表示されます。「×」で箱の選択を外して閉じます</li>
@@ -570,14 +595,16 @@ body.view #cv{touch-action:auto}
 <tr><th>段組</th><td>本体を左右に分けるか。「自動」は横長の用紙で種別が3つ以上あると2段になります</td></tr>
 <tr><th>種別ごとに見出しで分ける</th><td>オフにすると見出しなしで登録順に並びます</td></tr>
 <tr><th>種別</th><td>「＋ 種別を追加」で自分の種別（例：ペーパー、無料配布）を作れます。名前の欄で名前を変更、色の四角でバッジと見出しの色を変更（「戻」でテーマの色）、↑↓で見出しの順番を入れ替え、「削除」で削除（その種別の頒布物は「既刊」に移ります）。初期の6種類を消した場合は「消した初期の種別を戻す」で戻せます。初期の「新刊」は名前を変えても、箱の枠の強調・「新刊を大きく」・新刊の列数がそのまま効きます</td></tr>
-<tr><th>種別ごとの並べ方</th><td><b>画像だけ</b>をオンにすると、その種別は表紙だけを縦長のまま並べ、価格は見出しの右の<b>まとめ価格</b>で示します（数字なら「ALL ¥500」、文字ならそのまま）。<b>タイトルも</b>で表紙の下にタイトルを出せます。表紙のない頒布物はタイトルの札で並び、完売は表紙に重ねて表示します</td></tr>
+<tr><th>種別ごとの並べ方</th><td><b>画像だけ</b>をオンにすると、その種別は表紙だけを縦長のまま並べ、価格は見出しの右の<b>まとめ価格</b>で示します（数字なら「ALL ¥500」、文字ならそのまま）。<b>タイトルも</b>で表紙の下にタイトルを出せます。表紙のない頒布物はタイトルの札で並び、完売は表紙に重ねて表示します。<br><b>上の種別の横に並べる</b>をオンにすると、その種別を見出しごと1つ上の種別（このページに頒布物がある種別）の右に並べます。続けてオンにすると3つ以上も並びます。幅は箱の数で分けるので、並んだ箱は同じ幅になり、行の高さはいちばん高い種別に揃います。委託元ごとの小見出しも、その種別の列の中に入ります。段組を2段にしたときは、横に並べた種別は同じ段に入ります</td></tr>
 <tr><th>委託</th><td><b>委託元ごとに小見出しを付ける</b>：委託元を入れた頒布物を「委託：〇〇」ごとに分けます。<b>委託の箱を目立たせる</b>：種別が「委託」の頒布物と委託元が入っている頒布物を、委託の色で縁取ります（委託以外の種別では「委託」バッジも付きます）</td></tr>
 <tr><th>箱の大きさ</th><td><b>均等</b>：同じ種別の箱は同じ大きさ（今までどおり）。<b>中身に合わせる</b>：表紙の枚数と段数に合わせて箱の高さを変えます（表紙が多い箱は高く、横長の写真だけの箱は低く）。<b>表紙の多い箱を広く</b>：さらに、表紙の多い箱は何列か使って横にも広げます。どちらも用紙に収まるよう、ほかの箱の大きさを調整します</td></tr>
 <tr><th>新刊を大きく</th><td>新刊の行を約1.6倍の高さにします</td></tr>
+<tr><th>表紙のまわりに枠を付ける</th><td>すべての表紙画像のまわりに、<b>表紙の枠の色</b>・<b>太さ</b>（mm）の枠線を引きます。線は画像の外側に引くので、絵には掛かりません。白っぽい表紙が背景に溶け込むときにも便利です。画像だけで並べる種別の表紙にも付きます（おまけの表紙と「+N！」の札は除く）</td></tr>
+<tr><th>表紙に影を付ける</th><td>表紙の下にドロップシャドウを付けます。<b>影の色</b>・<b>濃さ</b>（％）、右下への<b>ずれ</b>（mm。0 なら真後ろで、まわりにぼんやり広がる）、<b>ぼかし</b>（mm。0 ならくっきり）を変えられます。枠を付けているときは枠ごと影になります。付く表紙は「表紙のまわりに枠を付ける」と同じです。Illustrator ではぼかし（ガウス）の効果を付けた半透明の四角形になります（効果を付けられない版では、ぼかし無しの影になるので、必要なら「効果」メニューから付けてください）</td></tr>
 <tr><th>表紙画像の大きさを変えても文字の大きさを変えない</th><td>オフ（初期値）：表紙画像の大きさ（％）を変えると、残りの場所に収まるよう文字の大きさも自動で変わります。オン：文字は表紙が100％のときの大きさのまま、画像だけが大きく・小さくなります（文字の位置は画像に合わせて動きます）。入りきらない文字は省略されたり価格と重なったりするので、そのときは箱を広げてください</td></tr>
 <tr><th>色を上書きする</th><td>テーマの帯色とアクセント色を好きな色に変更</td></tr>
 <tr><th>箱の色を上書きする</th><td>すべての箱の色と、枠線・区切り線の色を変更（新刊の枠線はアクセント色）。箱を1つだけ変えるときは、プロパティパネルで箱を選んで「箱」の色を指定</td></tr>
-<tr><th>箱のデザイン</th><td>標準・角なし・影付き・二重線・見出し帯・左ライン・角飾り・点線・透過素材から選択。「種別ごとに変える」でその種別の箱だけ変えられます。透過素材は四隅の形を保ったまま伸ばして箱に合わせます（Illustrator では引き伸ばして配置。素材ファイルも表紙画像と同じフォルダへ）</td></tr>
+<tr><th>箱のデザイン</th><td>標準・角なし・影付き・二重線・見出し帯・左ライン・角飾り・点線・透過素材から選択。「種別ごとに変える」でその種別の箱だけ変えられます。1つの箱だけ別の素材や背景画像にしたいときは、頒布物タブの「箱の画像」で選びます。<b>透過素材・箱の画像の箱に影を付ける</b>をオンにすると、透過素材や箱の画像を使っている箱に、箱の形のドロップシャドウを付けます（色・濃さ・右下へのずれ・ぼかしを指定。影は箱の外側にだけ出るので、素材の透けている所から影が見えることはありません。Illustrator ではぼかしの効果を付けた半透明の四角形として箱の下に入ります。「素材の下に箱の色を塗る」をオフにしていると、透けた所から影が見えるので、必要なら手で直してください）。透過素材は四隅の形を保ったまま伸ばして箱に合わせます（Illustrator では引き伸ばして配置。素材ファイルも表紙画像と同じフォルダへ）</td></tr>
 <tr><th>PC内のフォント名</th><td>インストール済みフォントの名前を入れるとプレビューと PNG に使われます</td></tr>
 </table>
 
@@ -665,6 +692,7 @@ for(var n=0;n<D.ops.length;n++){
     if(o.fill){p.filled=true;p.fillColor=col(o.fill);}else{p.filled=false;}
     if(o.stroke){p.stroked=true;p.strokeColor=col(o.stroke);p.strokeWidth=o.sw*MM;if(o.dash){p.strokeDashes=[o.dash[0]*MM,o.dash[1]*MM];}}else{p.stroked=false;}
     if(o.a<1){p.opacity=o.a*100;}
+    if(o.blur>0){try{p.applyEffect('<LiveEffect name="Adobe PSL Gaussian Blur"><Dict data="R blur '+(o.blur*MM)+' "/></LiveEffect>');}catch(e){}} // 表紙の影のぼかし（使えない版ではぼかし無しの半透明の影のまま）
     if(o.g){try{p.name=o.g;}catch(e){}}
   }else if(o.t=='text'){
     var t=ly.textFrames.pointText([X(o.x),Y(o.y)]);
@@ -733,7 +761,7 @@ const PAPERS={
 // 種別：初期の6種類。実際に使う一覧（名前・並び順・色）は S.design.kinds にあり、デザインタブで追加・変更・削除できる
 // 「新刊」(id:new) は名前を変えても、強調表示・「新刊を大きく」・新刊の列数がそのまま効く
 const DEF_KINDS=[['new','新刊'],['semi','準新刊'],['set','セット'],['old','既刊'],['itaku','委託'],['goods','グッズ']];
-const mkKinds=()=>DEF_KINDS.map(([id,n])=>({id,n,c:'',bs:'',io:false,ap:'',it:false})); // io：画像だけで並べる、ap：まとめ価格、it：画像の下にタイトルも出す
+const mkKinds=()=>DEF_KINDS.map(([id,n])=>({id,n,c:'',bs:'',io:false,ap:'',it:false,side:false})); // io：画像だけで並べる、ap：まとめ価格、it：画像の下にタイトルも出す、side：上の種別の横に並べる
 const fbKind=d=>d.kinds.find(k=>k.id==='old')||d.kinds[0]; // 見つからない種別は「既刊」（無ければ先頭）として扱う
 const kOf=(d,id)=>d.kinds.find(k=>k.id===id)||fbKind(d);
 const kName=k=>String(k.n==null?'':k.n).trim()||'（名前なし）';
@@ -779,7 +807,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},csHead:true,csMark:true,fit:'eq',panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},cvb:{on:false,c:'#333333',w:.5},cvs:{on:false,c:'#000000',a:35,d:1.2,b:1},bsh:{on:false,c:'#000000',a:35,d:1.5,b:1},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},csHead:true,csMark:true,fit:'eq',panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -796,9 +824,9 @@ function sample(){const s=blank();
   return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem(LS));if(j&&j.items)return norm(j);}catch(e){}return sample();}
 function norm(j){const b=blank();
-  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:'',more:[],iarr:'row',cs:'',ex:'',nv:0,ir:0,om:'',omImg:'',omName:''},i))};
+  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:'',more:[],iarr:'row',cs:'',ex:'',nv:0,ir:0,om:'',omImg:'',omName:'',frImg:'',frName:'',frFit:'nine',frA:100},i))};
   s.items.forEach(i=>{i.more=(Array.isArray(i.more)?i.more:[]).filter(m=>m&&m.img).slice(0,IMG_MAX-1).map(m=>({img:String(m.img),name:String(m.name||'')}));if(i.iarr!=='fan')i.iarr='row';i.cs=String(i.cs||'');i.ex=String(i.ex||'');
-    i.nv=Math.max(0,Math.min(IMG_MAX,Math.round(+i.nv||0)));i.ir=Math.max(0,Math.min(5,Math.round(+i.ir||0)));['om','omImg','omName'].forEach(k=>i[k]=String(i[k]||''));});
+    i.nv=Math.max(0,Math.min(IMG_MAX,Math.round(+i.nv||0)));i.ir=Math.max(0,Math.min(5,Math.round(+i.ir||0)));['om','omImg','omName','frImg','frName'].forEach(k=>i[k]=String(i[k]||''));if(i.frFit!=='cover')i.frFit='nine';i.frA=i.frA===''||i.frA==null||isNaN(+i.frA)?100:Math.max(0,Math.min(100,+i.frA));});
   if(!s.design.free||typeof s.design.free!=='object')s.design.free={};
   if(!['eq','fit','many'].includes(s.design.fit))s.design.fit='eq';
   // レイヤー：重なり順（lo.g＝まとまりの順、lo.i＝まとまりの中の順。どちらも前面→背面）、非表示、ロック
@@ -808,7 +836,7 @@ function norm(j){const b=blank();
   {const ts=mkTs(),o=(j.design&&j.design.ts)||{},tc=j.design&&j.design.tc;CATS.forEach(c=>Object.assign(ts[c[0]],o[c[0]]));
     if(tc&&tc.on){ts.title.c=ts.desc.c=tc.title;ts.price.c=tc.price;ts.spec.c=tc.sub;} // 旧「文字色を上書き」の設定を引き継ぐ
     s.design.ts=ts;}
-  {const D0=blank().design,jd=j.design||{};['box','bg','fs','pg'].forEach(k=>{s.design[k]=Object.assign(D0[k],jd[k]);});} // 入れ子の設定は既定値に上書きして欠けを補う
+  {const D0=blank().design,jd=j.design||{};['box','bg','fs','pg','cvb','cvs','bsh'].forEach(k=>{s.design[k]=Object.assign(D0[k],jd[k]);});} // 入れ子の設定は既定値に上書きして欠けを補う（cvb：表紙の枠、cvs：表紙の影、bsh：透過素材の箱の影）
   // 箱の透過素材は design.bframe。design.frame は「ヘッダー下ライン」のオン・オフ（以前の版で同じ名前を使ってしまっていたので形を整える）
   {const jd=j.design||{},old=jd.frame&&typeof jd.frame==='object'?jd.frame:null;
     s.design.bframe=Object.assign(blank().design.bframe,old,jd.bframe&&typeof jd.bframe==='object'?jd.bframe:null);
@@ -819,7 +847,7 @@ function norm(j){const b=blank();
   // 種別：形を整える（保存データに無ければ初期の6種類）。各種別にページの設定を用意し、一覧に無い種別の頒布物は「既刊」へ
   {const seen=new Set(),src=Array.isArray(j.design&&j.design.kinds)?j.design.kinds:[];
     s.design.kinds=src.filter(k=>k&&/^[\w-]+$/.test(String(k.id))&&!seen.has(String(k.id))&&seen.add(String(k.id)))
-      .map(k=>({id:String(k.id),n:String(k.n==null?'':k.n),c:/^#[0-9a-f]{6}$/i.test(k.c)?k.c:'',bs:BSID.has(k.bs)?k.bs:'',io:!!k.io,ap:String(k.ap==null?'':k.ap),it:!!k.it}));
+      .map(k=>({id:String(k.id),n:String(k.n==null?'':k.n),c:/^#[0-9a-f]{6}$/i.test(k.c)?k.c:'',bs:BSID.has(k.bs)?k.bs:'',io:!!k.io,ap:String(k.ap==null?'':k.ap),it:!!k.it,side:!!k.side}));
     if(!s.design.kinds.length)s.design.kinds=mkKinds();
     s.design.kinds.forEach(k=>{if(!s.design.pg[k.id])s.design.pg[k.id]=1;});
     const ids=new Set(s.design.kinds.map(k=>k.id)),fb=fbKind(s.design).id;s.items.forEach(i=>{if(!ids.has(i.kind))i.kind=fb;});}
@@ -834,12 +862,12 @@ function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
    IndexedDB が使えないときは、今までどおり localStorage に画像ごと入れる（入りきらなければ画像を省く） */
 const IDB={db:null,p:null,key:new Map()/* 画像データ → キー */,has:new Set()/* データベースに書き込み済みのキー */,last:new Set()/* 前回の保存で使ったキー */};
 const isRef=v=>typeof v==='string'&&v.startsWith('idb:');
-const isImgKey=k=>k==='img'||k==='omImg'; // 状態の中で画像データが入る項目名
+const isImgKey=k=>k==='img'||k==='omImg'||k==='frImg'; // 状態の中で画像データが入る項目名
 IDB.open=()=>IDB.p||(IDB.p=new Promise(res=>{try{const rq=indexedDB.open('oshinagaki-maker',1);
   rq.onupgradeneeded=()=>rq.result.createObjectStore('imgs');rq.onsuccess=()=>{IDB.db=rq.result;res(IDB.db);};rq.onerror=()=>res(null);}catch(e){res(null);}}));
 const idbReq=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
 // 状態 st の中の画像の入る場所ごとに f(持ち主, 項目名) を呼ぶ
-const eachImg=(st,f)=>{if(!st)return;(st.items||[]).forEach(i=>{f(i,'img');f(i,'omImg');(i.more||[]).forEach(m=>f(m,'img'));});
+const eachImg=(st,f)=>{if(!st)return;(st.items||[]).forEach(i=>{f(i,'img');f(i,'omImg');f(i,'frImg');(i.more||[]).forEach(m=>f(m,'img'));});
   const d=st.design;if(d){if(d.bg)f(d.bg,'img');if(d.bframe)f(d.bframe,'img');}};
 let saveSeq=0,wroteSeq=0;
 function saveNow(){clearTimeout(saveT);saveT=0;const seq=++saveSeq,db=IDB.db,put=[],used=new Set();
@@ -958,12 +986,19 @@ function build(S,M,page){
   else if(items.length)secs.push({k:null,it:items,hh:0});
   const setC=(s,c)=>{s.c=Math.max(1,Math.min(s.it.length,c));s.r=Math.ceil(s.it.length/s.c);};
   secs.forEach(s=>{const big=s.k==='new'&&d.newBig&&!s.io;s.wt=big?1.6:1;setC(s,big?(+d.newCols||1):(+d.cols||1));});
-  // 段組：横長の用紙で見出しが多いときは左右2段に分ける
-  const load=a=>a.reduce((t,s)=>t+s.r*s.wt+.6,0);
-  let np=d.panels==='2'?2:d.panels==='1'?1:(W/H>1.2&&secs.length>=3?2:1);if(secs.length<2)np=1;
-  let panels=[secs];
-  if(np===2){let best=1,bd=1e9;for(let i=1;i<secs.length;i++){const df=Math.abs(load(secs.slice(0,i))-load(secs.slice(i)));if(df<bd){bd=df;best=i;}}
-    panels=[secs.slice(0,best),secs.slice(best)];}
+  // 縦に積む単位（まとまり）：[列, 列, …]、列＝[見出し, …]。ふつうは見出し1つずつ（今までどおり）。
+  // 「上の種別の横に並べる」（K.side）の種別は、その種別の見出しと委託元ごとの小見出しを1つの列にして、上の種別の列の右に足す
+  const blks=[];{const runs=[];secs.forEach(s=>{const r=runs[runs.length-1];if(r&&s.k!=null&&r[0].k===s.k)r.push(s);else runs.push([s]);});
+    const sideOf=r=>!!(r&&r[0].k!=null&&kOf(d,r[0].k).side);
+    runs.forEach((r,i)=>{if(i>0&&sideOf(r))blks[blks.length-1].push(r); // 上のまとまりの右に列として足す
+      else if(sideOf(runs[i+1]))blks.push([r]); // 次の種別が横に来る：この種別を1つの列にまとめる
+      else r.forEach(s=>blks.push([[s]]));});}
+  // 段組：横長の用紙で見出しが多いときは左右2段に分ける（横に並べたまとまりは分けない）
+  const load=a=>a.reduce((t,b)=>b.length===1?b[0].reduce((t2,s)=>t2+s.r*s.wt+.6,t):t+Math.max(...b.map(c=>c.reduce((t2,s)=>t2+s.r*s.wt+.6,0))),0);
+  let np=d.panels==='2'?2:d.panels==='1'?1:(W/H>1.2&&blks.length>=3?2:1);if(blks.length<2)np=1;
+  let panels=[blks];
+  if(np===2){let best=1,bd=1e9;for(let i=1;i<blks.length;i++){const df=Math.abs(load(blks.slice(0,i))-load(blks.slice(i)));if(df<bd){bd=df;best=i;}}
+    panels=[blks.slice(0,best),blks.slice(best)];}
   const pgap=6*u,bw=(W-2*m-(np-1)*pgap)/np;let minUnit=1e9;
   // 箱の大きさ（d.fit）：eq＝均等（今まで）、fit＝中身に合わせて高さを変える、many＝さらに表紙の多い箱は何列か使って広くする
   const FIT=d.fit==='fit'||d.fit==='many'?d.fit:'';
@@ -989,34 +1024,61 @@ function build(S,M,page){
   // 用紙の高さに収まるいちばん大きい基準（unit）を二分探索で求める
   const fitUnit=(ps,U0,fixed)=>{let lo=0,hi=Math.max(U0,6*u)*4;if(fitTotal(ps,hi,fixed)<=bh)return hi;
     for(let i=0;i<22;i++){const mU=(lo+hi)/2;if(fitTotal(ps,mU,fixed)<=bh)lo=mU;else hi=mU;}return lo;};
-  panels.forEach((ps,pi)=>{const bx=m+pi*(bw+pgap);let unit;
+  // 同じ探し方を、高さの式（tot）を渡して使う（横に並べた種別があるときの段）
+  const fitBy=(tot,U0)=>{let lo=0,hi=Math.max(U0,6*u)*4;if(tot(hi)<=bh)return hi;
+    for(let i=0;i<22;i++){const mU=(lo+hi)/2;if(tot(mU)<=bh)lo=mU;else hi=mU;}return lo;};
+  panels.forEach((pb,pi)=>{const bx=m+pi*(bw+pgap),ps=pb.flat(2),side=pb.some(b=>b.length>1),SG=5*u;let unit; // ps＝この段の見出し（上から順）、side＝横に並べたまとまりがある、SG＝横に並べた種別どうしのすき間
     ps.forEach(s=>{if(s.io){s.ioc=Math.max(+d.cols||1,3,Math.round((bw+g)/(30*u+g)));setC(s,s.ioc);}}); // 画像だけの種別は、表紙が縦長に収まる幅（ioc 列分）で左から並べる
+    pb.forEach(b=>{if(b.length>1)b.forEach(col=>col.forEach(s=>{if(s.io)s.ioc=s.c;}));}); // 横に並べた画像だけの種別は、点数ぶんの列だけ使う
+    // 見出しごとの左端（X）と幅（Wd）。横に並べたまとまりは、並んだ箱が同じ幅になるよう列の数で分ける
+    const lay=()=>pb.forEach(b=>{if(b.length===1){b[0].forEach(s=>{s.X=bx;s.Wd=bw;});return;}
+      const cs=b.map(col=>Math.max(...col.map(s=>s.ioc||s.c))),C=cs.reduce((a,c)=>a+c,0),cw=(bw-(b.length-1)*SG-(C-b.length)*g)/C;
+      let x=bx;b.forEach((col,i)=>{const w=cs[i]*cw+(cs[i]-1)*g;col.forEach(s=>{s.X=x;s.Wd=w;});x+=w+SG;});});
+    // 横に並べたまとまりがあるとき：まとまりの高さ＝列のうちいちばん高い列。見出しの高さ（secH）は描くときと同じ計算
+    const secH=(s,U)=>{if(FIT)return s.hh+s.r*g+s.rows.reduce((t,r)=>t+Math.max(...r.its.map(o=>natH(o.it,s,o.sp*s.cw+(o.sp-1)*g,U))),0);
+      const K=s.k?kOf(d,s.k):null,tH=s.io&&K&&K.it?3.2*u*FS.title*2.7:0;return s.hh+s.r*(Math.max(6*u,Math.min(U*s.wt,s.io?s.cw/.72+tH:s.cw*1.75))+g);};
+    const totH=U=>pb.reduce((t,b)=>t+Math.max(...b.map(col=>col.reduce((t2,s)=>t2+secH(s,U),0))),-g);
     // 行が低くなりすぎるときは、行数の多い種別から自動で列を増やす
-    for(;;){let tw=0,fixed=-g;ps.forEach(s=>{const c=s.ioc||s.c;s.cw=(bw-(c-1)*g)/c;if(FIT)flow(s);tw+=s.r*s.wt;fixed+=s.hh+s.r*g;});unit=(bh-fixed)/tw;
-      if(FIT)unit=fitUnit(ps,unit,fixed);
+    for(;;){lay();let tw=0,fixed=-g;ps.forEach(s=>{const c=s.ioc||s.c;s.cw=(s.Wd-(c-1)*g)/c;if(FIT)flow(s);tw+=s.r*s.wt;fixed+=s.hh+s.r*g;});unit=(bh-fixed)/tw;
+      if(side)unit=fitBy(totH,unit);else if(FIT)unit=fitUnit(ps,unit,fixed);
       if(unit>=24*u)break;
-      const c=ps.filter(s=>!s.io&&s.r>1&&s.c<s.it.length&&(bw-s.c*g)/(s.c+1)>=38*u).sort((a,b)=>b.r*b.wt-a.r*a.wt)[0];if(!c)break;setC(c,c.c+1);}
+      const c=ps.filter(s=>!s.io&&s.r>1&&s.c<s.it.length&&(s.Wd-s.c*g)/(s.c+1)>=38*u).sort((a,b)=>b.r*b.wt-a.r*a.wt)[0];if(!c)break;setC(c,c.c+1);}
     minUnit=Math.min(minUnit,unit);let y=by;
-    ps.forEach(s=>{const K=s.k?kOf(d,s.k):null,pc=K&&(K.c||(s.k==='new'?T.accent:T.ink));
+    // 見出しの線（lns）は箱をすべて描いてから長さを決め、見出しの文字のすぐ後ろの重なり順に差し込む（x・w＝線の左端と長さ、e＝右端。まとめ価格はその右端に寄せる）
+    const lns=[];
+    // 見出し1つ分を描く（bx・bw はその見出しの左端と幅。横に並べていなければ段の左端と幅）
+    const drawSec=s=>{const bx=s.X,bw=s.Wd,K=s.k?kOf(d,s.k):null,pc=K&&(K.c||(s.k==='new'?T.accent:T.ink));
+      let ln=null;
       if(s.hh&&s.sub){const key='sub:'+s.k+':'+s.sub,lab='委託：'+s.sub,ls=3.6*u*FS.sec,ph=4.2*u*FS.sec;BK=key; // 委託元ごとの小見出し
         const q=place(key,bx,y,bw,ph,0),tw=M(lab,ls,1);
-        X(lab,q.x+u,mid(q.y,ph,ls),ls,pc,{cat:'sec',g:'小見出し：'+lab});R(q.x+tw+3*u,q.y+ph/2-.15*u,bw-tw-3*u,.3*u,T.line,{g:'小見出し：'+lab});y+=s.hh;BK=null;}
+        X(lab,q.x+u,mid(q.y,ph,ls),ls,pc,{cat:'sec',g:'小見出し：'+lab});
+        ln={i:ops.length,k:key,x:q.x+tw+3*u,y:q.y+ph/2-.15*u,w:bw-tw-3*u,e:q.x+bw,t:.3*u,g:'小見出し：'+lab};y+=s.hh;BK=null;}
       else if(s.hh){BK='sec:'+s.k;const lab=kName(K),ls=4.6*u*FS.sec,ph=6.4*u*FS.sec,pw=M(lab,ls,1)+7*u;
         const q=place('sec:'+s.k,bx,y,bw,ph,0);
         // 画像だけの種別のまとめ価格（数字なら「ALL ¥500」）は、見出しの線の右端に
-        const ap=s.io?String(K.ap||'').trim():'',aps=ls*1.25,apStr=!ap?'':/^[\d,，]+$/.test(ap)?'ALL '+priceStr(ap,d):ap,apw=ap?M(apStr,aps,1)+3*u:0;
+        const ap=s.io?String(K.ap||'').trim():'',aps=ls*1.25,apStr=!ap?'':/^[\d,，]+$/.test(ap)?'ALL '+priceStr(ap,d):ap;
         R(q.x,q.y,pw,ph,pc,{r:ph/2,g:'見出し：'+lab});X(lab,q.x+pw/2,mid(q.y,ph,ls),ls,on(pc),{al:'c',cat:'sec',g:'見出し：'+lab});
-        R(q.x+pw+2*u,q.y+ph/2-.2*u,bw-pw-2*u-apw,.4*u,T.line,{g:'見出し：'+lab});
-        if(ap)X(apStr,q.x+bw,mid(q.y,ph,aps),aps,T.accent,{al:'r',cat:'price',g:'まとめ価格：'+lab});y+=s.hh;BK=null;}
+        ln={i:ops.length,k:'sec:'+s.k,x:q.x+pw+2*u,y:q.y+ph/2-.2*u,w:bw-pw-2*u,e:q.x+bw,t:.4*u,g:'見出し：'+lab,
+          ap:apStr&&{s:apStr,y:mid(q.y,ph,aps),size:aps,w:M(apStr,aps,1)+3*u,g:'まとめ価格：'+lab}};y+=s.hh;BK=null;}
+      if(ln){ln.s=s;lns.push(ln);}
       const tH=s.io&&K.it?3.2*u*FS.title*2.7:0; // 画像だけの種別でタイトルも出すときの、タイトルの高さ
       if(FIT){const cap=s.ioc||s.c; // 段ごとに高さを決める。ふつうの箱は段の中でいちばん高い箱に揃え、画像だけの箱は自分の高さ
         s.rows.forEach(r=>{const hs=r.its.map(o=>{const w=o.sp*s.cw+(o.sp-1)*g;return[w,natH(o.it,s,w,unit)];}),rhh=Math.max(...hs.map(h=>h[1]));
-          let x=bx+(s.io?0:(cap-r.used)*(s.cw+g)/2);r.its.forEach((o,i)=>{const[w,h]=hs[i];if(s.io)tile(x,y,w,h,o.it,K,tH);else card(x,y,w,rhh,o.it);x+=w+g;});y+=rhh+g;});
-        return;}
-      const rh=Math.max(6*u,Math.min(unit*s.wt,s.io?s.cw/.72+tH:s.cw*1.75));
-      s.it.forEach((it,i)=>{const row=Math.floor(i/s.c),col=i%s.c,nr=row===s.r-1?s.it.length-row*s.c:s.c,x=bx+(s.io?0:(s.c-nr)*(s.cw+g)/2)+col*(s.cw+g),yy=y+row*(rh+g);
-        if(s.io)tile(x,yy,s.cw,rh,it,K,tH);else card(x,yy,s.cw,rh,it);});
-      y+=s.r*(rh+g);});});
+          let x=bx+(s.io?0:(cap-r.used)*(s.cw+g)/2);r.its.forEach((o,i)=>{const[w,h]=hs[i];if(s.io)tile(x,y,w,h,o.it,K,tH);else card(x,y,w,rhh,o.it);x+=w+g;});y+=rhh+g;});}
+      else{const rh=Math.max(6*u,Math.min(unit*s.wt,s.io?s.cw/.72+tH:s.cw*1.75));
+        s.it.forEach((it,i)=>{const row=Math.floor(i/s.c),col=i%s.c,nr=row===s.r-1?s.it.length-row*s.c:s.c,x=bx+(s.io?0:(s.c-nr)*(s.cw+g)/2)+col*(s.cw+g),yy=y+row*(rh+g);
+          if(s.io)tile(x,yy,s.cw,rh,it,K,tH);else card(x,yy,s.cw,rh,it);});
+        y+=s.r*(rh+g);}};
+    // まとまりごとに上から描く。横に並べた列は同じ高さから描き始め、次のまとまりはいちばん低い列の下から
+    pb.forEach(b=>{const y0=y;let y1=y0;b.forEach(col=>{y=y0;col.forEach(drawSec);y1=Math.max(y1,y);});y=y1;});
+    // 手動で動かした・大きさを変えた箱があれば、線はその見出しの箱の右端まで（箱を狭めても線だけ長く残らない）。自動配置だけなら今までどおり段の幅いっぱい
+    // 種別の見出しは、委託元ごとの小見出しの下の箱も含めて見る。差し込むと後ろの位置がずれるので、後ろの見出しから順に入れる
+    for(let j=lns.length-1;j>=0;j--){const ln=lns[j],s=ln.s,its=s.sub?s.it:ps.filter(t=>t.k===s.k).flatMap(t=>t.it);
+      if(its.some(it=>F[it.id])){const ids=new Set(its.map(it=>it.id));let r=-Infinity;hits.forEach(h=>{if(ids.has(h.key))r=Math.max(r,h.x+h.w);});if(r>-Infinity){ln.e=Math.min(W,r);ln.w=ln.e-ln.x;}}
+      const n0=ops.length,a=ln.ap,aw=a?a.w:0;BK=ln.k;
+      if(ln.w-aw>0)R(ln.x,ln.y,ln.w-aw,ln.t,T.line,{g:ln.g});
+      if(a)X(a.s,Math.max(ln.e,ln.x+aw),a.y,a.size,T.accent,{al:'r',cat:'price',g:a.g});
+      BK=null;ops.splice(ln.i,0,...ops.splice(n0));}});
   if(secs.length&&minUnit<14*u)warn='頒布物が多くて窮屈です。列数を増やすか、大きい用紙か2枚構成にしてください。';
   if(!secs.length)X(d.twoPage?'このページに載せる頒布物がありません':'「頒布物」タブから追加してください',W/2,by+bh/2,6*u,T.sub,{al:'c',b:0});
 
@@ -1056,11 +1118,21 @@ function build(S,M,page){
   function drawCovers(it,ims,L,fan,x0,y0,gap,g0,nm){const dy=fan?DY:0,n=ims.length,xs=x0,K=L.k||L.a.length||1,ph=L.hh*(1+dy*(K-1))+gap; // ph＝段の間隔
     if(L.ex)drawOm(it,xs+L.cw+L.eg,y0+(L.bh-L.hh)/2,L.hh*L.ex,L.hh,nm);
     L.a.forEach((asp,k)=>{const j=k%K;if(k&&!j)x0=xs; // 次の段は左端から
-      const iw=L.hh*asp,yy=y0+Math.floor(k/K)*ph+L.hh*dy*j,more=k>=L.v,g=more?'残りの表紙：'+nm:g0+(n>1?'（'+(k+1)+'）':'');
-      if(fan&&L.a.length>1||more){const e=.5*u;R(x0-e,yy-e,iw+2*e,L.hh+2*e,more?'#ffffff':'#ffffff',{r:more?1.2*u:0,stroke:more?T.accent:T.line,sw:(more?.5:.25)*u,L:2,g});}
+      const iw=L.hh*asp,yy=y0+Math.floor(k/K)*ph+L.hh*dy*j,more=k>=L.v,g=more?'残りの表紙：'+nm:g0+(n>1?'（'+(k+1)+'）':''),bgE=fan&&L.a.length>1||more,e=.5*u;
+      if(!more)cvShadow({x:x0,y:yy,w:iw,h:L.hh},Math.max(bgE?e:0,cvSw()),g); // 影は白いフチ（少し重ねるとき）より下に
+      if(bgE)R(x0-e,yy-e,iw+2*e,L.hh+2*e,more?'#ffffff':'#ffffff',{r:more?1.2*u:0,stroke:more?T.accent:T.line,sw:(more?.5:.25)*u,L:2,g});
       if(more){const lab='+'+(n-L.v)+'！',fz=fit(lab,iw*.84,Math.min(iw/2.6,L.hh/3),1);X(lab,x0+iw/2,mid(yy,L.hh,fz),fz,T.accent,{al:'c',L:2,g});}
-      else put({t:'img',x:x0,y:yy,w:iw,h:L.hh,id:imgId(it,k),name:ims[k].name,L:2,g});
+      else cvPut({t:'img',x:x0,y:yy,w:iw,h:L.hh,id:imgId(it,k),name:ims[k].name,L:2,g},1);
       x0+=fan?iw*STEP:iw+gap;});}
+  // 表紙の枠と影（デザインタブ）。cvSw＝枠の太さ（オフなら 0）、cvRect＝実際に描かれる画像の範囲（範囲 o の中に縦横比を保って収めた大きさ）
+  function cvSw(){const B=d.cvb;return B&&B.on?Math.max(.1,Math.min(5,+B.w||.5))*u:0;}
+  function cvRect(o){const asp=imgAsp(o.id)||.74,w=Math.min(o.w,o.h*asp),h=Math.min(o.h,o.w/asp);return{x:o.x+(o.w-w)/2,y:o.y+(o.h-h)/2,w,h};}
+  // 影：画像の範囲 r を pad（枠の太さなど）だけ広げた形を、右下へずらしてぼかす
+  function cvShadow(r,pad,g){const D=d.cvs;if(!D||!D.on)return;const off=Math.max(0,Math.min(10,+D.d||0))*u,bl=Math.max(0,Math.min(10,+D.b||0))*u;
+    R(r.x-pad+off,r.y-pad+off,r.w+2*pad,r.h+2*pad,D.c||'#000000',{a:alp(D.a),blur:bl,L:2,g:String(g||'').replace(/^表紙：/,'表紙の影：')});}
+  // 表紙を置く（影 → 画像 → 枠の順）。枠は線の内側の端が画像の端に来るので、画像には掛からない。noSh：影は呼び出し側で先に描いた
+  function cvPut(o,noSh){const r=cvRect(o),sw=cvSw();if(!noSh)cvShadow(r,sw,o.g);put(o);
+    if(sw)R(r.x-sw/2,r.y-sw/2,r.w+sw,r.h+sw,null,{stroke:d.cvb.c||T.ink,sw,L:o.L,g:String(o.g||'').replace(/^表紙：/,'表紙の枠：')});}
   // 委託の頒布物：種別が「委託」か、委託元が入っているもの（「委託の箱を目立たせる」がオンのとき強調）
   function consign(it,K){return !!d.csMark&&(K.id==='itaku'||!!csOf(it));}
   function itakuC(){const k=d.kinds.find(x=>x.id==='itaku');return k&&k.c||T.sub;}
@@ -1079,8 +1151,8 @@ function build(S,M,page){
     if(tH){const ts=3.2*u*FS.title*pc(it.fs)*pc(it.fsT);wrap(tt,w,ts,2,1).forEach((l,i)=>X(l,x+w/2,y+ah+ts*1.15+i*ts*1.22,ts,it.tcol||T.ink,{al:'c',cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm}));}
     if(it.sold){R(A.x,A.y,A.w,A.h,'#000000',{r:1*u,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(A.w/2.6,A.h/3,22*u);X('完売',A.x+A.w/2,mid(A.y,A.h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
     BK=null;}
-  // 箱を描く。戻り値 r：角の丸み、ins：中身を内側へ寄せる量 [左,上,右,下]
-  function boxDraw(st,x,y,w,h,bc,kc,isNew,G){
+  // 箱を描く。戻り値 r：角の丸み、ins：中身を内側へ寄せる量 [左,上,右,下]。fr：その箱だけの画像 {id,name,fit}（無ければデザインタブの透過素材）
+  function boxDraw(st,x,y,w,h,bc,kc,isNew,G,fr){
     const lc=isNew?kc:T.line,lw=(isNew?.8:.35)*u,ins=[0,0,0,0];
     const box=(rad,stroke,sw,o)=>{ // 塗りと枠線。箱の濃さを下げているときは、枠線は薄くしない
       if(cardA<1||!stroke){R(x,y,w,h,bc,Object.assign({r:rad,a:cardA,g:G},o));if(stroke)R(x,y,w,h,null,{r:rad,stroke,sw,g:G});}
@@ -1095,9 +1167,13 @@ function build(S,M,page){
         R(sx>0?cx:cx-L,sy>0?cy:cy-t,L,t,kc,{r:0,g:G});R(sx>0?cx:cx-t,sy>0?cy:cy-L,t,L,kc,{r:0,g:G});});
       ins.fill(t);return{r:0,ins};}
     if(st==='dash'){const rad=2.5*u;box(rad,null,0);R(x,y,w,h,null,{r:rad,stroke:isNew?kc:T.sub,sw:(isNew?.6:.4)*u,dash:[1.6*u,1.1*u],g:G});return{r:rad,ins};}
-    if(st==='frame'){const Fr=d.bframe,cm=Math.max(.5,+Fr.cm||5)*u;
+    if(st==='frame'){const Fr=d.bframe,cm=Math.max(.5,+Fr.cm||5)*u,D=d.bsh;
+      // 箱の影（デザインタブ「透過素材・箱の画像の箱に影を付ける」）：箱の形の影を右下へずらしてぼかし、箱の外側にだけ出す
+      if(D&&D.on){const off=Math.max(0,Math.min(10,+D.d||0))*u;R(x+off,y+off,w,h,D.c||'#000000',{a:alp(D.a),blur:Math.max(0,Math.min(10,+D.b||0))*u,ko:[x,y,w,h],g:G.replace(/^箱：/,'箱の影：')});}
       if(Fr.fill)box(0,null,0);
-      put({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:alp(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
+      // 箱ごとの画像を「背景」で使うとき：スライスせず箱いっぱいに敷き、はみ出しは切る（縦横比は保つ）。中身は内側へ寄せない
+      if(fr&&fr.fit==='cover'){put({t:'img',id:fr.id,name:fr.name,x,y,w,h,fit:'cover',a:fr.a,L:1,g:G});return{r:0,ins};}
+      put({t:'img',id:fr?fr.id:'frame',name:fr?fr.name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:fr?fr.a:alp(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度。箱ごとの画像はその箱の濃さ）。角の範囲・大きさ・塗りは箱ごとの画像でも共通
       ins.fill(Math.min(cm*.3,Math.min(w,h)*.08));return{r:0,ins};} // 枠の飾りに文字が重なりにくいよう、少しだけ内側へ
     const rad=2.5*u;box(rad,lc,lw);return{r:rad,ins};} // 標準
   function card(x,y,w,h,it){BK=it.id;
@@ -1105,7 +1181,9 @@ function build(S,M,page){
     // 種別の色：指定が無ければテーマの色（新刊はアクセント色、ほかは補助色）。新刊は箱の枠もこの色
     const K=kOf(d,it.kind),isNew=K.id==='new',kc=K.c||(isNew?T.accent:T.sub),cons=consign(it,K);
     // 箱のデザイン（種別ごとの指定 → 全体の指定）。ins：デザインのぶん中身を内側へ寄せる量（左・上・右・下）。委託の箱は新刊と同じく種別の色で強調し、うっすら色を付ける
-    const r=boxDraw(boxStyleOf(d,K),x,y,w,h,cons&&!it.bcol?mix(bc,kc,.1):bc,kc,isNew||cons,'箱：'+nm),ins=r.ins;
+    // この箱だけの画像（frImg）があれば、全体・種別のデザインに関係なくその画像を使う（frFit：nine＝枠として9スライス、cover＝背景として敷く。frA：濃さ ％）
+    const fr=it.frImg?{id:imgId(it,'fr'),name:it.frName||'',fit:it.frFit==='cover'?'cover':'nine',a:alp(it.frA)}:null;
+    const r=boxDraw(fr?'frame':boxStyleOf(d,K),x,y,w,h,cons&&!it.bcol?mix(bc,kc,.1):bc,kc,isNew||cons,'箱：'+nm,fr),ins=r.ins;
     const p=Math.min(w,h)*.06+1.2*u;let tx=x+p+ins[0],ty=y+p+ins[1],tw=w-2*p-ins[0]-ins[2],th=h-2*p-ins[1]-ins[3],kw=0,kh=0; // kw/kh：表紙が100％のときの文字の場所（文字サイズ固定モード用）
     const ims=imgsOf(it),omx=omEx(it);
     if(ims.length>1||omx){
@@ -1122,10 +1200,10 @@ function build(S,M,page){
       const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),asp=imgAsp(it.id)||.74,io={id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm},hit=hits[hits.length-1];let got;
       if(w/h>1.25){const b0=Math.min(th*.74,tw*.45),iw=s>1?Math.max(b0,Math.min(b0*s,th*asp,tw*.8)):b0*s,ih=th*Math.min(1,s);
         got=Math.min(iw,ih*asp)/Math.min(b0,th*asp);kw=tw-(b0+p);kh=th;
-        put(Object.assign({t:'img',x:tx,y:ty+(th-ih)/2,w:iw,h:ih},io));tx+=iw+p;tw-=iw+p;}
+        cvPut(Object.assign({t:'img',x:tx,y:ty+(th-ih)/2,w:iw,h:ih},io));tx+=iw+p;tw-=iw+p;}
       else{const b0=th*.6,ih=s>1?Math.max(b0,Math.min(b0*s,tw/asp,th*.8)):b0*s,iw=tw*Math.min(1,s);
         got=Math.min(ih,iw/asp)/Math.min(b0,tw/asp);kw=tw;kh=th-(b0+p*.7);
-        put(Object.assign({t:'img',x:tx+(tw-iw)/2,y:ty,w:iw,h:ih},io));ty+=ih+p*.7;th-=ih+p*.7;}
+        cvPut(Object.assign({t:'img',x:tx+(tw-iw)/2,y:ty,w:iw,h:ih},io));ty+=ih+p*.7;th-=ih+p*.7;}
       hit.icap=s>1&&got<s-.005?Math.floor(got*100+.001):0;} // 指定した％まで大きくできなかったとき、実際の上限（％）を画面に出す
     // 文字の大きさは残りの場所から決める。「文字の大きさを変えない」がオンなら、表紙を100％にしたときの場所で決める（表紙の％を変えても文字は同じ大きさ）
     const wide=tw/th>3.5,fx=d.imgFix&&kw>0&&kh>0,aw=fx?kw:tw,ah=fx?kh:th,k=Math.max(.2,Math.min(1.7,aw/46/u,ah/(aw/ah>3.5?23:30)/u));
@@ -1141,11 +1219,12 @@ function build(S,M,page){
     const ifs=pc(it.fs),tcol=it.tcol||T.ink;
     const ps=9.5*u*k*FS.price*ifs*pc(it.fsP),pstr=priceStr(it.price,d),limit=ty+th-(pstr&&!wide?ps*1.05:0);
     const txw=wide&&pstr?tw-M(pstr,ps,1)-3*u:tw; // 横長カードは価格を右に並べる
-    const ts=6.2*u*k*FS.title*ifs*pc(it.fsT);
-    // 改行した位置で折り返し、さらに長い行は自動で折り返す（全体で2行まで）
-    wrap(tt,txw,ts,2,1).forEach(l=>{X(l,tx,cy+ts*.88,ts,tcol,{cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm});cy+=ts*1.24;});
+    const ts=6.2*u*k*FS.title*ifs*pc(it.fsT),ss=3.5*u*k*FS.spec*ifs*pc(it.fsS);
+    // 改行した位置で折り返し、さらに長い行は自動で折り返す。ふつうは2行までで、2行に収まらず箱に余白があれば、
+    // 価格の上（仕様の1行は残す）に入るだけ行を増やす（説明文より優先）
+    const tmax=Math.max(2,Math.floor((limit-cy-.6*u*k-(it.spec?ss:0)+.1)/(ts*1.24)));
+    wrap(tt,txw,ts,tmax,1).forEach(l=>{X(l,tx,cy+ts*.88,ts,tcol,{cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm});cy+=ts*1.24;});
     cy+=.6*u*k;
-    const ss=3.5*u*k*FS.spec*ifs*pc(it.fsS);
     if(it.spec&&cy+ss<=limit+.1){X(it.spec,tx,cy+ss*.9,fit(it.spec,txw,ss,0),it.tcol?tcol:T.sub,{b:0,cat:'spec',keep:!!it.tcol,ia,g:'仕様：'+nm});cy+=ss*1.55;}
     if(d.showDesc&&it.desc){const ds=3.3*u*k*FS.desc*ifs*pc(it.fsD),lh=ds*1.45;
       wrap(it.desc,txw,ds,Math.floor((limit-cy)/lh),0).forEach(l=>{X(l,tx,cy+ds*.92,ds,tcol,{b:0,cat:'desc',keep:!!it.tcol,ia,g:'説明：'+nm});cy+=lh;});}
@@ -1187,7 +1266,7 @@ const dropImg=c=>{if(c&&c.bm&&c.bm.close)c.bm.close();};
 function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
 // 読み込み済みの画像の縦横比（幅÷高さ）。まだなら 0
 function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
-function syncImgs(){const want=new Map();S.items.forEach(i=>{imgsOf(i).forEach((m,k)=>want.set(imgId(i,k),m.img));if(i.omImg)want.set(imgId(i,'om'),i.omImg);});want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
+function syncImgs(){const want=new Map();S.items.forEach(i=>{imgsOf(i).forEach((m,k)=>want.set(imgId(i,k),m.img));if(i.omImg)want.set(imgId(i,'om'),i.omImg);if(i.frImg)want.set(imgId(i,'fr'),i.frImg);});want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
   for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
   want.forEach((data,id)=>{if(!data||isRef(data))return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
     const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
@@ -1208,10 +1287,16 @@ function render(ctx,B,sc,f,only){
   const list=drawOrder(B.ops);
   ctx.textBaseline='alphabetic';
   for(const o of list){if(only!=null&&o.L!==only)continue;
+    // ぼかした塗り（表紙の影）：図形を画面の外に置き、影だけを本来の位置へずらして描く（影の位置・ぼかしは座標変換を受けないので、変換の倍率を掛ける）
+    // ko：[x,y,w,h] の内側には描かない（箱の影を箱の外側だけに出す。CSS の box-shadow と同じ）
+    if(o.t==='rect'&&o.ko){ctx.save();ctx.beginPath();ctx.rect(-1e6,-1e6,2e6,2e6);ctx.rect(o.ko[0]*sc,o.ko[1]*sc,o.ko[2]*sc,o.ko[3]*sc);ctx.clip('evenodd');}
+    if(o.t==='rect'&&o.blur>0&&o.fill){const m=ctx.getTransform(),F=1e4;ctx.save();ctx.globalAlpha=o.a;
+      ctx.shadowColor=o.fill;ctx.shadowBlur=2*o.blur*sc*m.a;ctx.shadowOffsetX=F*m.a;ctx.shadowOffsetY=F*m.b; // shadowBlur の半分がぼかしの標準偏差 ≒ o.blur（mm）
+      rr(ctx,o.x*sc-F,o.y*sc,o.w*sc,o.h*sc,o.r*sc);ctx.fillStyle=o.fill;ctx.fill();ctx.restore();ctx.globalAlpha=1;if(o.ko)ctx.restore();continue;}
     if(o.t==='rect'){ctx.globalAlpha=o.a;rr(ctx,o.x*sc,o.y*sc,o.w*sc,o.h*sc,o.r*sc);
       if(o.fill){ctx.fillStyle=o.fill;ctx.fill();}
       if(o.stroke){ctx.strokeStyle=o.stroke;ctx.lineWidth=o.sw*sc;if(o.dash)ctx.setLineDash(o.dash.map(v=>v*sc));ctx.stroke();if(o.dash)ctx.setLineDash([]);}
-      ctx.globalAlpha=1;}
+      ctx.globalAlpha=1;if(o.ko)ctx.restore();}
     else if(o.t==='text'){ctx.font=(o.b?700:400)+' '+(o.size*sc)+'px '+f;ctx.fillStyle=o.color;ctx.globalAlpha=o.a==null?1:o.a;
       ctx.textAlign=o.al==='c'?'center':o.al==='r'?'right':'left';ctx.fillText(o.s,o.x*sc,o.y*sc);ctx.globalAlpha=1;}
     else if(o.t==='img'){const c=IMG.get(o.id),im=c&&c.im;
@@ -1389,9 +1474,10 @@ $('#bFree').addEventListener('click',()=>{const L=S.design.lock||{},nf={};Object
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
 // 2枚構成：種別ごとに載せるページ（種別の一覧から作る）
 // 種別ごとの並べ方（画像だけ・まとめ価格・タイトルも）
-function renderKindLay(){$('#kindLay').innerHTML=S.design.kinds.map(k=>`<div class="kl" data-id="${k.id}"><span class="kd k-${k.id}" style="${chipCss(k.id)}">${esc(kName(k))}</span>
+function renderKindLay(){$('#kindLay').innerHTML=S.design.kinds.map((k,i)=>`<div class="kl" data-id="${k.id}"><span class="kd k-${k.id}" style="${chipCss(k.id)}">${esc(kName(k))}</span>
 <label><input type="checkbox" data-ko="io" ${k.io?'checked':''}>画像だけ</label><label>まとめ価格<input data-ko="ap" value="${esc(k.ap||'')}" placeholder="500" ${k.io?'':'disabled'}></label>
-<label><input type="checkbox" data-ko="it" ${k.it?'checked':''} ${k.io?'':'disabled'}>タイトルも</label></div>`).join('');}
+<label><input type="checkbox" data-ko="it" ${k.it?'checked':''} ${k.io?'':'disabled'}>タイトルも</label>
+<label title="この種別を、1つ上の種別の右に並べます"><input type="checkbox" data-ko="side" ${k.side?'checked':''} ${i?'':'disabled'}>上の種別の横に並べる</label></div>`).join('');}
 $('#kindLay').addEventListener('input',e=>{const f=e.target.dataset.ko,r=e.target.closest('.kl'),k=r&&S.design.kinds.find(x=>x.id===r.dataset.id);if(!f||!k)return;
   k[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;if(f==='io')renderKindLay();schedule();});
 // 種別の一覧から作る選択欄をまとめて作り直す（ページ分け・種別ごとの箱のデザイン・追加するときの種別）
@@ -1520,7 +1606,7 @@ const itemHtml=(it,isOpen)=>`<details class="it" data-id="${it.id}" ${isOpen?'op
 <div class="body">
 <div class="row"><label>種別<select data-f="kind">${kindOpts(kOf(S.design,it.kind).id)}</select></label>
 <label>価格（数字 / 自由記入）<input data-f="price" value="${esc(it.price)}" placeholder="500"></label></div>
-<label>タイトル（改行可・2行まで）<textarea data-f="title" rows="2">${esc(it.title)}</textarea></label>
+<label>タイトル（改行可・2行まで。箱に余白があればもっと）<textarea data-f="title" rows="2">${esc(it.title)}</textarea></label>
 <label>仕様<input data-f="spec" value="${esc(it.spec)}" placeholder="B5 / 36P / 全年齢"></label>
 <div class="row"><label title="箱の中で目立つ札として出します">添え書き<input data-f="ex" value="${esc(it.ex||'')}" placeholder="+特典！"></label>
 <label title="委託を受けた頒布物のサークル名・作家名">委託元（委託のとき）<input data-f="cs" value="${esc(it.cs||'')}" placeholder="サークル名・作家名"></label></div>
@@ -1542,11 +1628,16 @@ const srcOf=v=>isRef(v)?'data:image/gif;base64,R0lGODlhAQABAAAAACw=':v; // 読�
 const imgsHtml=it=>{const ims=imgsOf(it),mx=IMG_MAX,fold=ims.length>IMS_FOLD,all=!fold||imsAll.has(it.id);return `<div class="cap">表紙画像（${mx}枚まで。2枚以上は箱の中に並べ、並べきれない分は「+N！」で示します）</div><div class="ims${ims.length>8?' many':''}">`+(all?ims:ims.slice(0,IMS_SHOW)).map((m,k)=>`<div class="imc"><img src="${srcOf(m.img)}" alt=""><span class="nm" title="${esc(m.name)}">${esc(m.name)||'（名前なし）'}</span><span class="imb">${k?`<button type="button" data-a="imL" data-n="${k}" title="前へ" aria-label="${k+1}枚目を前へ">◀</button>`:''}<button type="button" data-a="imX" data-n="${k}" title="外す" aria-label="${k+1}枚目を外す">✕</button></span></div>`).join('')+
     (fold?`<button type="button" class="imall" data-a="imAll">${all?'たたむ':'ほか '+(ims.length-IMS_SHOW)+' 枚も表示'}</button>`:'')+
     (ims.length<mx?`<label class="fbtn imadd">${ims.length?'＋ 画像を追加':'画像を選ぶ'}<input type="file" accept="image/*,.psd,.psb" data-f="img" multiple></label>`:'')+'</div>'+
-    (ims.length?`<div class="row imrow"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label>${ims.length>1?`<label>並べ方<select data-f="iarr"><option value="row" ${it.iarr!=='fan'?'selected':''}>横に並べる</option><option value="fan" ${it.iarr==='fan'?'selected':''}>少し重ねる</option></select></label>`:''}</div>${ims.length>1?`<div class="row imrow"><label title="空欄＝自動（箱に入るだけ並べる）。数を入れると、その枚数だけ並べて残りを「+N！」にします">並べる枚数<input type="number" min="1" max="${mx}" data-f="nv" value="${+it.nv||''}" placeholder="自動"></label><label title="自動＝表紙がいちばん大きくなる段数">段数<select data-f="ir"><option value="0">自動</option>${[1,2,3,4,5].map(r=>`<option value="${r}" ${+it.ir===r?'selected':''}>${r}段</option>`).join('')}</select></label></div>`:''}<span class="isn" data-id="${it.id}"></span>`:'')+omHtml(it);};
+    (ims.length?`<div class="row imrow"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label>${ims.length>1?`<label>並べ方<select data-f="iarr"><option value="row" ${it.iarr!=='fan'?'selected':''}>横に並べる</option><option value="fan" ${it.iarr==='fan'?'selected':''}>少し重ねる</option></select></label>`:''}</div>${ims.length>1?`<div class="row imrow"><label title="空欄＝自動（箱に入るだけ並べる）。数を入れると、その枚数だけ並べて残りを「+N！」にします">並べる枚数<input type="number" min="1" max="${mx}" data-f="nv" value="${+it.nv||''}" placeholder="自動"></label><label title="自動＝表紙がいちばん大きくなる段数">段数<select data-f="ir"><option value="0">自動</option>${[1,2,3,4,5].map(r=>`<option value="${r}" ${+it.ir===r?'selected':''}>${r}段</option>`).join('')}</select></label></div>`:''}<span class="isn" data-id="${it.id}"></span>`:'')+omHtml(it)+frHtml(it);};
 // おまけの欄：名前と表紙（どちらか片方でよい）
 const omHtml=it=>`<div class="cap">おまけ（セットの特典本など。表紙を入れると表紙を、入れなければ名前を、点線の枠で表紙の横に出します）</div>
 <div class="row omr"><label>おまけの名前<input data-f="om" value="${esc(it.om||'')}" placeholder="おまけ本"></label>
 <div class="ims">${it.omImg?`<div class="imc"><img src="${srcOf(it.omImg)}" alt=""><span class="nm" title="${esc(it.omName||'')}">${esc(it.omName||'')||'（名前なし）'}</span><span class="imb"><button type="button" data-a="omX" title="外す" aria-label="おまけの表紙を外す">✕</button></span></div>`:`<label class="fbtn imadd">おまけの表紙<input type="file" accept="image/*,.psd,.psb" data-f="omImg"></label>`}</div></div>`;
+// この箱だけの画像：選ぶと、全体・種別の箱のデザインに関係なくこの画像を使う。使い方（frFit）は 枠＝9スライス / 背景＝箱いっぱいに敷く。濃さ（frA）は箱ごと（角の範囲・大きさ・塗りはデザインタブの透過素材と共通）
+const frHtml=it=>`<div class="cap">箱の画像（この箱だけ。デザインタブの「箱のデザイン」より優先します。<b>枠</b>：透過素材の四隅を保って伸ばす／<b>背景</b>：箱いっぱいに敷く）</div>
+<div class="ims">${it.frImg?`<div class="imc"><img src="${srcOf(it.frImg)}" alt=""><span class="nm" title="${esc(it.frName||'')}">${esc(it.frName||'')||'（名前なし）'}</span><span class="imb"><button type="button" data-a="frX" title="外す" aria-label="この箱の画像を外す">✕</button></span></div>`:`<label class="fbtn imadd">箱の画像を選ぶ<input type="file" accept="image/png,image/*,.psd,.psb" data-f="frImg"></label>`}</div>
+${it.frImg?`<div class="row imrow"><label>使い方<select data-f="frFit"><option value="nine" ${it.frFit!=='cover'?'selected':''}>枠（9スライス）</option><option value="cover" ${it.frFit==='cover'?'selected':''}>背景（箱いっぱいに敷く）</option></select></label>
+<label title="0〜100％。下げると画像が淡くなり、上の文字が読みやすくなります">濃さ ％<input type="number" min="0" max="100" step="5" data-f="frA" value="${it.frA===''||it.frA==null?100:+it.frA}"></label></div>`:''}`;
 const itemOf=el=>{const d=el.closest('details');return d&&S.items.find(i=>i.id===d.dataset.id);};
 list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.target);if(!f||!it)return;
   if(f==='img'){const files=[...e.target.files];e.target.value='';if(!files.length)return;const a=imgsOf(it); // 選んだ画像を後ろに足す（IMG_MAX 枚まで）
@@ -1555,6 +1646,9 @@ list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.t
     setImgs(it,a);renderList();schedule();return;}
   if(f==='omImg'){const file=e.target.files[0];e.target.value='';if(!file)return;
     try{it.omImg=await readImg(file);it.omName=file.name;}catch(x){setErr(file.name+'：'+((x&&x.message)||'画像を読めませんでした'));}renderList();schedule();return;}
+  if(f==='frA'){if(e.target.value==='')return;it.frA=Math.max(0,Math.min(100,+e.target.value||0));schedule();return;} // 箱の画像の濃さ（0％も可）
+  if(f==='frImg'){const file=e.target.files[0];e.target.value='';if(!file)return;
+    try{it.frImg=await readImg(file);it.frName=file.name;}catch(x){setErr(file.name+'：'+((x&&x.message)||'画像を読めませんでした'));}renderList();schedule();return;}
   if(f==='nv'){const v=Math.round(+e.target.value);it.nv=v>0?Math.min(IMG_MAX,v):0;schedule();return;} // 並べる枚数（空欄・0＝自動）
   if(f==='ir'){it.ir=Math.max(0,Math.min(5,+e.target.value||0));schedule();return;} // 段数（0＝自動）
   if(PCT[f]){const v=+e.target.value;if(v)it[f]=Math.max(PCT[f][0],Math.min(PCT[f][1],v));schedule();return;} // 表紙画像の大きさ・文字サイズ（％）
@@ -1571,6 +1665,7 @@ list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target)
   if(a==='up'||a==='down'){const same=S.items.filter(x=>!S.design.group||kOf(S.design,x.kind).id===kOf(S.design,it.kind).id),k=same.indexOf(it),t=a==='up'?k-1:k+1; // 種別の中で入れ替え
     if(t>=0&&t<same.length){const o=same[t],io=S.items.indexOf(o);S.items[i]=o;S.items[io]=it;}}
   if(a==='omX'){it.omImg='';it.omName='';}
+  if(a==='frX'){it.frImg='';it.frName='';}
   if(a==='imAll'){if(imsAll.has(it.id))imsAll.delete(it.id);else imsAll.add(it.id);renderList();return;} // 表示だけの切り替え（元に戻すの対象外）
   if(a==='imX'||a==='imL'){const n=+e.target.dataset.n,m=imgsOf(it);if(a==='imX')m.splice(n,1);else if(n>0)m.splice(n-1,0,m.splice(n,1)[0]);setImgs(it,m);}
   renderList();schedule();});
@@ -1579,7 +1674,7 @@ list.addEventListener('click',e=>{if(e.target.closest('.dh'))e.preventDefault();
 dragSort(list,dh=>{const g=dh.closest('.igh');return g?{el:g.closest('.ig'),els:$$('.ig',list),isG:true}:{el:dh.closest('details'),els:$$('details.it',dh.closest('.ig'))};},
   (d,order)=>{if(d.isG){S.design.kinds=refill(S.design.kinds,k=>k.id,order.map(x=>x.dataset.kind));kindsChanged(true);}
     else{S.items=refill(S.items,i=>i.id,order.map(x=>x.dataset.id));renderList();schedule();}});
-const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:'',more:[],iarr:'row',cs:'',ex:'',nv:0,ir:0,om:'',omImg:'',omName:''},o);
+const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:'',more:[],iarr:'row',cs:'',ex:'',nv:0,ir:0,om:'',omImg:'',omName:'',frImg:'',frName:'',frFit:'nine',frA:100},o);
 $('#bAdd').addEventListener('click',()=>{const it=newItem(addKind());S.items.push(it);renderList(it.id);schedule();
   const d=$(`details[data-id="${it.id}"]`,list);d.scrollIntoView({block:'nearest'});$('[data-f=title]',d).focus();});
 /* PSD / PSB：ファイル末尾の「統合画像」を読む（レイヤーは見ない）。大きい画像は間引いて展開する */
@@ -1778,7 +1873,7 @@ async function makePSD(B,sc,dpi,sp){
   const cls=o=>o.t==='text'?'text':o.L===0?'bg':o.t==='img'?'img':'box';
   const bbox=o=>{if(o.t==='text'){const z=o.size*sc;sg.font=(o.b?700:400)+' '+z+'px '+f;const w=sg.measureText(o.s).width,px=o.x*sc,l=o.al==='c'?px-w/2:o.al==='r'?px-w:px;
       return[l-z*.2,o.y*sc-z*1.2,l+w+z*.2,o.y*sc+z*.5];}
-    const e=(o.sw||0)*sc/2+1;return[o.x*sc-e,o.y*sc-e,(o.x+o.w)*sc+e,(o.y+o.h)*sc+e];};
+    const e=(o.sw||0)*sc/2+1+(o.blur>0?o.blur*sc*3:0);return[o.x*sc-e,o.y*sc-e,(o.x+o.w)*sc+e,(o.y+o.h)*sc+e];}; // ぼかしは標準偏差の3倍ほど外へ広がる
   // レイヤーは中身のある範囲だけの大きさで作る
   const add=(name,ops)=>{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
     for(const o of ops){const q=bbox(o);x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[2]);y1=Math.max(y1,q[3]);}
