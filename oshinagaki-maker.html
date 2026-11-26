@@ -238,9 +238,10 @@ body.view #cv{touch-action:auto}
     <div class="row">
       <label>素材の角の範囲 ％<input type="number" min="5" max="50" step="1" data-k="design.frame.sl"></label>
       <label>角の大きさ<input type="number" min="1" max="30" step="0.5" data-k="design.frame.cm"></label>
+      <label>素材の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.frame.a"></label>
     </div>
     <div class="chk"><label><input type="checkbox" data-k="design.frame.fill">素材の下に箱の色を塗る</label></div>
-    <p class="note">透過素材は、四隅の形を保ったまま辺と中央だけを伸ばして箱に合わせます（9スライス）。<b>素材の角の範囲</b>は、素材の短い辺のうち何％を角として扱うか、<b>角の大きさ</b>は箱に描く角の大きさです。透過を活かすには PNG を使ってください。Illustrator 用スクリプトでは、素材を箱の大きさに引き伸ばして配置します。<br>配布素材を使うときは、同人誌・お品書きでの使用や加工が利用規約で認められているか確認してください。</p>
+    <p class="note">透過素材は、四隅の形を保ったまま辺と中央だけを伸ばして箱に合わせます（9スライス）。<b>素材の角の範囲</b>は、素材の短い辺のうち何％を角として扱うか、<b>角の大きさ</b>は箱に描く角の大きさ、<b>素材の濃さ</b>を下げると素材が淡くなります（Illustrator では不透明度として入るので、あとから変えられます）。透過を活かすには PNG を使ってください。Illustrator 用スクリプトでは、素材を箱の大きさに引き伸ばして配置します。<br>配布素材を使うときは、同人誌・お品書きでの使用や加工が利用規約で認められているか確認してください。</p>
     <h2>背景画像</h2>
     <div class="imgrow"><span class="nm" id="bgName">背景画像なし</span>
       <label class="fbtn">画像を選ぶ<input type="file" id="fBg" accept="image/*,.psd,.psb"></label><button type="button" id="bBgX">外す</button></div>
@@ -651,7 +652,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',frame:{img:'',name:'',sl:30,cm:5,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',frame:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -819,7 +820,7 @@ function build(S,M,page){
     if(st==='dash'){const rad=2.5*u;box(rad,null,0);R(x,y,w,h,null,{r:rad,stroke:isNew?kc:T.sub,sw:(isNew?.6:.4)*u,dash:[1.6*u,1.1*u],g:G});return{r:rad,ins};}
     if(st==='frame'){const Fr=d.frame,cm=Math.max(.5,+Fr.cm||5)*u;
       if(Fr.fill)box(0,null,0);
-      ops.push({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,L:1,g:G});
+      ops.push({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:al(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
       ins.fill(Math.min(cm*.3,Math.min(w,h)*.08));return{r:0,ins};} // 枠の飾りに文字が重なりにくいよう、少しだけ内側へ
     const rad=2.5*u;box(rad,lc,lw);return{r:rad,ins};} // 標準
   function card(x,y,w,h,it){
