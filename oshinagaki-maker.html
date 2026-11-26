@@ -70,6 +70,23 @@ h2:first-child{margin-top:0}
 #tsgrid input{margin:0}#tsgrid input[type=color]{height:28px}#tsgrid button{padding:2px 0;font-size:11px}#tsgrid .hd{color:var(--sub);font-size:11px}
 #tlist .body{padding:10px}
 #pgmap{flex-wrap:wrap}#pgmap label{flex:1 0 28%}#bsKinds{flex-wrap:wrap}#bsKinds label{flex:1 0 40%}
+/* レイヤー一覧 */
+#layers{border:1px solid var(--ln);border-radius:8px;background:#fff;overflow:hidden;font-size:13px}
+#layers .lg{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#f1eee9;border-top:1px solid var(--ln);font-weight:700}
+#layers .lg:first-child{border-top:0}
+#layers .lg .tw{border:0;background:transparent;padding:0 2px;width:20px;color:var(--sub);flex:none}
+#layers .lr{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 28px;border-top:1px solid #efebe4;cursor:pointer;min-height:36px}
+#layers .lg.sel,#layers .lr.sel{background:#dcebff;box-shadow:inset 3px 0 0 #0a84ff}
+#layers .lr:hover,#layers .lg[data-key]:hover{background:#eef5ff}
+#layers .lg[data-key]{cursor:pointer}
+#layers .ln{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#layers .tg{font-size:11px;border-radius:99px;padding:1px 7px;white-space:nowrap;flex:none;border:1px solid var(--ln);color:var(--sub);background:#fff}
+#layers .tg.mn{border-color:#0a84ff;color:#0a84ff}
+#layers .tg.sd{border-color:#555;color:#fff;background:#555}
+#layers .sz{font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap;flex:none}
+#layers .rs{padding:1px 7px;font-size:12px;flex:none}
+#layers .fx{color:var(--sub);cursor:default;font-weight:400;background:#faf9f7}
+#layers .em{padding:14px;color:var(--sub)}
 label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk select{width:auto;flex:1;margin:0}.kd.k-set{background:var(--ac2)}
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -124,6 +141,11 @@ body.view #cv{touch-action:auto}
   #split::before{content:"";width:48px;height:5px;border-radius:3px;background:var(--sub);opacity:.45}
   #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
   #split:focus-visible{outline:none}
+  nav button{font-size:13px}
+}
+/* 幅の狭いスマホ（iPhone SE・mini など）でもヘッダーを1行に収める */
+@media(max-width:400px){
+  header h1{font-size:12px}header{gap:3px;padding:6px 6px}header button,header .fbtn{padding:3px 5px}
   footer{flex-wrap:wrap;gap:4px 8px;padding:4px 8px}footer .pc,footer #stat{display:none}
   #hint{display:inline;color:var(--ac2);font-size:12px} /* 箱を選んでいないときの操作のヒント（スマホのみ） */
   /* プロパティパネルは画面下から出るシートにする（画面下のボタン列の上に重ねる。--fh＝画面下の高さ） */
@@ -154,6 +176,7 @@ body.view #cv{touch-action:auto}
     <button role="tab" data-t="t2">頒布物</button>
     <button role="tab" data-t="t3">デザイン</button>
     <button role="tab" data-t="t5">文字</button>
+    <button role="tab" data-t="t6">レイヤー</button>
     <button role="tab" data-t="t4">書き出し</button>
   </nav>
 
@@ -282,6 +305,10 @@ body.view #cv{touch-action:auto}
     <p class="note"><b>濃さ</b>は 100％で通常、下げると薄く（半透明に）なります。色を変えていない項目はテーマの色に従います。「戻」で色だけテーマ色に戻せます。<br>箱ごとに変えたいときは、プロパティパネルを表示して箱を選ぶと、その箱だけの文字サイズ（全体・要素ごと）・色・濃さ・表紙画像の大きさを指定できます。</p>
   </div>
 
+  <div class="tab" id="t6">
+    <p class="note">プレビューに置いている箱の一覧です（2枚に分けているときは表示中のページ）。<b>上にあるものほど前面</b>に描かれます。行を押すとその箱を選択し、PC ではマウスを乗せるとプレビューで強調します。</p>
+    <div id="layers"></div>
+  </div>
   <div class="tab" id="t4">
     <h2>PNG</h2>
     <label>解像度<select id="selRes">
@@ -358,7 +385,7 @@ body.view #cv{touch-action:auto}
 <dialog id="help" aria-labelledby="helpT">
 <div class="hh"><h2 id="helpT">お品書きメーカーの使い方</h2><button type="button" id="bHelpX">閉じる</button></div>
 <div class="hb">
-<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-undo">元に戻す</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
+<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-layer">レイヤー</a><a href="#h-undo">元に戻す</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
 
 <h3 id="h-flow">基本の流れ</h3>
 <ol>
@@ -406,6 +433,19 @@ body.view #cv{touch-action:auto}
 <li>デザインタブの「目安線を常に表示」で、余白と中央の線（水色）を出しっぱなしにできます。書き出しには出ません</li>
 <li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）。パネル右上の「▾」で折りたたむと、箱の名前だけの 1 行になります。スマホではこの設定に関係なく、箱をタップすると画面下からシートで表示されます。「×」で箱の選択を外して閉じます</li>
 <li>ヘッダーとフッターは固定です</li>
+</ul>
+
+<h3 id="h-layer">レイヤー（配置している箱の一覧）</h3>
+<table>
+<tr><th>行を押す</th><td>その箱を選択します。プレビューで選んだ箱は、一覧でも選択されます</td></tr>
+<tr><th>行にマウスを乗せる（PC）</th><td>プレビューでその箱をオレンジ色で強調します</td></tr>
+<tr><th>▾ / ▸</th><td>種別ごとのまとまりを閉じる・開く</td></tr>
+<tr><th>↺</th><td>その箱を自動配置に戻す（手動配置の箱だけ）</td></tr>
+</table>
+<ul>
+<li>上にあるものほど前面に描かれます（Adobe ツールのレイヤーパネルと同じ）。自由テキストが最前面です</li>
+<li>2枚に分けているときは、表示中のページの箱だけが出ます</li>
+<li>ヘッダー・フッター・背景は「固定」です</li>
 </ul>
 
 <h3 id="h-undo">元に戻す／やり直し</h3>
@@ -942,6 +982,9 @@ function draw(){
       if(t==='x'){ctx.moveTo(v*k,0);ctx.lineTo(v*k,cv.height);}else{ctx.moveTo(0,v*k);ctx.lineTo(cv.width,v*k);}ctx.stroke();ctx.restore();};
     if(S.design.showGuides){const m=pageM(B);[m,B.W/2,B.W-m].forEach(v=>ln('x',v,'rgba(0,160,220,.7)',[4*dpr,4*dpr]));ln('y',B.H/2,'rgba(0,160,220,.7)',[4*dpr,4*dpr]);}
     guides.forEach(g=>ln(g[0],g[1],'#ff2d9b',[]));}
+  {const hv=hoverKey&&hoverKey!==sel&&B.hits.find(h=>h.key===hoverKey); // レイヤー一覧でマウスを乗せている箱
+    if(hv){const k=fitSc*dpr;ctx.save();ctx.fillStyle='rgba(255,149,0,.12)';ctx.fillRect(hv.x*k,hv.y*k,hv.w*k,hv.h*k);
+      ctx.strokeStyle='#ff9500';ctx.lineWidth=2*dpr;ctx.strokeRect(hv.x*k,hv.y*k,hv.w*k,hv.h*k);ctx.restore();}}
   $('#al').hidden=!sh;$('#hint').hidden=!!sh;$('#bPos').disabled=!sh||!S.design.free[sh.key];updProps(sh);
   $$('.isn',list).forEach(e=>{const h=B.hits.find(x=>x.key===e.dataset.id),t=capMsg(h);if(e.textContent!==t)e.textContent=t;});
   // 種別の一覧：点数と、色を指定していない種別のテーマ由来の色を最新にする
@@ -949,7 +992,7 @@ function draw(){
     const ne=$('.kn',r),t=kCount(k.id)+'点';if(ne.textContent!==t)ne.textContent=t;
     const ci=$('[data-kf=c]',r);if(!k.c&&document.activeElement!==ci){const v=kDef(k.id,T);if(ci.value!==v)ci.value=v;}});}
   $('#stat').textContent=PAPERS[S.design.paper].n+'　頒布物 '+S.items.length+' 点';
-  $('#warn').textContent=imgErr||B.warn;persist();checkpoint();
+  $('#warn').textContent=imgErr||B.warn;persist();checkpoint();renderLayers();
 }
 
 /* ---------- 入力バインド ---------- */
@@ -978,7 +1021,7 @@ $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(
   if(!S.design.box.on){S.design.box.fill=THEMES[b.dataset.th].card;S.design.box.line=THEMES[b.dataset.th].line;}
   if(!S.design.tc.on){const t=THEMES[b.dataset.th];S.design.tc.title=t.ink;S.design.tc.price=t.accent;S.design.tc.sub=t.sub;}fillForm();schedule();});
 $$('nav button').forEach(b=>b.addEventListener('click',()=>{$$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
-  $$('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));}));
+  $$('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));if(b.dataset.t==='t6')renderLayers(true);}));
 /* ---------- 箱の手動配置（ドラッグ / リサイズ / キー操作） ---------- */
 const toMM=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/lastSc,y:(e.clientY-r.top)/lastSc};};
 const hitAt=p=>{const inb=h=>p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h,cur=sel&&lastB.hits.find(h=>h.key===sel);if(cur&&inb(cur))return cur; // 重なっているときは選択中の箱を優先
@@ -1439,6 +1482,47 @@ $('#bPsd').addEventListener('click',async e=>{const btn=e.target,v=$('#selRes').
       download(baseName()+(n>1?'_p'+p:'')+'.psd',await makePSD(B,sc,Math.round(sc*25.4),{text:$('#psdText').checked,box:$('#psdBox').checked,img:$('#psdImg').checked,bg:$('#psdBg').checked}));await new Promise(r=>setTimeout(r,600));}}
   catch(x){setErr('PSDを書き出せませんでした（解像度を下げて試してください）');}
   btn.disabled=false;btn.textContent=label;});
+
+/* ---------- レイヤー一覧（配置している箱の一覧。選択と強調） ---------- */
+// 描画順を逆にたどって「上にあるほど前面」で並べる。種別ごとに見出しの行でまとめ、自由テキストは最前面のまとまり。
+// 一覧は表示中のときだけ作り、中身が変わったときだけ書き換える（ドラッグ中に毎フレーム作り直さない）
+let hoverKey=null,lySig='',lySel=null;const lyClosed=new Set();
+const lyEl=$('#layers');
+function layerModel(){const B=lastB,d=S.design;if(!B)return null;
+  const F=d.free,hits=B.hits.slice().reverse(),groups=[];
+  const row=h=>{const it=S.items.find(i=>i.id===h.key),t=h.key.startsWith('t:')&&S.texts.find(x=>'t:'+x.id===h.key);
+    const name=it?(String(it.title||'').trim().split('\n')[0]||'（無題）'):t?(String(t.s||'').trim().split('\n')[0]||'（文字）'):'';
+    return{key:h.key,name,man:!!F[h.key],sold:!!(it&&it.sold),r18:!!(it&&it.r18),kind:it?kOf(d,it.kind):null,w:Math.round(h.w),h:Math.round(h.h)};};
+  const texts=hits.filter(h=>h.key.startsWith('t:'));
+  if(texts.length)groups.push({id:'texts',label:'自由テキスト（最前面）',rows:texts.map(row)});
+  // 頒布物：見出しの箱があればそれを先頭にしたまとまり。見出しなしのときは1つのまとまり
+  const cards=hits.filter(h=>!h.key.startsWith('t:'));let cur=null;const secs=[];
+  cards.slice().reverse().forEach(h=>{if(h.key.startsWith('sec:')){cur={head:h,rows:[]};secs.push(cur);}else{if(!cur){cur={head:null,rows:[]};secs.push(cur);}cur.rows.push(h);}});
+  secs.reverse().forEach(g=>{const K=g.head?kOf(d,g.head.key.slice(4)):null;
+    groups.push({id:g.head?g.head.key:'items',head:g.head?row(g.head):null,kind:K,label:K?kName(K):'頒布物',rows:g.rows.slice().reverse().map(row)});});
+  const fixed=['ヘッダー'];if(B.ops.some(o=>o.g==='フッター帯'))fixed.push('フッター');fixed.push(B.ops.some(o=>o.g==='背景画像')?'背景（画像）':'背景');
+  return{groups,fixed};}
+function renderLayers(force){if(!force&&!$('#t6').classList.contains('on'))return;const m=layerModel();if(!m)return;
+  if(sel!==lySel&&sel){const g=m.groups.find(g=>(g.head&&g.head.key===sel)||g.rows.some(r=>r.key===sel));if(g)lyClosed.delete(g.id);} // 選んだ箱が閉じたまとまりの中なら開く
+  const sig=JSON.stringify([m,sel,[...lyClosed],curPg]);if(!force&&sig===lySig)return;lySig=sig;
+  const chip=K=>{const T=getTheme(S.design),c=K.c||kDef(K.id,T);return`<span class="kd" style="background:${c};color:${on(c)}">${esc(kName(K))}</span>`;};
+  const tags=r=>(r.sold?'<span class="tg sd">完売</span>':'')+`<span class="tg${r.man?' mn':''}">${r.man?'手動':'自動'}</span><span class="sz">${r.w}×${r.h}</span>`+(r.man?`<button type="button" class="rs" data-reset="${esc(r.key)}" title="自動配置に戻す" aria-label="${esc(r.name)}を自動配置に戻す">↺</button>`:'');
+  let h='';
+  m.groups.forEach(g=>{const closed=lyClosed.has(g.id),hd=g.head;
+    h+=`<div class="lg${hd&&sel===hd.key?' sel':''}" ${hd?`data-key="${esc(hd.key)}" title="見出しの箱を選択"`:''}><button type="button" class="tw" data-tw="${esc(g.id)}" aria-expanded="${!closed}" aria-label="${esc(g.label)}を${closed?'開く':'閉じる'}">${closed?'▸':'▾'}</button>`+
+      `${g.kind?chip(g.kind):''}<span class="ln">${g.kind?'見出し':esc(g.label)}</span><span class="sz">${g.rows.length}点</span>${hd?tags(hd).replace(/<span class="sz">[^<]*<\/span>/,''):''}</div>`;
+    if(!closed)g.rows.forEach(r=>{h+=`<div class="lr${sel===r.key?' sel':''}" data-key="${esc(r.key)}" role="button" tabindex="0">${r.kind?chip(r.kind):''}<span class="ln">${esc(r.name)}</span>${tags(r)}</div>`;});});
+  if(!m.groups.length)h+='<div class="em">このページに置いている箱はありません</div>';
+  m.fixed.forEach(n=>{h+=`<div class="lg fx"><span class="tw" aria-hidden="true">🔒</span><span class="ln">${n}</span><span class="tg">固定</span></div>`;});
+  lyEl.innerHTML=h;
+  if(sel!==lySel){lySel=sel;const e=sel&&lyEl.querySelector('.sel');if(e)e.scrollIntoView({block:'nearest'});}
+  if(hoverKey&&!lyEl.querySelector(`[data-key="${CSS.escape(hoverKey)}"]`)){hoverKey=null;schedule();}}
+lyEl.addEventListener('click',e=>{const tw=e.target.closest('[data-tw]');if(tw){const id=tw.dataset.tw;lyClosed.has(id)?lyClosed.delete(id):lyClosed.add(id);renderLayers(true);return;}
+  const rs=e.target.closest('[data-reset]');if(rs){delete S.design.free[rs.dataset.reset];schedule();return;}
+  const r=e.target.closest('[data-key]');if(r){sel=r.dataset.key;schedule();}});
+lyEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.key){e.preventDefault();sel=e.target.dataset.key;schedule();}});
+lyEl.addEventListener('pointerover',e=>{if(e.pointerType==='touch')return;const r=e.target.closest('[data-key]'),k=r?r.dataset.key:null;if(k!==hoverKey){hoverKey=k;schedule();}});
+lyEl.addEventListener('pointerleave',()=>{if(hoverKey){hoverKey=null;schedule();}});
 
 /* ---------- ヘルプ ---------- */
 const help=$('#help');
