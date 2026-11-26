@@ -381,6 +381,7 @@ body.view #cv{touch-action:auto}
 <tr><th>揃えボタン（画面下）</th><td>選択中の箱を 左揃え / 左右中央 / 右揃え / 幅いっぱい にする</td></tr>
 <tr><th>「位置を戻す」（画面下）／「位置だけ戻す」（プロパティパネル）</th><td>大きさはそのままで、位置だけ自動配置の場所に戻す</td></tr>
 <tr><th>ダブルクリック / <kbd>Delete</kbd></th><td>その箱だけ自動配置に戻す（位置も大きさも）</td></tr>
+<tr><th>用紙の外（灰色の部分）をクリック・タップ</th><td>箱の選択を外す</td></tr>
 </table>
 <ul>
 <li>箱が重なっているときは、選択中（青い点線）の箱が優先されます</li>
@@ -953,6 +954,10 @@ cv.addEventListener('pointermove',e=>{if(!lastB||UI.view)return;const p=toMM(e);
     if(c)gl.push(['x',cx2/2],['y',cy2/2]);}
   guides=gl;S.design.free[drag.key]=f;schedule();});
 const endDrag=()=>{drag=null;guides=[];schedule();};cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+// 用紙の外（プレビューの灰色の部分）をタップ・クリックしたら箱の選択を外す。
+// click を使うので、スクロールのためのドラッグでは外れない。スクロールバーの上は対象外
+$('#stage').addEventListener('click',e=>{const st=e.currentTarget;if(e.target!==st||!sel)return;
+  if(e.offsetX>=st.clientWidth||e.offsetY>=st.clientHeight)return;sel=null;schedule();});
 cv.addEventListener('dblclick',e=>{if(UI.view)return;const h=hitAt(toMM(e));if(h){delete S.design.free[h.key];schedule();}});
 cv.addEventListener('keydown',e=>{if(UI.view)return;const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h)return;
   if(e.key==='Escape'||e.key==='Delete'||e.key==='Backspace'){delete S.design.free[sel];e.preventDefault();schedule();return;}
