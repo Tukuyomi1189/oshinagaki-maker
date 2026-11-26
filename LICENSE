@@ -1,21 +1,82 @@
-MIT License
+お品書きメーカー 利用規約
 
 Copyright (c) 2026 Tukuyomi1189
+https://github.com/Tukuyomi1189/oshinagaki-maker
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+この利用規約は、お品書きメーカー（このリポジトリのプログラムとドキュメント。以下「本ツール」）を
+使う・改変する・公開する・配布するときの条件です。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+この規約は、LICENSE がこの内容に変わった版から適用します。
+それより前に MIT License で公開した版には、MIT License が適用されます。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+
+1. 使うこと（自由）
+
+- 本ツールは、個人・サークル・団体を問わず、無料で使えます。
+- 同人誌やグッズの頒布（販売）のためにお品書きを作るなど、本ツールを使う活動が営利目的でもかまいません。
+- 本ツールで作ったもの（お品書きの画像・動画・PSD・Illustrator のデータなど）は、作った人のものです。
+  印刷、SNS への投稿、販売物への使用など、自由に使えます。作者の表記もいりません。
+
+
+2. 改変すること（自分で使うだけなら可）
+
+- 本ツールを改変して、自分（自サークル・自団体）で使うことは自由です。
+- 改変したものを公開・配布することは、無料であっても禁止します（「4. 禁止すること」）。
+- 元のリポジトリへ改善を提案する（プルリクエストを送る）ために、GitHub でフォークして変更することはかまいません。
+
+
+3. そのまま公開・再配布すること（無料なら可）
+
+改変していない本ツールを、別の場所で公開・配布するときは、次のすべてを守ってください。
+
+- 無料で公開・配布すること（「4. 禁止すること」に当たらないこと）
+- 元の作者名（Tukuyomi1189）と、元のリポジトリへのリンク
+  （https://github.com/Tukuyomi1189/oshinagaki-maker）を、利用者から見える場所に表示すること
+- この利用規約をそのまま付けること
+
+
+4. 禁止すること
+
+本ツールについて、次のことを禁止します。
+
+- 改変したものを公開・配布すること（無料でも禁止。「2. 改変すること」のプルリクエストのためのフォークを除く）
+- 販売すること（有料ダウンロード、有料の素材集・ソフトへの同梱など。改変の有無を問わない）
+- 有料のサービス・アプリや、会員制・サブスクリプションのサイトに組み込んで提供すること
+- 本ツールを置いたページに広告を載せる、利用に料金を求めるなど、本ツールの提供そのものから収益を得ること
+- 作者の表記や、この利用規約を取り除くこと
+- 自分が作ったものだと偽ること
+
+「1. 使うこと」のとおり、本ツールで作ったお品書きを使う活動（同人誌の頒布など）は、
+営利目的でもこの禁止には当たりません。
+
+
+5. これ以外の使い方
+
+ここに書いていない使い方や、改変したものの公開、商用での利用を希望する場合は、
+GitHub の Issue などで作者に相談してください。
+
+
+6. 保証がないこと
+
+本ツールは現状のまま提供します。動作や結果について、作者は一切の保証をしません。
+本ツールの使用によって生じた損害について、作者は責任を負いません。
+
+
+----------------------------------------------------------------------
+English summary (for reference only; the Japanese text above prevails)
+
+- You may use this tool free of charge, including for commercial activities such as selling doujinshi.
+  Everything you create with it (images, videos, PSD and Illustrator data) is yours to use freely;
+  no credit is required.
+- You may modify it for your own use, but you may not publish or distribute modified versions,
+  even free of charge. Forking on GitHub to send a pull request to the original repository is allowed.
+- You may publish or redistribute the unmodified tool only if you: do so free of charge; show the
+  original author (Tukuyomi1189) and a link to https://github.com/Tukuyomi1189/oshinagaki-maker;
+  and include these terms unchanged.
+- You may not sell it, include it in paid products, services, apps or subscription sites, earn revenue
+  from providing it (including advertising or usage fees), remove the credit or these terms, or claim
+  it as your own work.
+- For any other use, including publishing a modified version or commercial use, contact the author
+  via GitHub Issues.
+- The tool is provided "as is", without warranty of any kind. The author is not liable for any damages.
+- Versions published under the MIT License before this LICENSE was changed remain under the MIT License.
