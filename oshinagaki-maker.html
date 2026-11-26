@@ -89,6 +89,7 @@ ol.note{padding-left:26px}
 #cv{touch-action:none;margin:auto;box-shadow:0 4px 22px rgba(0,0,0,.22);background:#fff;flex:none}
 footer{display:flex;gap:12px;align-items:center;padding:5px 14px;font-size:12px;color:var(--sub);background:var(--pn);border-top:1px solid var(--ln)}
 footer #warn{color:var(--ac);font-weight:700}
+#hint{display:none}body.view #hint{display:none!important}
 footer label{display:flex;align-items:center;gap:6px;margin:0 0 0 auto}
 input[type=color]{width:100%;height:30px;padding:0;border:1px solid var(--ln);border-radius:6px;background:#fff;display:block;margin-top:2px}
 dialog{border:0;border-radius:12px;padding:0;width:min(760px,94vw);max-height:88vh;color:var(--ink);box-shadow:0 12px 50px rgba(0,0,0,.35)}
@@ -123,6 +124,7 @@ body.view #cv{touch-action:auto}
   #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
   #split:focus-visible{outline:none}
   footer{flex-wrap:wrap;gap:4px 8px;padding:4px 8px}footer .pc,footer #stat{display:none}
+  #hint{display:inline;color:var(--ac2);font-size:12px} /* 箱を選んでいないときの操作のヒント（スマホのみ） */
   /* プロパティパネルは画面下から出るシートにする（画面下のボタン列の上に重ねる。--fh＝画面下の高さ） */
   #props{top:auto;left:0;right:0;bottom:var(--fh,0px);width:auto;max-height:min(52vh,calc(100% - 140px));border-radius:14px 14px 0 0;border-width:1px 0 0;padding:8px 12px 10px;box-shadow:0 -6px 24px rgba(0,0,0,.2);font-size:13px}
   #props h2{font-size:13px}#props #pMin,#props #pClose{width:30px;height:30px;font-size:15px}
@@ -205,7 +207,7 @@ body.view #cv{touch-action:auto}
     <p class="note">上から順に見出しが並びます（↑↓で入れ替え）。名前を変えると、見出し・バッジ・頒布物タブの選択肢・CSV に反映されます。<b>色</b>はその種別のバッジと見出しの色です（「戻」でテーマの色に戻す）。<br>初期の「新刊」は名前や色を変えても、強調表示（箱の枠）・「新刊を大きく」・新刊の列数がそのまま効きます。<br>種別を削除すると、その種別の頒布物は「既刊」に移ります。CSVで一覧に無い種別名を読み込むと、その名前の種別が自動で追加されます。</p>
     <h2>箱の手動調整</h2>
     <p class="note">プレビュー上で箱を<b>ドラッグ</b>して移動、<b>辺や角</b>をドラッグして大きさ変更（上下左右の辺はその方向だけ、角は縦横同時）（中の文字も追従）。見出しも動かせます。<br>ドラッグ中は、ほかの箱の端・中心や用紙の中央・余白に吸着し、<b>ピンクの目安線</b>が出ます（<b>Alt</b>で無効）。<b>Shift</b>を押しながら辺や角をドラッグすると、中心を保ったまま大きさが変わります。箱を選ぶと画面下に揃えボタンが出ます。矢印キーで1mm移動、<b>Shift＋矢印</b>でサイズ変更、<b>Ctrl</b>併用で0.5mm。<br><b>ダブルクリック</b>か <b>Delete</b> でその箱だけ自動配置に戻ります。用紙サイズを変えると箱の手動配置はリセットされます（自由テキストは新しい用紙のほぼ同じ位置に移ります）。</p>
-    <div class="chk"><label><input type="checkbox" data-k="design.showProps">プロパティパネルを表示（選択中の箱の名前・位置・大きさ。数値入力可）</label></div>
+    <div class="chk"><label><input type="checkbox" data-k="design.showProps">プロパティパネルを表示（選択中の箱の名前・位置・大きさ。数値入力可。スマホでは箱をタップすると自動で表示）</label></div>
     <div class="chk"><label><input type="checkbox" data-k="design.showGuides">目安線（余白・中央）を常に表示　※書き出しには出ません</label></div>
     <button type="button" id="bFree">すべて自動配置に戻す</button>
     <h2>ページ分け</h2>
@@ -334,7 +336,7 @@ body.view #cv{touch-action:auto}
 <section id="stage"><canvas id="cv" tabindex="0" aria-label="お品書きプレビュー。箱を選んで矢印キーで移動、Shift＋矢印でサイズ変更、Deleteで自動配置に戻す"></canvas></section>
 </main>
 <button type="button" id="bEdit">調整に戻る</button>
-<footer><span id="hist"><button type="button" id="bUndo" disabled title="元に戻す（Ctrl+Z）" aria-label="元に戻す">↶<span class="pc"> 戻す</span></button> <button type="button" id="bRedo" disabled title="やり直し（Ctrl+Y / Ctrl+Shift+Z）" aria-label="やり直し">↷<span class="pc"> やり直し</span></button></span><span id="pgs" hidden><button type="button" data-p="1">1枚目</button> <button type="button" data-p="2">2枚目</button></span><span id="al" hidden><span class="pc">選択中の箱：</span><button type="button" data-al="l">左揃え</button> <button type="button" data-al="c">左右中央</button> <button type="button" data-al="r">右揃え</button> <button type="button" data-al="w">幅いっぱい</button> <button type="button" id="bPos" title="大きさはそのままで、位置だけ自動配置の場所に戻します">位置を戻す</button></span><span id="stat"></span><span id="warn"></span>
+<footer><span id="hist"><button type="button" id="bUndo" disabled title="元に戻す（Ctrl+Z）" aria-label="元に戻す">↶<span class="pc"> 戻す</span></button> <button type="button" id="bRedo" disabled title="やり直し（Ctrl+Y / Ctrl+Shift+Z）" aria-label="やり直し">↷<span class="pc"> やり直し</span></button></span><span id="pgs" hidden><button type="button" data-p="1">1枚目</button> <button type="button" data-p="2">2枚目</button></span><span id="al" hidden><span class="pc">選択中の箱：</span><button type="button" data-al="l">左揃え</button> <button type="button" data-al="c">左右中央</button> <button type="button" data-al="r">右揃え</button> <button type="button" data-al="w">幅いっぱい</button> <button type="button" id="bPos" title="大きさはそのままで、位置だけ自動配置の場所に戻します">位置を戻す</button></span><span id="hint">箱をタップすると位置や大きさを調整できます</span><span id="stat"></span><span id="warn"></span>
   <label>表示倍率<input type="range" id="zoom" min="1" max="3" step="0.25" value="1"></label></footer>
 
 <dialog id="help" aria-labelledby="helpT">
@@ -385,7 +387,7 @@ body.view #cv{touch-action:auto}
 <li>動かしていない箱は自動配置のまま。動かした箱は頒布物を増減しても位置が変わりません</li>
 <li>デザインタブの「すべて自動配置に戻す」で一括リセット。用紙サイズを変えたときも箱はリセットされます（自由テキストは位置を保ちます）</li>
 <li>デザインタブの「目安線を常に表示」で、余白と中央の線（水色）を出しっぱなしにできます。書き出しには出ません</li>
-<li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）。パネル右上の「▾」で折りたたむと、箱の名前だけの 1 行になります。スマホでは画面下から出るシートになり、箱を選んでいるときだけ表示されます</li>
+<li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）。パネル右上の「▾」で折りたたむと、箱の名前だけの 1 行になります。スマホではこの設定に関係なく、箱をタップすると画面下からシートで表示されます。「×」で箱の選択を外して閉じます</li>
 <li>ヘッダーとフッターは固定です</li>
 </ul>
 
@@ -871,14 +873,14 @@ function draw(){
   const sh=sel&&B.hits.find(h=>h.key===sel);
   if(sh){const k=fitSc*dpr;ctx.save();ctx.strokeStyle='#0a84ff';ctx.lineWidth=2*dpr;ctx.setLineDash([6*dpr,4*dpr]);ctx.strokeRect(sh.x*k,sh.y*k,sh.w*k,sh.h*k);
     if(sh.rs){ctx.setLineDash([]);ctx.fillStyle='#0a84ff';const q=7*dpr;for(const fx of [0,.5,1])for(const fy of [0,.5,1]){if(fx===.5&&fy===.5)continue;const hx=(sh.x+sh.w*fx)*k-q/2,hy=(sh.y+sh.h*fy)*k-q/2;ctx.fillStyle='#fff';ctx.fillRect(hx,hy,q,q);ctx.lineWidth=1.5*dpr;ctx.strokeRect(hx,hy,q,q);}}
-    if(S.design.showProps){const r1=v=>Math.round(v*10)/10,t=r1(sh.w)+' × '+r1(sh.h)+' mm';ctx.setLineDash([]);ctx.font='700 '+11*dpr+'px sans-serif';ctx.textAlign='left';
+    if(S.design.showProps||MOB.matches){const r1=v=>Math.round(v*10)/10,t=r1(sh.w)+' × '+r1(sh.h)+' mm';ctx.setLineDash([]);ctx.font='700 '+11*dpr+'px sans-serif';ctx.textAlign='left';
       const tw=ctx.measureText(t).width+10*dpr,ty=Math.min((sh.y+sh.h)*k+4*dpr,cv.height-18*dpr);ctx.fillStyle='#0a84ff';ctx.fillRect(sh.x*k,ty,tw,17*dpr);ctx.fillStyle='#fff';ctx.fillText(t,sh.x*k+5*dpr,ty+12.5*dpr);}
     ctx.restore();}
   {const k=fitSc*dpr,ln=(t,v,c,dash)=>{ctx.save();ctx.strokeStyle=c;ctx.lineWidth=dpr;ctx.setLineDash(dash);ctx.beginPath();
       if(t==='x'){ctx.moveTo(v*k,0);ctx.lineTo(v*k,cv.height);}else{ctx.moveTo(0,v*k);ctx.lineTo(cv.width,v*k);}ctx.stroke();ctx.restore();};
     if(S.design.showGuides){const m=pageM(B);[m,B.W/2,B.W-m].forEach(v=>ln('x',v,'rgba(0,160,220,.7)',[4*dpr,4*dpr]));ln('y',B.H/2,'rgba(0,160,220,.7)',[4*dpr,4*dpr]);}
     guides.forEach(g=>ln(g[0],g[1],'#ff2d9b',[]));}
-  $('#al').hidden=!sh;$('#bPos').disabled=!sh||!S.design.free[sh.key];updProps(sh);
+  $('#al').hidden=!sh;$('#hint').hidden=!!sh;$('#bPos').disabled=!sh||!S.design.free[sh.key];updProps(sh);
   $$('.isn',list).forEach(e=>{const h=B.hits.find(x=>x.key===e.dataset.id),t=capMsg(h);if(e.textContent!==t)e.textContent=t;});
   // 種別の一覧：点数と、色を指定していない種別のテーマ由来の色を最新にする
   {const T=getTheme(S.design);$$('.kr',kindsEl).forEach(r=>{const k=S.design.kinds.find(x=>x.id===r.dataset.id);if(!k)return;
@@ -970,7 +972,7 @@ const FE=['fsT','fsP','fsS','fsD'];
 // 箱ごとの％設定の範囲
 const PCT={fs:[50,200],is:[20,200],fsT:[50,200],fsP:[50,200],fsS:[50,200],fsD:[50,200]};
 const capMsg=h=>h&&h.icap?'この箱では '+h.icap+'% が上限です（箱を広げると大きくなります）':'';
-function updProps(h){props.hidden=!S.design.showProps||(MOB.matches&&!h);if(props.hidden)return; // スマホでは箱を選んでいるときだけシートを出す
+function updProps(h){props.hidden=MOB.matches?!h:!S.design.showProps;if(props.hidden)return; // スマホは設定に関係なく、箱を選んでいるときだけシートを出す。PC は設定で表示
   const it=h&&S.items.find(i=>i.id===h.key);
   $('#pName').textContent=!h?'箱を選択してください':it?kName(kOf(S.design,it.kind))+'：'+(it.title||'（無題）'):h.key.startsWith('t:')?'文字：'+String((S.texts.find(t=>'t:'+t.id===h.key)||{}).s||'').split('\n')[0]:'見出し：'+kName(kOf(S.design,h.key.slice(4)));
   $('#pMode').textContent=!h?'':S.design.free[h.key]?'手動配置':'自動配置';
@@ -1001,7 +1003,8 @@ const MOB=matchMedia('(max-width:760px)');
 function applyPMin(){const m=!!UI.pmin;props.classList.toggle('min',m);$('#pBody').hidden=m;
   const b=$('#pMin');b.textContent=m?'▴':'▾';b.setAttribute('aria-expanded',!m);b.setAttribute('aria-label',m?'プロパティパネルを広げる':'プロパティパネルを折りたたむ');}
 $('#pMin').addEventListener('click',()=>{UI.pmin=!UI.pmin;applyPMin();saveUI();});
-$('#pClose').addEventListener('click',()=>{S.design.showProps=false;fillForm();schedule();});
+$('#pClose').addEventListener('click',()=>{if(MOB.matches){sel=null;schedule();return;} // スマホ：選択を外してシートを閉じるだけ（設定は変えない）
+  S.design.showProps=false;fillForm();schedule();});
 $('#pReset').addEventListener('click',()=>{if(sel){delete S.design.free[sel];schedule();}});
 $('#bFree').addEventListener('click',()=>{S.design.free={};sel=null;schedule();});
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
