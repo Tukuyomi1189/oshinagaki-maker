@@ -599,7 +599,8 @@ body.view #cv{touch-action:auto}
 
 <h3 id="h-save">保存と読込</h3>
 <ul>
-<li>入力内容はブラウザに自動保存されます（画像が多いと画像だけ保存されないことがあります。表紙をたくさん使うときは「保存」でプロジェクトを保存しておいてください）</li>
+<li>入力内容はブラウザに自動保存されます。画像はブラウザ内のデータベース（IndexedDB）に入れるので、表紙が多くても画像ごと残ります（どちらもこの端末のブラウザの中だけで、外部には送信しません）</li>
+<li>自動保存はブラウザごとに別で、サイトデータを削除すると消えます。Safari では、しばらく開いていないサイトの保存データが消されることがあります</li>
 <li>確実に残すには右上の「プロジェクト保存」で JSON にし、「開く」で読み込みます</li>
 <li>「新規」は2回押すと全消去、「サンプル」は見本データに置き換えます</li>
 </ul>
@@ -824,9 +825,51 @@ let S=load();
 // 自動保存：画像入りだと数MBになるので、描画のたびではなく操作が落ち着いてからまとめて保存する（ドラッグ中の毎フレーム保存で重くなっていた）
 let saveT=0;
 function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
-function saveNow(){clearTimeout(saveT);saveT=0;
-  try{localStorage.setItem(LS,JSON.stringify(S));}
-  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),bframe:Object.assign({},S.design.bframe,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:'',omImg:'',more:(i.more||[]).map(m=>Object.assign({},m,{img:''}))}))})));}catch(e2){}}}
+/* 画像の保存先：自動保存（localStorage）は数MBまでしか入らないので、画像はブラウザ内のデータベース（IndexedDB）に1枚ずつ入れ、
+   localStorage には「idb:キー」だけを書く。どちらもこの端末のブラウザの中だけにあり、外部には送らない。
+   IndexedDB が使えないときは、今までどおり localStorage に画像ごと入れる（入りきらなければ画像を省く） */
+const IDB={db:null,p:null,key:new Map()/* 画像データ → キー */,has:new Set()/* データベースに書き込み済みのキー */,last:new Set()/* 前回の保存で使ったキー */};
+const isRef=v=>typeof v==='string'&&v.startsWith('idb:');
+const isImgKey=k=>k==='img'||k==='omImg'; // 状態の中で画像データが入る項目名
+IDB.open=()=>IDB.p||(IDB.p=new Promise(res=>{try{const rq=indexedDB.open('oshinagaki-maker',1);
+  rq.onupgradeneeded=()=>rq.result.createObjectStore('imgs');rq.onsuccess=()=>{IDB.db=rq.result;res(IDB.db);};rq.onerror=()=>res(null);}catch(e){res(null);}}));
+const idbReq=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
+// 状態 st の中の画像の入る場所ごとに f(持ち主, 項目名) を呼ぶ
+const eachImg=(st,f)=>{if(!st)return;(st.items||[]).forEach(i=>{f(i,'img');f(i,'omImg');(i.more||[]).forEach(m=>f(m,'img'));});
+  const d=st.design;if(d){if(d.bg)f(d.bg,'img');if(d.bframe)f(d.bframe,'img');}};
+let saveSeq=0,wroteSeq=0;
+function saveNow(){clearTimeout(saveT);saveT=0;const seq=++saveSeq,db=IDB.db,put=[],used=new Set();
+  // 前回の保存に無かった画像は書き直す（元に戻すで戻った画像が、別のタブの片付けで消えていても失わないように）
+  const json=JSON.stringify(S,(k,v)=>{if(!db||!isImgKey(k)||typeof v!=='string')return v;if(isRef(v)){used.add(v.slice(4));return v;}if(!v.startsWith('data:'))return v;
+    let key=IDB.key.get(v);if(!key){key=uid();IDB.key.set(v,key);}if(!used.has(key)&&(!IDB.has.has(key)||!IDB.last.has(key)))put.push([key,v]);used.add(key);return 'idb:'+key;});
+  if(!put.length){IDB.last=used;writeLS(json,seq);return;}
+  // 新しい画像をデータベースに書き終えてから localStorage を書く（途中で閉じても、前の状態のまま食い違わない）
+  try{const tx=db.transaction('imgs','readwrite'),os=tx.objectStore('imgs');put.forEach(([k,v])=>os.put(v,k));
+    tx.oncomplete=()=>{put.forEach(([k])=>IDB.has.add(k));IDB.last=used;writeLS(json,seq);};
+    tx.onabort=()=>{if(IDB.db===db){IDB.db=null;saveNow();}};} // 書けなかった（容量など）ときは、今までどおりの保存に切り替える
+  catch(e){IDB.db=null;saveNow();}}
+// 古い保存が新しい保存を上書きしないよう、番号の新しいものだけ書く
+function writeLS(json,seq){if(seq<wroteSeq)return;wroteSeq=seq;
+  try{localStorage.setItem(LS,json);}
+  catch(e){try{localStorage.setItem(LS,JSON.stringify(S,(k,v)=>isImgKey(k)&&typeof v==='string'&&v.startsWith('data:')?'':v));}catch(e2){}}}
+// 「idb:キー」の画像をデータベースから読み込んで差し替える（いまの状態と、元に戻すの履歴の両方）。読めなかったキーはそのまま残す
+let hydrating=null;
+function hydrate(){return hydrating||(hydrating=(async()=>{try{
+  const states=()=>[S,base,...undoS,...redoS],want=new Set();
+  states().forEach(st=>eachImg(st,(o,k)=>{if(isRef(o[k]))want.add(o[k].slice(4));}));if(!want.size)return;
+  const db=await IDB.open();if(!db)return;
+  const os=db.transaction('imgs').objectStore('imgs'),got=new Map();
+  await Promise.all([...want].map(k=>idbReq(os.get(k)).then(v=>got.set(k,typeof v==='string'?v:''))));
+  got.forEach((v,k)=>{if(v){IDB.key.set(v,k);IDB.has.add(k);IDB.last.add(k);}});
+  states().forEach(st=>eachImg(st,(o,k)=>{if(isRef(o[k])&&got.has(o[k].slice(4)))o[k]=got.get(o[k].slice(4));})); // データベースに無いキーは空にする
+  if(base)baseSig=sigOf(base); // 差し替えは操作ではないので、元に戻すの手には数えない
+  renderList();fillForm();schedule();
+}catch(e){}finally{hydrating=null;}})());}
+// 起動時の片付け：どの状態からも使われていない画像をデータベースから消す
+async function idbGC(){const db=await IDB.open();if(!db)return;const live=new Set();
+  [S,base,...undoS,...redoS].forEach(st=>eachImg(st,(o,k)=>{const v=o[k];if(isRef(v))live.add(v.slice(4));else if(v&&IDB.key.has(v))live.add(IDB.key.get(v));}));
+  try{const keys=await idbReq(db.transaction('imgs').objectStore('imgs').getAllKeys()),os=db.transaction('imgs','readwrite').objectStore('imgs');
+    keys.forEach(k=>{if(!live.has(k)){os.delete(k);IDB.has.delete(k);}});}catch(e){}}
 const flushSave=()=>{if(saveT)saveNow();};
 addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave();});
 
@@ -1102,7 +1145,7 @@ function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
 function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
 function syncImgs(){const want=new Map();S.items.forEach(i=>{imgsOf(i).forEach((m,k)=>want.set(imgId(i,k),m.img));if(i.omImg)want.set(imgId(i,'om'),i.omImg);});want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
   for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
-  want.forEach((data,id)=>{if(!data)return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
+  want.forEach((data,id)=>{if(!data||isRef(data))return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
     const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
     im.onload=()=>{schedule();if(!window.createImageBitmap)return;
       try{createImageBitmap(im,{imageOrientation:'from-image'}).then(bm=>{if(IMG.get(id)===e){e.bm=bm;schedule();}else bm.close();},()=>{});}catch(x){}};
@@ -1451,14 +1494,15 @@ ${imgsHtml(it)}
 // 表紙画像の欄：画像の一覧（◀ で前へ、✕ で外す）、追加、大きさ、2枚以上なら並べ方
 const imsAll=new Set(); // 表紙が多い頒布物で「すべて表示」にしているもの（画面の状態だけ。保存しない）
 const IMS_FOLD=15,IMS_SHOW=12;
-const imgsHtml=it=>{const ims=imgsOf(it),mx=IMG_MAX,fold=ims.length>IMS_FOLD,all=!fold||imsAll.has(it.id);return `<div class="cap">表紙画像（${mx}枚まで。2枚以上は箱の中に並べ、並べきれない分は「+N！」で示します）</div><div class="ims${ims.length>8?' many':''}">`+(all?ims:ims.slice(0,IMS_SHOW)).map((m,k)=>`<div class="imc"><img src="${m.img}" alt=""><span class="nm" title="${esc(m.name)}">${esc(m.name)||'（名前なし）'}</span><span class="imb">${k?`<button type="button" data-a="imL" data-n="${k}" title="前へ" aria-label="${k+1}枚目を前へ">◀</button>`:''}<button type="button" data-a="imX" data-n="${k}" title="外す" aria-label="${k+1}枚目を外す">✕</button></span></div>`).join('')+
+const srcOf=v=>isRef(v)?'data:image/gif;base64,R0lGODlhAQABAAAAACw=':v; // 読み込み中（idb:キー）の画像は空で出す
+const imgsHtml=it=>{const ims=imgsOf(it),mx=IMG_MAX,fold=ims.length>IMS_FOLD,all=!fold||imsAll.has(it.id);return `<div class="cap">表紙画像（${mx}枚まで。2枚以上は箱の中に並べ、並べきれない分は「+N！」で示します）</div><div class="ims${ims.length>8?' many':''}">`+(all?ims:ims.slice(0,IMS_SHOW)).map((m,k)=>`<div class="imc"><img src="${srcOf(m.img)}" alt=""><span class="nm" title="${esc(m.name)}">${esc(m.name)||'（名前なし）'}</span><span class="imb">${k?`<button type="button" data-a="imL" data-n="${k}" title="前へ" aria-label="${k+1}枚目を前へ">◀</button>`:''}<button type="button" data-a="imX" data-n="${k}" title="外す" aria-label="${k+1}枚目を外す">✕</button></span></div>`).join('')+
     (fold?`<button type="button" class="imall" data-a="imAll">${all?'たたむ':'ほか '+(ims.length-IMS_SHOW)+' 枚も表示'}</button>`:'')+
     (ims.length<mx?`<label class="fbtn imadd">${ims.length?'＋ 画像を追加':'画像を選ぶ'}<input type="file" accept="image/*,.psd,.psb" data-f="img" multiple></label>`:'')+'</div>'+
     (ims.length?`<div class="row imrow"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label>${ims.length>1?`<label>並べ方<select data-f="iarr"><option value="row" ${it.iarr!=='fan'?'selected':''}>横に並べる</option><option value="fan" ${it.iarr==='fan'?'selected':''}>少し重ねる</option></select></label><label title="空欄＝自動（箱に入るだけ並べる）。数を入れると、その枚数だけ並べて残りを「+N！」にします">並べる枚数<input type="number" min="1" max="${mx}" data-f="nv" value="${+it.nv||''}" placeholder="自動"></label>`:''}</div><span class="isn" data-id="${it.id}"></span>`:'')+omHtml(it);};
 // おまけの欄：名前と表紙（どちらか片方でよい）
 const omHtml=it=>`<div class="cap">おまけ（セットの特典本など。表紙を入れると表紙を、入れなければ名前を、点線の枠で表紙の横に出します）</div>
 <div class="row omr"><label>おまけの名前<input data-f="om" value="${esc(it.om||'')}" placeholder="おまけ本"></label>
-<div class="ims">${it.omImg?`<div class="imc"><img src="${it.omImg}" alt=""><span class="nm" title="${esc(it.omName||'')}">${esc(it.omName||'')||'（名前なし）'}</span><span class="imb"><button type="button" data-a="omX" title="外す" aria-label="おまけの表紙を外す">✕</button></span></div>`:`<label class="fbtn imadd">おまけの表紙<input type="file" accept="image/*,.psd,.psb" data-f="omImg"></label>`}</div></div>`;
+<div class="ims">${it.omImg?`<div class="imc"><img src="${srcOf(it.omImg)}" alt=""><span class="nm" title="${esc(it.omName||'')}">${esc(it.omName||'')||'（名前なし）'}</span><span class="imb"><button type="button" data-a="omX" title="外す" aria-label="おまけの表紙を外す">✕</button></span></div>`:`<label class="fbtn imadd">おまけの表紙<input type="file" accept="image/*,.psd,.psb" data-f="omImg"></label>`}</div></div>`;
 const itemOf=el=>{const d=el.closest('details');return d&&S.items.find(i=>i.id===d.dataset.id);};
 list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.target);if(!f||!it)return;
   if(f==='img'){const files=[...e.target.files];e.target.value='';if(!files.length)return;const a=imgsOf(it); // 選んだ画像を後ろに足す（IMG_MAX 枚まで）
@@ -1593,8 +1637,9 @@ function download(name,data,type){const b=data instanceof Blob?data:new Blob([da
   a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
 const baseName=()=>'oshinagaki'+(S.info.event?'_'+S.info.event.replace(/[\\/:*?"<>|\s]+/g,''):'');
 const readText=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(f);});
-function reset(s){S=s;clearImgs();sel=null;renderKinds();kindViews();fillForm();list.innerHTML='';renderList();renderTexts();schedule();}
-$('#bSave').addEventListener('click',()=>download(baseName()+'.json',JSON.stringify(S),'application/json'));
+function reset(s){S=s;clearImgs();sel=null;renderKinds();kindViews();fillForm();list.innerHTML='';renderList();renderTexts();schedule();hydrate();}
+$('#bSave').addEventListener('click',async()=>{await hydrate(); // 画像を読み込み中なら待つ。読めなかった画像（idb:キー）はファイルに入れない
+  download(baseName()+'.json',JSON.stringify(S,(k,v)=>isImgKey(k)&&isRef(v)?'':v),'application/json');});
 $('#fOpen').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{reset(norm(JSON.parse(await readText(f))));}catch(x){setErr('プロジェクトファイルを読めませんでした');}});
 $('#bSample').addEventListener('click',()=>reset(sample()));
@@ -1830,6 +1875,7 @@ document.addEventListener('keydown',e=>{if(e.key==='F1'){e.preventDefault();if(!
   hb.addEventListener('scroll',mark,{passive:true});$('#bHelp').addEventListener('click',()=>{cur=-1;mark();});}
 
 renderKinds();kindViews();fillForm();renderList();renderTexts();draw();
+hydrate().then(idbGC); // 自動保存の画像をデータベースから読み込み、使われていない画像を片付ける
 </script>
 </body>
 </html>
