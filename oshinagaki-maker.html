@@ -238,11 +238,11 @@ body.view #cv{touch-action:auto}
     <div class="imgrow"><span class="nm" id="frName">透過素材なし</span>
       <label class="fbtn">素材を選ぶ<input type="file" id="fFrame" accept="image/png,image/*,.psd,.psb"></label><button type="button" id="bFrX">外す</button></div>
     <div class="row">
-      <label>素材の角の範囲 ％<input type="number" min="5" max="50" step="1" data-k="design.frame.sl"></label>
-      <label>角の大きさ<input type="number" min="1" max="30" step="0.5" data-k="design.frame.cm"></label>
-      <label>素材の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.frame.a"></label>
+      <label>素材の角の範囲 ％<input type="number" min="5" max="50" step="1" data-k="design.bframe.sl"></label>
+      <label>角の大きさ<input type="number" min="1" max="30" step="0.5" data-k="design.bframe.cm"></label>
+      <label>素材の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.bframe.a"></label>
     </div>
-    <div class="chk"><label><input type="checkbox" data-k="design.frame.fill">素材の下に箱の色を塗る</label></div>
+    <div class="chk"><label><input type="checkbox" data-k="design.bframe.fill">素材の下に箱の色を塗る</label></div>
     <p class="note">透過素材は、四隅の形を保ったまま辺と中央だけを伸ばして箱に合わせます（9スライス）。<b>素材の角の範囲</b>は、素材の短い辺のうち何％を角として扱うか、<b>角の大きさ</b>は箱に描く角の大きさ、<b>素材の濃さ</b>を下げると素材が淡くなります（Illustrator では不透明度として入るので、あとから変えられます）。透過を活かすには PNG を使ってください。Illustrator 用スクリプトでは、素材を箱の大きさに引き伸ばして配置します。<br>配布素材を使うときは、同人誌・お品書きでの使用や加工が利用規約で認められているか確認してください。</p>
     <h2>背景画像</h2>
     <div class="imgrow"><span class="nm" id="bgName">背景画像なし</span>
@@ -397,7 +397,7 @@ body.view #cv{touch-action:auto}
 <tr><th>揃えボタン（画面下）</th><td>選択中の箱を 左揃え / 左右中央 / 右揃え / 幅いっぱい にする</td></tr>
 <tr><th>「位置を戻す」（画面下）／「位置だけ戻す」（プロパティパネル）</th><td>大きさはそのままで、位置だけ自動配置の場所に戻す</td></tr>
 <tr><th>ダブルクリック / <kbd>Delete</kbd></th><td>その箱だけ自動配置に戻す（位置も大きさも）</td></tr>
-<tr><th>用紙の外（灰色の部分）をクリック・タップ</th><td>箱の選択を外す</td></tr>
+<tr><th>用紙の外（灰色の部分）をクリック・タップ／<kbd>Esc</kbd></th><td>箱の選択を外す</td></tr>
 </table>
 <ul>
 <li>箱が重なっているときは、選択中（青い点線）の箱が優先されます</li>
@@ -646,7 +646,7 @@ const LS='oshinagaki-maker-v1';
 const BOX_STYLES=[['std','標準（角丸）'],['sq','角なし'],['shadow','影付き（ポップ）'],['double','二重線'],['band','見出し帯'],['left','左ライン'],['corner','角飾り（和風）'],['dash','点線（チケット風）'],['frame','透過素材']];
 const BSID=new Set(BOX_STYLES.map(b=>b[0]));
 // 種別の指定 → 全体の指定。透過素材が未設定なら標準で描く
-const boxStyleOf=(d,K)=>{const v=(K&&BSID.has(K.bs)?K.bs:'')||d.bs||'std';return v==='frame'&&!(d.frame&&d.frame.img)?'std':v;};
+const boxStyleOf=(d,K)=>{const v=(K&&BSID.has(K.bs)?K.bs:'')||d.bs||'std';return v==='frame'&&!(d.bframe&&d.bframe.img)?'std':v;};
 let uidN=Date.now();const uid=()=>'i'+(uidN++).toString(36);
 
 const CATS=[['circle','サークル名'],['event','イベント名・日付'],['pen','ペンネーム'],['space','スペース番号'],['sec','種別の見出し'],['badge','バッジ'],['title','タイトル'],['spec','仕様'],['desc','説明'],['price','価格'],['foot','フッター（支払い・お知らせ）'],['sns','SNS / 連絡先']];
@@ -654,7 +654,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',frame:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -679,7 +679,11 @@ function norm(j){const b=blank();
     s.design.ts=ts;}
   s.design.box=Object.assign(blank().design.box,j.design&&j.design.box);
   s.design.bg=Object.assign(blank().design.bg,j.design&&j.design.bg);
-  s.design.frame=Object.assign(blank().design.frame,j.design&&j.design.frame);if(!BSID.has(s.design.bs))s.design.bs='std';
+  // 箱の透過素材は design.bframe。design.frame は「ヘッダー下ライン」のオン・オフ（以前の版で同じ名前を使ってしまっていたので形を整える）
+  {const jd=j.design||{},old=jd.frame&&typeof jd.frame==='object'?jd.frame:null;
+    s.design.bframe=Object.assign(blank().design.bframe,old,jd.bframe&&typeof jd.bframe==='object'?jd.bframe:null);
+    s.design.frame=old?true:typeof jd.frame==='boolean'?jd.frame:true;}
+  if(!BSID.has(s.design.bs))s.design.bs='std';
   s.design.fs=Object.assign(blank().design.fs,j.design&&j.design.fs);
   {const o=(j.design&&j.design.fs)||{};if(o.sub!=null){if(o.spec==null)s.design.fs.spec=o.sub;if(o.desc==null)s.design.fs.desc=o.sub;}delete s.design.fs.sub;} // 旧「仕様・説明」を仕様と説明の両方に引き継ぐ
   s.design.tc=Object.assign(blank().design.tc,j.design&&j.design.tc);
@@ -700,7 +704,7 @@ let saveT=0;
 function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
 function saveNow(){clearTimeout(saveT);saveT=0;
   try{localStorage.setItem(LS,JSON.stringify(S));}
-  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),frame:Object.assign({},S.design.frame,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:''}))})));}catch(e2){}}}
+  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),bframe:Object.assign({},S.design.bframe,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:''}))})));}catch(e2){}}}
 const flushSave=()=>{if(saveT)saveNow();};
 addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave();});
 
@@ -820,13 +824,13 @@ function build(S,M,page){
         R(sx>0?cx:cx-L,sy>0?cy:cy-t,L,t,kc,{r:0,g:G});R(sx>0?cx:cx-t,sy>0?cy:cy-L,t,L,kc,{r:0,g:G});});
       ins.fill(t);return{r:0,ins};}
     if(st==='dash'){const rad=2.5*u;box(rad,null,0);R(x,y,w,h,null,{r:rad,stroke:isNew?kc:T.sub,sw:(isNew?.6:.4)*u,dash:[1.6*u,1.1*u],g:G});return{r:rad,ins};}
-    if(st==='frame'){const Fr=d.frame,cm=Math.max(.5,+Fr.cm||5)*u;
+    if(st==='frame'){const Fr=d.bframe,cm=Math.max(.5,+Fr.cm||5)*u;
       if(Fr.fill)box(0,null,0);
       ops.push({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:al(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
       ins.fill(Math.min(cm*.3,Math.min(w,h)*.08));return{r:0,ins};} // 枠の飾りに文字が重なりにくいよう、少しだけ内側へ
     const rad=2.5*u;box(rad,lc,lw);return{r:rad,ins};} // 標準
   function card(x,y,w,h,it){
-    const q=place(it.id,x,y,w,h,1),ia=alp(it.ta),tt=String(it.title||'').trim()||'（無題）',nm=tt.replace(/\s*\n\s*/g,' '),bc=it.bcol||T.card; // nm：レイヤー名などに使う1行の名前x=q.x;y=q.y;w=q.w;h=q.h;
+    const q=place(it.id,x,y,w,h,1),ia=alp(it.ta),tt=String(it.title||'').trim()||'（無題）',nm=tt.replace(/\s*\n\s*/g,' '),bc=it.bcol||T.card;x=q.x;y=q.y;w=q.w;h=q.h; // nm：レイヤー名などに使う1行の名前
     // 種別の色：指定が無ければテーマの色（新刊はアクセント色、ほかは補助色）。新刊は箱の枠もこの色
     const K=kOf(d,it.kind),isNew=K.id==='new',kc=K.c||(isNew?T.accent:T.sub);
     // 箱のデザイン（種別ごとの指定 → 全体の指定）。ins：デザインのぶん中身を内側へ寄せる量（左・上・右・下）
@@ -855,8 +859,8 @@ function build(S,M,page){
     const ps=9.5*u*k*FS.price*ifs*pc(it.fsP),pstr=priceStr(it.price,d),limit=ty+th-(pstr&&!wide?ps*1.05:0);
     const txw=wide&&pstr?tw-M(pstr,ps,1)-3*u:tw; // 横長カードは価格を右に並べる
     const ts=6.2*u*k*FS.title*ifs*pc(it.fsT);
-    wrap(tt,txw,ts,2,1).forEach( // 改行した位置で折り返し、さらに長い行は自動で折り返す（全体で2行まで）
-l=>{X(l,tx,cy+ts*.88,ts,tcol,{cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm});cy+=ts*1.24;});
+    // 改行した位置で折り返し、さらに長い行は自動で折り返す（全体で2行まで）
+    wrap(tt,txw,ts,2,1).forEach(l=>{X(l,tx,cy+ts*.88,ts,tcol,{cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm});cy+=ts*1.24;});
     cy+=.6*u*k;
     const ss=3.5*u*k*FS.spec*ifs*pc(it.fsS);
     if(it.spec&&cy+ss<=limit+.1){X(it.spec,tx,cy+ss*.9,fit(it.spec,txw,ss,0),it.tcol?tcol:subC,{b:0,cat:'spec',keep:!!it.tcol,ia,g:'仕様：'+nm});cy+=ss*1.55;}
@@ -880,7 +884,7 @@ const dropImg=c=>{if(c&&c.bm&&c.bm.close)c.bm.close();};
 function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
 // 読み込み済みの画像の縦横比（幅÷高さ）。まだなら 0
 function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
-function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('bg',S.design.bg.img);want.set('frame',S.design.frame.img);
+function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
   for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
   want.forEach((data,id)=>{if(!data)return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
     const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
@@ -955,7 +959,7 @@ function fillForm(){$$('[data-k]').forEach(e=>{const v=getP(e.dataset.k);if(e.ty
   $$('#themes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===S.design.theme));
   refTs();
   $('#bgName').textContent=S.design.bg.img?(S.design.bg.name||'背景画像あり'):'背景画像なし';$('#bBgX').hidden=!S.design.bg.img;
-  $('#frName').textContent=S.design.frame.img?(S.design.frame.name||'透過素材あり'):'透過素材なし';$('#bFrX').hidden=!S.design.frame.img;}
+  $('#frName').textContent=S.design.bframe.img?(S.design.bframe.name||'透過素材あり'):'透過素材なし';$('#bFrX').hidden=!S.design.bframe.img;}
 // 用紙を変えたとき：箱の手動配置はリセットする。自由テキストは、用紙の中での相対位置（左寄り・中央・右寄り、上・下など）を保ったまま新しい用紙へ移す
 function paperChanged(prev){const A=PAPERS[prev],P=PAPERS[S.design.paper],F=S.design.free,nf={};
   if(A&&P){const M=mkMeasure(S.design),mv=(v,size,from,to)=>(from-size>0?Math.max(0,Math.min(1,v/(from-size))):.5)*(to-size);
@@ -1018,7 +1022,8 @@ $('#stage').addEventListener('click',e=>{const st=e.currentTarget;if(e.target!==
   if(e.offsetX>=st.clientWidth||e.offsetY>=st.clientHeight)return;sel=null;schedule();});
 cv.addEventListener('dblclick',e=>{if(UI.view)return;const h=hitAt(toMM(e));if(h){delete S.design.free[h.key];schedule();}});
 cv.addEventListener('keydown',e=>{if(UI.view)return;const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h)return;
-  if(e.key==='Escape'||e.key==='Delete'||e.key==='Backspace'){delete S.design.free[sel];e.preventDefault();schedule();return;}
+  if(e.key==='Escape'){sel=null;e.preventDefault();schedule();return;} // Esc は選択を外すだけ（以前は手動配置を消していた）
+  if(e.key==='Delete'||e.key==='Backspace'){delete S.design.free[sel];e.preventDefault();schedule();return;}
   const mv={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!mv)return;e.preventDefault();
   const n=(e.ctrlKey||e.metaKey)?.5:1,f={x:h.x,y:h.y,w:h.w,h:h.h};
   if(e.shiftKey&&h.rs){f.w=Math.max(15,f.w+mv[0]*n);f.h=Math.max(8,f.h+mv[1]*n);}else{f.x+=mv[0]*n;f.y+=mv[1]*n;}
@@ -1080,9 +1085,9 @@ function renderBsKinds(){$('#bsKinds').innerHTML=S.design.kinds.map(k=>`<label>$
 renderBsKinds();
 $('#bsKinds').addEventListener('change',e=>{const k=S.design.kinds.find(x=>x.id===e.target.dataset.bk);if(!k)return;k.bs=e.target.value;schedule();});
 $('#fFrame').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
-  try{S.design.frame.img=await readImg(f);S.design.frame.name=f.name;if(S.design.bs!=='frame'&&!S.design.kinds.some(k=>k.bs==='frame'))S.design.bs='frame';}
+  try{S.design.bframe.img=await readImg(f);S.design.bframe.name=f.name;if(S.design.bs!=='frame'&&!S.design.kinds.some(k=>k.bs==='frame'))S.design.bs='frame';}
   catch(x){setErr((x&&x.message)||'画像を読めませんでした');}fillForm();schedule();});
-$('#bFrX').addEventListener('click',()=>{S.design.frame.img='';S.design.frame.name='';fillForm();schedule();});
+$('#bFrX').addEventListener('click',()=>{S.design.bframe.img='';S.design.bframe.name='';fillForm();schedule();});
 $('#zoom').addEventListener('input',e=>{zoom=+e.target.value;schedule();});
 window.addEventListener('resize',schedule);
 // プレビュー枠の大きさが変わったら描き直す（境目のドラッグ、確認モードの切り替えなど）
@@ -1142,15 +1147,16 @@ document.addEventListener('input',e=>{const t=e.target;curKey=t.tagName==='TEXTA
 document.addEventListener('change',()=>{checkpoint();lastKey=null;curKey=null;},true); // 入力の確定（欄を離れた等）で区切る
 document.addEventListener('pointerdown',()=>{curKey=null;},true);
 cv.addEventListener('keydown',e=>{curKey=/^Arrow/.test(e.key)?'key:'+sel:null;},true);
-// 入力中の欄があれば先に確定させる（作り直しで欄が消えるときに出る change を、新しい操作として記録しないため）
-function restore(snap){const ae=document.activeElement;if(ae&&ae!==document.body&&ae.blur)ae.blur();
+// 入力中の欄があれば先に確定させる（作り直しで欄が消えるときに出る change を、新しい操作として記録しないため）。プレビューやボタンのフォーカスはそのまま
+const blurField=()=>{const ae=document.activeElement;if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))ae.blur();};
+function restore(snap){blurField();
   restoring=true;try{restoreNow(snap);}finally{restoring=false;}}
 function restoreNow(snap){S=clone(snap);drag=null;guides=[];
   if(sel&&!S.items.some(i=>i.id===sel)&&!S.texts.some(t=>'t:'+t.id===sel)&&!sel.startsWith('sec:'))sel=null;
   renderKinds();renderPgmap();fillForm();renderList();renderTexts();
   base=snap;baseSig=sigOf(S);lastKey=curKey=null;updHist();schedule();}
-function undo(){if(drag)return;const ae=document.activeElement;if(ae&&ae!==document.body&&ae.blur)ae.blur();checkpoint();if(!undoS.length)return;redoS.push(base);restore(undoS.pop());}
-function redo(){if(drag)return;const ae=document.activeElement;if(ae&&ae!==document.body&&ae.blur)ae.blur();checkpoint();if(!redoS.length)return;undoS.push(base);restore(redoS.pop());}
+function undo(){if(drag)return;blurField();checkpoint();if(!undoS.length)return;redoS.push(base);restore(undoS.pop());}
+function redo(){if(drag)return;blurField();checkpoint();if(!redoS.length)return;undoS.push(base);restore(redoS.pop());}
 $('#bUndo').addEventListener('click',undo);$('#bRedo').addEventListener('click',redo);
 document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey||document.querySelector('dialog[open]'))return;const k=e.key.toLowerCase();
   if(k==='z'&&!e.shiftKey){e.preventDefault();undo();}else if(k==='y'||(k==='z'&&e.shiftKey)){e.preventDefault();redo();}});
@@ -1164,7 +1170,7 @@ const kindOpts=cur=>S.design.kinds.map(k=>`<option value="${k.id}" ${k.id===cur?
 function renderList(openId){
   const open=new Set($$('details[open]',list).map(d=>d.dataset.id));if(openId)open.add(openId);
   list.innerHTML=S.items.map(it=>`<details class="it" data-id="${it.id}" ${open.has(it.id)?'open':''}>
-<summary><span class="kd k-${kOf(S.design,it.kind).id}" style="${chipCss(it.kind)}">${esc(kName(kOf(S.design,it.kind)))}</span><b class="st">${esc(it.title)||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
+<summary><span class="kd k-${kOf(S.design,it.kind).id}" style="${chipCss(it.kind)}">${esc(kName(kOf(S.design,it.kind)))}</span><b class="st">${esc(String(it.title||'').trim())||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
 <div class="body">
 <div class="row"><label>種別<select data-f="kind">${kindOpts(kOf(S.design,it.kind).id)}</select></label>
 <label>価格（数字 / 自由記入）<input data-f="price" value="${esc(it.price)}" placeholder="500"></label></div>
@@ -1191,12 +1197,12 @@ list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.t
   it[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;
   const d=e.target.closest('details');
   if(f==='kind')paintChip($('.kd',d),it.kind);
-  if(f==='title')$('.st',d).textContent=it.title||'（無題）';
+  if(f==='title')$('.st',d).textContent=String(it.title||'').trim()||'（無題）';
   if(f==='price')$('.sp',d).textContent=priceStr(it.price,S.design);
   schedule();});
 list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target);if(!a||!it)return;
   const i=S.items.indexOf(it);
-  if(a==='del')S.items.splice(i,1);
+  if(a==='del'){S.items.splice(i,1);delete S.design.free[it.id];if(sel===it.id)sel=null;}
   if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid()}));
   if(a==='up'&&i>0)S.items.splice(i-1,0,S.items.splice(i,1)[0]);
   if(a==='down'&&i<S.items.length-1)S.items.splice(i+1,0,S.items.splice(i,1)[0]);
@@ -1308,7 +1314,7 @@ const readText=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>
 function reset(s){S=s;clearImgs();sel=null;renderKinds();renderPgmap();fillForm();list.innerHTML='';renderList();renderTexts();schedule();}
 $('#bSave').addEventListener('click',()=>download(baseName()+'.json',JSON.stringify(S),'application/json'));
 $('#fOpen').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
-  try{reset(norm(JSON.parse(await readText(f))));}catch(x){$('#warn').textContent='プロジェクトファイルを読めませんでした';}});
+  try{reset(norm(JSON.parse(await readText(f))));}catch(x){setErr('プロジェクトファイルを読めませんでした');}});
 $('#bSample').addEventListener('click',()=>reset(sample()));
 let armed=0;$('#bNew').addEventListener('click',e=>{if(!armed){armed=1;e.target.textContent='もう一度押すと全消去';setTimeout(()=>{armed=0;e.target.textContent='新規';},3000);return;}
   armed=0;e.target.textContent='新規';reset(blank());});
@@ -1420,7 +1426,7 @@ async function makePSD(B,sc,dpi,sp){
     const ex=BW();ex.u32(0);ex.u32(40);for(let q=0;q<10;q++){ex.u8(0);ex.u8(0);ex.u8(255);ex.u8(255);} // マスクなし / ブレンド範囲は全域
     const an='Layer '+(i+1);ex.u8(an.length);ex.str(an);while(ex.a.length%4)ex.u8(0);               // 英数のレイヤー名
     const nm=String(ly.name).replace(/\s+/g,' ').slice(0,80),ul=Math.ceil((4+nm.length*2)/4)*4;ex.str('8BIM');ex.str('luni');ex.u32(ul);ex.u32(nm.length); // 日本語のレイヤー名
-    for(const ch of nm)ex.u16(ch.charCodeAt(0));for(let q=4+nm.length*2;q<ul;q++)ex.u8(0);
+    for(let q=0;q<nm.length;q++)ex.u16(nm.charCodeAt(q));for(let q=4+nm.length*2;q<ul;q++)ex.u8(0); // UTF-16 の単位で書く（for…of だと絵文字が1文字分になり長さがずれる）
     rec.u32(ex.a.length);rec.a.push(...ex.a);});
   let infoLen=rec.a.length+dataLen;const pad=infoLen%2;infoLen+=pad;
   const sec=BW();sec.u32(4+infoLen+4);sec.u32(infoLen);
