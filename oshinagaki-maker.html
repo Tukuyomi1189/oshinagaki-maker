@@ -115,12 +115,15 @@ label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk sel
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
 .imgrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
-/* 頒布物の表紙画像（4枚まで） */
+/* 頒布物の表紙画像（100枚まで） */
 .ims{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:9px}
 .imc{width:74px;font-size:11px;text-align:center}
 .imc img{width:74px;height:98px;object-fit:contain;background:#f1eee9;border:1px solid var(--ln);border-radius:4px;display:block}
 .imc .nm{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub);margin:2px 0}
 .imc .imb{display:flex;gap:3px;justify-content:center}.imc .imb button{padding:0 7px;font-size:11px}
+.ims.many .imc{width:56px}.ims.many .imc img{width:56px;height:74px} /* 画像が多いときは小さく並べる */
+.omr{align-items:flex-start}.omr .ims{margin:0;flex:none}.imrow{align-items:flex-end}
+.ims .imall{align-self:center;font-size:12px;padding:6px 10px}
 .imgrow img{width:44px;height:60px;object-fit:contain;background:#f1eee9;border:1px solid var(--ln);border-radius:4px}
 .imgrow .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub)}
 .acts{display:flex;gap:6px;justify-content:flex-end}
@@ -463,9 +466,10 @@ body.view #cv{touch-action:auto}
 <tr><th>タイトル</th><td>改行できます（Enter）。2行まで表示し、改行した位置で折り返します。長い行は自動でも折り返し、入りきらない分は「…」で省略</td></tr>
 <tr><th>仕様・説明</th><td>箱に余白がある分だけ表示されます</td></tr>
 <tr><th>R18 / 残りわずか / 完売</th><td>バッジで表示。完売は箱全体に重ねて表示</td></tr>
+<tr><th>おまけ</th><td>セットの特典本など。<b>おまけの名前</b>か<b>おまけの表紙</b>を入れると、表紙の横に「＋おまけ」の札が付いた点線の枠で出します（表紙があれば表紙、なければ名前）。どの種別でも使えます</td></tr>
 <tr><th>添え書き</th><td>箱の中に目立つ札で出す短い文字（例：+特典！、+ペーパー）</td></tr>
 <tr><th>委託元</th><td>委託を受けた頒布物のサークル名・作家名。入れると「委託：〇〇」の小見出しで分かれ、委託の箱が目立ちます（デザインタブの「委託」で切り替え）</td></tr>
-<tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）。1点につき4枚まで（種別が「セット」なら10枚まで）選べ、2枚以上は箱の中に並べます（並べ方は「横に並べる / 少し重ねる」）。箱に入りきらないときは、並べられる分だけ出して残りを「+6！」のような札で示します。◀ で順番を前へ、✕ で外します。「表紙画像の大きさ ％」で、その箱の中での画像の大きさを 20〜200% で変えられます（プロパティパネルの「画」と同じ）。大きくできるのは箱に収まるところまでなので、もっと大きくしたいときは箱も広げてください。画像の大きさを変えたときに文字の大きさまで変わってほしくない場合は、デザインタブの「表紙画像の大きさを変えても文字の大きさを変えない」をオンにします</td></tr>
+<tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）。1点につき100枚まで選べ、2枚以上は箱の中に並べます（並べ方は「横に並べる / 少し重ねる」）。<b>並べる枚数</b>が空欄（自動）なら箱に入るだけ並べ、数を入れるとその枚数だけ並べて、残りを「+6！」のような札で示します。画像が16枚以上になると一覧はたたまれ、「ほか N 枚も表示」で全部出せます。◀ で順番を前へ、✕ で外します。「表紙画像の大きさ ％」で、その箱の中での画像の大きさを 20〜200% で変えられます（プロパティパネルの「画」と同じ）。大きくできるのは箱に収まるところまでなので、もっと大きくしたいときは箱も広げてください。画像の大きさを変えたときに文字の大きさまで変わってほしくない場合は、デザインタブの「表紙画像の大きさを変えても文字の大きさを変えない」をオンにします</td></tr>
 <tr><th>この頒布物の文字サイズ ％</th><td>その頒布物だけ、タイトル / 価格 / 仕様 / 説明 の大きさを別々に 50〜200% で変えられます（例：タイトル 120・価格 100・仕様 80）。文字タブの「文字サイズ（％）」との掛け算です。プロパティパネルの「題・価・仕・説」と同じ</td></tr>
 <tr><th>⋮⋮ をドラッグ</th><td>種別の見出しの ⋮⋮ で種別まるごと（お品書きの見出しの順番）、頒布物の ⋮⋮ でその種別の中を並べ替え。指でも操作できます</td></tr>
 <tr><th>↑ ↓ / 複製 / 削除</th><td>その種別の中で1つずつ移動、複製・削除。種別をまたいで動かすときは「種別」を変えます</td></tr>
@@ -577,7 +581,7 @@ body.view #cv{touch-action:auto}
 <h3 id="h-bulk">まとめて登録</h3>
 <ul>
 <li><b>画像からまとめて追加</b>：表紙画像を複数選ぶと、ファイル名をタイトルにして一括登録。種別はボタンの下の「追加するときの種別」で選べます（初期値は新刊）</li>
-<li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名, 委託元, 添え書き」（委託元・添え書きは省略可）。画像が複数あるときはファイル名を「|」で区切ります（例：<code>vol1.png|vol2.png</code>。4枚まで、セットは10枚まで）。フラグ列は 1 や ○ でオン。種別は名前で書きます。一覧に無い名前はその名前の種別として自動で追加され、空欄は「既刊」になります</li>
+<li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名, 委託元, 添え書き, おまけ, おまけ画像」（委託元から後ろは省略可）。画像が複数あるときはファイル名を「|」で区切ります（例：<code>vol1.png|vol2.png</code>。100枚まで）。画像は、読み込み済みの同じファイル名の画像が使われます。フラグ列は 1 や ○ でオン。種別は名前で書きます。一覧に無い名前はその名前の種別として自動で追加され、空欄は「既刊」になります</li>
 <li><b>CSV保存</b>：出力したファイルがそのままひな形になります</li>
 </ul>
 
@@ -595,7 +599,7 @@ body.view #cv{touch-action:auto}
 
 <h3 id="h-save">保存と読込</h3>
 <ul>
-<li>入力内容はブラウザに自動保存されます（画像が多いと画像だけ保存されないことがあります）</li>
+<li>入力内容はブラウザに自動保存されます（画像が多いと画像だけ保存されないことがあります。表紙をたくさん使うときは「保存」でプロジェクトを保存しておいてください）</li>
 <li>確実に残すには右上の「プロジェクト保存」で JSON にし、「開く」で読み込みます</li>
 <li>「新規」は2回押すと全消去、「サンプル」は見本データに置き換えます</li>
 </ul>
@@ -757,11 +761,13 @@ const BSID=new Set(BOX_STYLES.map(b=>b[0]));
 // 種別の指定 → 全体の指定。透過素材が未設定なら標準で描く
 const boxStyleOf=(d,K)=>{const v=(K&&BSID.has(K.bs)?K.bs:'')||d.bs||'std';return v==='frame'&&!(d.bframe&&d.bframe.img)?'std':v;};
 let uidN=Date.now();const uid=()=>'i'+(uidN++).toString(36);
-// 表紙画像：1枚目は従来どおり it.img / it.imgName、2〜4枚目は it.more（[{img,name}]）。並べ方は it.iarr（row＝横に並べる / fan＝少し重ねる）
-const IMG_MAX=10,imgMax=it=>kOf(S.design,it.kind).id==='set'?10:4; // 1点に登録できる表紙の数（セットは10枚、ほかは4枚）
+// 表紙画像：1枚目は従来どおり it.img / it.imgName、2枚目以降は it.more（[{img,name}]）。並べ方は it.iarr（row＝横に並べる / fan＝少し重ねる）、並べる枚数は it.nv（0＝自動）
+const IMG_MAX=100; // 1点に登録できる表紙の数（どの種別も同じ）
 const imgsOf=it=>(it.img?[{img:it.img,name:it.imgName||''}]:[]).concat((it.more||[]).filter(m=>m&&m.img));
 const setImgs=(it,a)=>{a=a.slice(0,IMG_MAX);it.img=a[0]?a[0].img:'';it.imgName=a[0]?a[0].name:'';it.more=a.slice(1).map(m=>({img:m.img,name:m.name||''}));};
-const csOf=it=>String(it.cs||'').trim(); // 委託元（サークル名・作家名）
+const csOf=it=>String(it.cs||'').trim();
+// おまけ（セットの特典本など）：名前（om）か表紙（omImg / omName）のどちらかがあれば出す
+const omOf=it=>{const t=String(it.om||'').trim();return t||it.omImg?{t,img:it.omImg||'',name:it.omName||''}:null;}; // 委託元（サークル名・作家名）
 const imgId=(it,k)=>k?it.id+'~'+k:it.id; // 画像の読み込み・縦横比を覚えておく名前（1枚目は頒布物の id）
 
 const CATS=[['circle','サークル名'],['event','イベント名・日付'],['pen','ペンネーム'],['space','スペース番号'],['sec','種別の見出し'],['badge','バッジ'],['title','タイトル'],['spec','仕様'],['desc','説明'],['price','価格'],['foot','フッター（支払い・お知らせ）'],['sns','SNS / 連絡先']];
@@ -786,8 +792,9 @@ function sample(){const s=blank();
   return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem(LS));if(j&&j.items)return norm(j);}catch(e){}return sample();}
 function norm(j){const b=blank();
-  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:'',more:[],iarr:'row',cs:'',ex:''},i))};
-  s.items.forEach(i=>{i.more=(Array.isArray(i.more)?i.more:[]).filter(m=>m&&m.img).slice(0,IMG_MAX-1).map(m=>({img:String(m.img),name:String(m.name||'')}));if(i.iarr!=='fan')i.iarr='row';i.cs=String(i.cs||'');i.ex=String(i.ex||'');});
+  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:'',more:[],iarr:'row',cs:'',ex:'',nv:0,om:'',omImg:'',omName:''},i))};
+  s.items.forEach(i=>{i.more=(Array.isArray(i.more)?i.more:[]).filter(m=>m&&m.img).slice(0,IMG_MAX-1).map(m=>({img:String(m.img),name:String(m.name||'')}));if(i.iarr!=='fan')i.iarr='row';i.cs=String(i.cs||'');i.ex=String(i.ex||'');
+    i.nv=Math.max(0,Math.min(IMG_MAX,Math.round(+i.nv||0)));['om','omImg','omName'].forEach(k=>i[k]=String(i[k]||''));});
   if(!s.design.free||typeof s.design.free!=='object')s.design.free={};
   // レイヤー：重なり順（lo.g＝まとまりの順、lo.i＝まとまりの中の順。どちらも前面→背面）、非表示、ロック
   {const lo=s.design.lo&&typeof s.design.lo==='object'?s.design.lo:{};s.design.lo={g:Array.isArray(lo.g)?lo.g:[],i:lo.i&&typeof lo.i==='object'?lo.i:{}};
@@ -819,7 +826,7 @@ let saveT=0;
 function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
 function saveNow(){clearTimeout(saveT);saveT=0;
   try{localStorage.setItem(LS,JSON.stringify(S));}
-  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),bframe:Object.assign({},S.design.bframe,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:'',more:(i.more||[]).map(m=>Object.assign({},m,{img:''}))}))})));}catch(e2){}}}
+  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),bframe:Object.assign({},S.design.bframe,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:'',omImg:'',more:(i.more||[]).map(m=>Object.assign({},m,{img:''}))}))})));}catch(e2){}}}
 const flushSave=()=>{if(saveT)saveNow();};
 addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave();});
 
@@ -938,17 +945,33 @@ function build(S,M,page){
   if(!secs.length)X(d.twoPage?'このページに載せる頒布物がありません':'「頒布物」タブから追加してください',W/2,by+bh/2,6*u,T.sub,{al:'c',b:0});
 
   // 表紙を並べる：幅 aw・高さ ah に、表紙（縦横比 asps）を横に並べる（fan＝少しずつずらして重ねる）。
-  // 表紙の高さが ah の55％より小さくなるときは、並べる枚数を減らし、残りの枚数を「+N！」の札（表紙1枚分）で示す
-  function coverFit(asps,fan,aw,ah,gap){const n=asps.length,dy=fan?DY:0;
-    const lay=v=>{const a=asps.slice(0,v);if(v<n)a.push(.74);const c=a.length;let hh=ah/(1+dy*(c-1));
-      const tot=h=>fan?a.slice(0,-1).reduce((t,x)=>t+h*x*STEP,0)+h*a[c-1]:a.reduce((t,x)=>t+h*x,0)+gap*(c-1);if(tot(hh)>aw)hh*=aw/tot(hh);
-      return{v,a,hh,bw:tot(hh),bh:hh*(1+dy*(c-1))};};
+  // nv＝並べる枚数（0＝自動）。自動のときは、表紙の高さが ah の55％より小さくなると並べる枚数を減らす。並べきれない分は「+N！」の札（表紙1枚分）で示す
+  // ex＝おまけの枠の幅（表紙の高さに対する比。0＝おまけなし）。表紙の右に少し離して置く
+  function coverFit(asps,fan,aw,ah,gap,nv,ex){const n=asps.length,dy=fan?DY:0;
+    const lay=v=>{const a=asps.slice(0,v);if(v<n)a.push(.74);const c=a.length;let hh=c?ah/(1+dy*(c-1)):ah;
+      const cv=h=>!c?0:fan?a.slice(0,-1).reduce((t,x)=>t+h*x*STEP,0)+h*a[c-1]:a.reduce((t,x)=>t+h*x,0)+gap*(c-1),eg=ex&&c?gap*1.6:0;
+      if(!ex){if(cv(hh)>aw)hh*=aw/cv(hh);return{v,a,hh,bw:cv(hh),bh:hh*(1+dy*(c-1)),cw:cv(hh),ex:0,eg};}
+      const tot=h=>cv(h)+eg+h*ex,k0=tot(0);if(tot(hh)>aw)hh=Math.max(0,(aw-k0)/((tot(hh)-k0)/hh)); // 幅は高さの一次式なので、ちょうど収まる高さを求める
+      return{v,a,hh,bw:tot(hh),bh:c?hh*(1+dy*(c-1)):hh,cw:cv(hh),ex,eg};};
+    if(nv>0)return lay(Math.min(nv,n));
     let L=lay(n);while(L.v>1&&L.hh<ah*.55)L=lay(L.v-1);return L;}
+  // おまけの枠の幅（表紙の高さに対する比）：表紙があれば表紙＋余白、なければ表紙1枚分
+  function omEx(it){const o=omOf(it);return !o?0:o.img?.75*(imgAsp(imgId(it,'om'))||.74)+.1:.74;}
+  // おまけ：点線の枠の左上に「＋おまけ」の札を付け、表紙（あれば）か名前を入れる。名前はレイヤー名にも使う
+  function drawOm(it,x,y,w,h,nm){const o=omOf(it),g='おまけ：'+(o.t||nm),pd=h*.05,lh=h*.15,ia=alp(it.ta);
+    R(x,y,w,h,'#ffffff',{r:Math.min(1.2*u,h*.06),stroke:T.accent,sw:.35*u,dash:[1.2*u,.8*u],L:2,g});
+    const lab='＋おまけ',ph=lh*.8,fs=fit(lab,w-2*pd-ph*.7,ph*.62,1),pw=M(lab,fs,1)+ph*.7;
+    R(x+pd,y+pd+lh*.1,pw,ph,T.accent,{r:ph/2,L:2,g});X(lab,x+pd+pw/2,mid(y+pd+lh*.1,ph,fs),fs,on(T.accent),{al:'c',cat:'badge',ia,g});
+    const cy=y+pd+lh,ch=h-lh-2*pd,cw=w-2*pd;
+    if(o.img){put({t:'img',x:x+pd,y:cy,w:cw,h:ch,id:imgId(it,'om'),name:o.name,L:2,g});return;}
+    let fz=Math.min(h*.12,cw/3),ls=wrap(o.t,cw,fz,4,1);while(ls.length*fz*1.25>ch&&fz>h*.05){fz*=.88;ls=wrap(o.t,cw,fz,4,1);}
+    ls.forEach((l,i)=>X(l,x+w/2,cy+ch/2+(i-(ls.length-1)/2)*fz*1.25+fz*.35,fz,it.tcol||T.ink,{al:'c',cat:'title',keep:!!it.tcol,ia,g}));}
   // coverFit の結果を (x0,y0) から描く。g0＝レイヤー名の頭
-  function drawCovers(it,ims,L,fan,x0,y0,gap,g0,nm){const dy=fan?DY:0,n=ims.length;
+  function drawCovers(it,ims,L,fan,x0,y0,gap,g0,nm){const dy=fan?DY:0,n=ims.length,xs=x0;
+    if(L.ex)drawOm(it,xs+L.cw+L.eg,y0+(L.bh-L.hh)/2,L.hh*L.ex,L.hh,nm);
     L.a.forEach((asp,k)=>{const iw=L.hh*asp,yy=y0+L.hh*dy*k,more=k>=L.v,g=more?'残りの表紙：'+nm:g0+(n>1?'（'+(k+1)+'）':'');
       if(fan&&L.a.length>1||more){const e=.5*u;R(x0-e,yy-e,iw+2*e,L.hh+2*e,more?'#ffffff':'#ffffff',{r:more?1.2*u:0,stroke:more?T.accent:T.line,sw:(more?.5:.25)*u,L:2,g});}
-      if(more){const lab='+'+(n-L.v)+'！',fz=Math.min(iw/2.6,L.hh/3);X(lab,x0+iw/2,mid(yy,L.hh,fz),fz,T.accent,{al:'c',L:2,g});}
+      if(more){const lab='+'+(n-L.v)+'！',fz=fit(lab,iw*.84,Math.min(iw/2.6,L.hh/3),1);X(lab,x0+iw/2,mid(yy,L.hh,fz),fz,T.accent,{al:'c',L:2,g});}
       else put({t:'img',x:x0,y:yy,w:iw,h:L.hh,id:imgId(it,k),name:ims[k].name,L:2,g});
       x0+=fan?iw*STEP:iw+gap;});}
   // 委託の頒布物：種別が「委託」か、委託元が入っているもの（「委託の箱を目立たせる」がオンのとき強調）
@@ -958,14 +981,14 @@ function build(S,M,page){
   function tile(x,y,w,h,it,K,tH){BK=it.id;const q=place(it.id,x,y,w,h,1);x=q.x;y=q.y;w=q.w;h=q.h;
     const tt=String(it.title||'').trim()||'（無題）',nm=tt.replace(/\s*\n\s*/g,' '),ia=alp(it.ta),ims=imgsOf(it),n=ims.length,ah=Math.max(u,h-tH),cons=consign(it,K);
     let A={x,y,w,h:ah}; // 表紙（または札）の範囲。完売の幕とバッジはここに合わせる
-    if(n){const fan=it.iarr==='fan',gap=.8*u,L=coverFit(ims.map((m,k)=>imgAsp(imgId(it,k))||.74),fan,w,ah,gap);
+    if(n){const fan=it.iarr==='fan',gap=.8*u,L=coverFit(ims.map((m,k)=>imgAsp(imgId(it,k))||.74),fan,w,ah,gap,+it.nv||0,omEx(it));
       A={x:x+(w-L.bw)/2,y:y+(ah-L.bh)/2,w:L.bw,h:L.bh};drawCovers(it,ims,L,fan,A.x,A.y,gap,'表紙：'+nm,nm);}
     else{const bc=it.bcol||T.card,fz=Math.min(4*u*FS.title*pc(it.fs)*pc(it.fsT),w/6.5);
       R(x,y,w,ah,cons&&!it.bcol?mix(bc,K.c||T.sub,.1):bc,{r:1.5*u,stroke:cons?(K.c||T.sub):T.line,sw:(cons?.6:.3)*u,a:cardA,g:'箱：'+nm});
       const ls=wrap(tt,w-3*u,fz,4,1);ls.forEach((l,i)=>X(l,x+w/2,y+ah/2+(i-(ls.length-1)/2)*fz*1.24+fz*.35,fz,it.tcol||T.ink,{al:'c',cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm}));}
     // バッジ（R18・残りわずか・委託）は表紙の左上に重ねる
     let bx2=A.x+.8*u;const by2=A.y+.8*u,bh2=3.4*u,bs2=2.3*u,bd=(lab,c)=>{const pw=M(lab,bs2,1)+bh2*.9;R(bx2,by2,pw,bh2,c,{r:bh2/2,L:3,g:'バッジ：'+lab+'／'+nm});X(lab,bx2+pw/2,mid(by2,bh2,bs2),bs2,on(c),{al:'c',cat:'badge',ia,g:'バッジ：'+lab+'／'+nm});bx2+=pw+.6*u;};
-    if(cons&&K.id!=='itaku')bd('委託',itakuC());if(String(it.ex||'').trim())bd(String(it.ex).trim(),T.accent);if(it.r18)bd('R18','#d6002a');if(it.few&&!it.sold)bd('残りわずか','#f08a00');
+    if(cons&&K.id!=='itaku')bd('委託',itakuC());if(String(it.ex||'').trim())bd(String(it.ex).trim(),T.accent);if(!n&&omOf(it))bd('＋おまけ',T.accent);if(it.r18)bd('R18','#d6002a');if(it.few&&!it.sold)bd('残りわずか','#f08a00');
     if(tH){const ts=3.2*u*FS.title*pc(it.fs)*pc(it.fsT);wrap(tt,w,ts,2,1).forEach((l,i)=>X(l,x+w/2,y+ah+ts*1.15+i*ts*1.22,ts,it.tcol||T.ink,{al:'c',cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm}));}
     if(it.sold){R(A.x,A.y,A.w,A.h,'#000000',{r:1*u,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(A.w/2.6,A.h/3,22*u);X('完売',A.x+A.w/2,mid(A.y,A.h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
     BK=null;}
@@ -997,11 +1020,11 @@ function build(S,M,page){
     // 箱のデザイン（種別ごとの指定 → 全体の指定）。ins：デザインのぶん中身を内側へ寄せる量（左・上・右・下）。委託の箱は新刊と同じく種別の色で強調し、うっすら色を付ける
     const r=boxDraw(boxStyleOf(d,K),x,y,w,h,cons&&!it.bcol?mix(bc,kc,.1):bc,kc,isNew||cons,'箱：'+nm),ins=r.ins;
     const p=Math.min(w,h)*.06+1.2*u;let tx=x+p+ins[0],ty=y+p+ins[1],tw=w-2*p-ins[0]-ins[2],th=h-2*p-ins[1]-ins[3],kw=0,kh=0; // kw/kh：表紙が100％のときの文字の場所（文字サイズ固定モード用）
-    const ims=imgsOf(it);
-    if(ims.length>1){
-      // 表紙が2枚以上：横に並べる（row）か、少しずつずらして重ねる（fan）。大きさ（％）は並び全体に掛かり、入りきらなければ全体を縮める（それでも小さすぎれば「+N！」）
-      const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),hit=hits[hits.length-1],fan=it.iarr==='fan',asps=ims.map((m,k)=>imgAsp(imgId(it,k))||.74),wideC=w/h>1.25,gap=p*.5;
-      const fitAt=sc=>wideC?coverFit(asps,fan,tw*(sc>1?.8:.62),th*Math.min(1,sc),gap):coverFit(asps,fan,tw,Math.min(th*.6*sc,th*.8),gap);
+    const ims=imgsOf(it),omx=omEx(it);
+    if(ims.length>1||omx){
+      // 表紙が2枚以上（またはおまけあり）：横に並べる（row）か、少しずつずらして重ねる（fan）。大きさ（％）は並び全体に掛かり、入りきらなければ全体を縮める（それでも小さすぎれば「+N！」）
+      const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),hit=hits[hits.length-1],fan=it.iarr==='fan',asps=ims.map((m,k)=>imgAsp(imgId(it,k))||.74),wideC=w/h>1.25,gap=p*.5,nv=+it.nv||0;
+      const fitAt=sc=>wideC?coverFit(asps,fan,tw*(sc>1?.8:.62),th*Math.min(1,sc),gap,nv,omx):coverFit(asps,fan,tw,Math.min(th*.6*sc,th*.8),gap,nv,omx);
       const L=fitAt(s),L1=fitAt(1);
       drawCovers(it,ims,L,fan,wideC?tx:tx+(tw-L.bw)/2,wideC?ty+(th-L.bh)/2:ty,gap,'表紙：'+nm,nm);
       if(wideC){kw=tw-(L1.bw+p);kh=th;tx+=L.bw+p;tw-=L.bw+p;}
@@ -1077,7 +1100,7 @@ const dropImg=c=>{if(c&&c.bm&&c.bm.close)c.bm.close();};
 function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
 // 読み込み済みの画像の縦横比（幅÷高さ）。まだなら 0
 function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
-function syncImgs(){const want=new Map();S.items.forEach(i=>imgsOf(i).forEach((m,k)=>want.set(imgId(i,k),m.img)));want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
+function syncImgs(){const want=new Map();S.items.forEach(i=>{imgsOf(i).forEach((m,k)=>want.set(imgId(i,k),m.img));if(i.omImg)want.set(imgId(i,'om'),i.omImg);});want.set('bg',S.design.bg.img);want.set('frame',S.design.bframe.img);
   for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
   want.forEach((data,id)=>{if(!data)return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
     const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
@@ -1426,15 +1449,25 @@ ${imgsHtml(it)}
 <button type="button" data-a="dup">複製</button><button type="button" data-a="del">削除</button></div>
 </div></details>`;
 // 表紙画像の欄：画像の一覧（◀ で前へ、✕ で外す）、追加、大きさ、2枚以上なら並べ方
-const imgsHtml=it=>{const ims=imgsOf(it);const mx=imgMax(it);return `<div class="cap">表紙画像（${mx}枚まで${mx>4?'（セット）':''}。2枚以上は箱の中に並べ、入りきらない分は「+N！」で示します）</div><div class="ims">`+ims.map((m,k)=>`<div class="imc"><img src="${m.img}" alt=""><span class="nm" title="${esc(m.name)}">${esc(m.name)||'（名前なし）'}</span><span class="imb">${k?`<button type="button" data-a="imL" data-n="${k}" title="前へ" aria-label="${k+1}枚目を前へ">◀</button>`:''}<button type="button" data-a="imX" data-n="${k}" title="外す" aria-label="${k+1}枚目を外す">✕</button></span></div>`).join('')+
+const imsAll=new Set(); // 表紙が多い頒布物で「すべて表示」にしているもの（画面の状態だけ。保存しない）
+const IMS_FOLD=15,IMS_SHOW=12;
+const imgsHtml=it=>{const ims=imgsOf(it),mx=IMG_MAX,fold=ims.length>IMS_FOLD,all=!fold||imsAll.has(it.id);return `<div class="cap">表紙画像（${mx}枚まで。2枚以上は箱の中に並べ、並べきれない分は「+N！」で示します）</div><div class="ims${ims.length>8?' many':''}">`+(all?ims:ims.slice(0,IMS_SHOW)).map((m,k)=>`<div class="imc"><img src="${m.img}" alt=""><span class="nm" title="${esc(m.name)}">${esc(m.name)||'（名前なし）'}</span><span class="imb">${k?`<button type="button" data-a="imL" data-n="${k}" title="前へ" aria-label="${k+1}枚目を前へ">◀</button>`:''}<button type="button" data-a="imX" data-n="${k}" title="外す" aria-label="${k+1}枚目を外す">✕</button></span></div>`).join('')+
+    (fold?`<button type="button" class="imall" data-a="imAll">${all?'たたむ':'ほか '+(ims.length-IMS_SHOW)+' 枚も表示'}</button>`:'')+
     (ims.length<mx?`<label class="fbtn imadd">${ims.length?'＋ 画像を追加':'画像を選ぶ'}<input type="file" accept="image/*,.psd,.psb" data-f="img" multiple></label>`:'')+'</div>'+
-    (ims.length?`<div class="row"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label>${ims.length>1?`<label>並べ方<select data-f="iarr"><option value="row" ${it.iarr!=='fan'?'selected':''}>横に並べる</option><option value="fan" ${it.iarr==='fan'?'selected':''}>少し重ねる</option></select></label>`:''}</div><span class="isn" data-id="${it.id}"></span>`:'');};
+    (ims.length?`<div class="row imrow"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label>${ims.length>1?`<label>並べ方<select data-f="iarr"><option value="row" ${it.iarr!=='fan'?'selected':''}>横に並べる</option><option value="fan" ${it.iarr==='fan'?'selected':''}>少し重ねる</option></select></label><label title="空欄＝自動（箱に入るだけ並べる）。数を入れると、その枚数だけ並べて残りを「+N！」にします">並べる枚数<input type="number" min="1" max="${mx}" data-f="nv" value="${+it.nv||''}" placeholder="自動"></label>`:''}</div><span class="isn" data-id="${it.id}"></span>`:'')+omHtml(it);};
+// おまけの欄：名前と表紙（どちらか片方でよい）
+const omHtml=it=>`<div class="cap">おまけ（セットの特典本など。表紙を入れると表紙を、入れなければ名前を、点線の枠で表紙の横に出します）</div>
+<div class="row omr"><label>おまけの名前<input data-f="om" value="${esc(it.om||'')}" placeholder="おまけ本"></label>
+<div class="ims">${it.omImg?`<div class="imc"><img src="${it.omImg}" alt=""><span class="nm" title="${esc(it.omName||'')}">${esc(it.omName||'')||'（名前なし）'}</span><span class="imb"><button type="button" data-a="omX" title="外す" aria-label="おまけの表紙を外す">✕</button></span></div>`:`<label class="fbtn imadd">おまけの表紙<input type="file" accept="image/*,.psd,.psb" data-f="omImg"></label>`}</div></div>`;
 const itemOf=el=>{const d=el.closest('details');return d&&S.items.find(i=>i.id===d.dataset.id);};
 list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.target);if(!f||!it)return;
-  if(f==='img'){const files=[...e.target.files];e.target.value='';if(!files.length)return;const a=imgsOf(it); // 選んだ画像を後ろに足す（4枚まで）
-    const mx=imgMax(it);for(const file of files){if(a.length>=mx){setErr('表紙画像は1点につき'+mx+'枚までです'+(mx<10?'（セットは10枚まで）':''));break;}
+  if(f==='img'){const files=[...e.target.files];e.target.value='';if(!files.length)return;const a=imgsOf(it); // 選んだ画像を後ろに足す（IMG_MAX 枚まで）
+    for(const file of files){if(a.length>=IMG_MAX){setErr('表紙画像は1点につき'+IMG_MAX+'枚までです');break;}
       try{a.push({img:await readImg(file),name:file.name});}catch(x){setErr(file.name+'：'+((x&&x.message)||'画像を読めませんでした'));}}
     setImgs(it,a);renderList();schedule();return;}
+  if(f==='omImg'){const file=e.target.files[0];e.target.value='';if(!file)return;
+    try{it.omImg=await readImg(file);it.omName=file.name;}catch(x){setErr(file.name+'：'+((x&&x.message)||'画像を読めませんでした'));}renderList();schedule();return;}
+  if(f==='nv'){const v=Math.round(+e.target.value);it.nv=v>0?Math.min(IMG_MAX,v):0;schedule();return;} // 並べる枚数（空欄・0＝自動）
   if(PCT[f]){const v=+e.target.value;if(v)it[f]=Math.max(PCT[f][0],Math.min(PCT[f][1],v));schedule();return;} // 表紙画像の大きさ・文字サイズ（％）
   it[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;
   const d=e.target.closest('details');
@@ -1448,6 +1481,8 @@ list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target)
   if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid(),more:(it.more||[]).map(m=>Object.assign({},m))}));
   if(a==='up'||a==='down'){const same=S.items.filter(x=>!S.design.group||kOf(S.design,x.kind).id===kOf(S.design,it.kind).id),k=same.indexOf(it),t=a==='up'?k-1:k+1; // 種別の中で入れ替え
     if(t>=0&&t<same.length){const o=same[t],io=S.items.indexOf(o);S.items[i]=o;S.items[io]=it;}}
+  if(a==='omX'){it.omImg='';it.omName='';}
+  if(a==='imAll'){if(imsAll.has(it.id))imsAll.delete(it.id);else imsAll.add(it.id);renderList();return;} // 表示だけの切り替え（元に戻すの対象外）
   if(a==='imX'||a==='imL'){const n=+e.target.dataset.n,m=imgsOf(it);if(a==='imX')m.splice(n,1);else if(n>0)m.splice(n-1,0,m.splice(n,1)[0]);setImgs(it,m);}
   renderList();schedule();});
 // ⋮⋮ のドラッグで並べ替え：種別の見出し → 種別の順番（デザインタブの種別の順）、頒布物 → その種別の中の順
@@ -1455,7 +1490,7 @@ list.addEventListener('click',e=>{if(e.target.closest('.dh'))e.preventDefault();
 dragSort(list,dh=>{const g=dh.closest('.igh');return g?{el:g.closest('.ig'),els:$$('.ig',list),isG:true}:{el:dh.closest('details'),els:$$('details.it',dh.closest('.ig'))};},
   (d,order)=>{if(d.isG){S.design.kinds=refill(S.design.kinds,k=>k.id,order.map(x=>x.dataset.kind));kindsChanged(true);}
     else{S.items=refill(S.items,i=>i.id,order.map(x=>x.dataset.id));renderList();schedule();}});
-const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:'',more:[],iarr:'row',cs:'',ex:''},o);
+const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:'',more:[],iarr:'row',cs:'',ex:'',nv:0,om:'',omImg:'',omName:''},o);
 $('#bAdd').addEventListener('click',()=>{const it=newItem(addKind());S.items.push(it);renderList(it.id);schedule();
   const d=$(`details[data-id="${it.id}"]`,list);d.scrollIntoView({block:'nearest'});$('[data-f=title]',d).focus();});
 /* PSD / PSB：ファイル末尾の「統合画像」を読む（レイヤーは見ない）。大きい画像は間引いて展開する */
@@ -1566,7 +1601,7 @@ $('#bSample').addEventListener('click',()=>reset(sample()));
 let armed=0;$('#bNew').addEventListener('click',e=>{if(!armed){armed=1;e.target.textContent='もう一度押すと全消去';setTimeout(()=>{armed=0;e.target.textContent='新規';},3000);return;}
   armed=0;e.target.textContent='新規';reset(blank());});
 
-const CSVH=['種別','タイトル','価格','仕様','説明','R18','完売','残りわずか','画像ファイル名','委託元','添え書き'];
+const CSVH=['種別','タイトル','価格','仕様','説明','R18','完売','残りわずか','画像ファイル名','委託元','添え書き','おまけ','おまけ画像'];
 function parseCSV(t){const rows=[];let row=[],cur='',q=false;t=t.replace(/^﻿/,'');
   for(let i=0;i<t.length;i++){const c=t[i];
     if(q){if(c==='"'){if(t[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=c;}
@@ -1581,12 +1616,12 @@ $('#fCsv').addEventListener('change',async e=>{const f=e.target.files[0];e.targe
   const added=[],kindOf=v=>{v=String(v||'').trim();const K=S.design.kinds;if(!v)return fbKind(S.design).id;
     let k=K.find(k=>k.id===v)||K.find(k=>kName(k)===v);
     if(!k){k={id:newKindId(),n:v,c:''};K.push(k);S.design.pg[k.id]=1;added.push(v);}return k.id;};
-  const byName={};S.items.forEach(i=>imgsOf(i).forEach(m=>{if(m.name)byName[m.name]=m.img;})); // 読み込み済みの画像はファイル名で使い回す
-  rows.forEach(r=>{const kd=kindOf(r[0]),mx=kd==='set'?IMG_MAX:4;S.items.push(newItem(Object.assign({kind:kd,title:r[1]||'',price:r[2]||'',spec:r[3]||'',desc:r[4]||'',r18:truthy(r[5]),sold:truthy(r[6]),few:truthy(r[7]),cs:r[9]||'',ex:r[10]||''},(()=>{const ns=String(r[8]||'').split('|').map(x=>x.trim()).filter(Boolean),o={imgName:ns[0]||'',img:byName[ns[0]]||''};o.more=ns.slice(1,mx).filter(x=>byName[x]).map(x=>({img:byName[x],name:x}));return o;})())));});
+  const byName={};S.items.forEach(i=>{imgsOf(i).forEach(m=>{if(m.name)byName[m.name]=m.img;});if(i.omName&&i.omImg)byName[i.omName]=i.omImg;}); // 読み込み済みの画像はファイル名で使い回す
+  rows.forEach(r=>{const kd=kindOf(r[0]),mx=IMG_MAX,on2=String(r[12]||'').trim();S.items.push(newItem(Object.assign({kind:kd,om:r[11]||'',omName:on2,omImg:byName[on2]||'',title:r[1]||'',price:r[2]||'',spec:r[3]||'',desc:r[4]||'',r18:truthy(r[5]),sold:truthy(r[6]),few:truthy(r[7]),cs:r[9]||'',ex:r[10]||''},(()=>{const ns=String(r[8]||'').split('|').map(x=>x.trim()).filter(Boolean),o={imgName:ns[0]||'',img:byName[ns[0]]||''};o.more=ns.slice(1,mx).filter(x=>byName[x]).map(x=>({img:byName[x],name:x}));return o;})())));});
   if(added.length){renderKinds();kindViews();setErr('CSVにあった種別を追加しました：'+added.join('、'));}
   renderList();schedule();});
 $('#bCsv').addEventListener('click',()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const rows=[CSVH].concat(S.items.map(i=>[kName(kOf(S.design,i.kind)),i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',[i.imgName].concat((i.more||[]).map(m=>m.name)).filter(Boolean).join('|'),i.cs||'',i.ex||'']));
+  const rows=[CSVH].concat(S.items.map(i=>[kName(kOf(S.design,i.kind)),i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',[i.imgName].concat((i.more||[]).map(m=>m.name)).filter(Boolean).join('|'),i.cs||'',i.ex||'',i.om||'',i.omName||'']));
   download(baseName()+'.csv','﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n'),'text/csv');});
 
 /* ---------- 書き出し ---------- */
