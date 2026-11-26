@@ -89,15 +89,13 @@ h2:first-child{margin-top:0}
 #layers .em{padding:14px;color:var(--sub)}
 #layers{position:relative}
 #layers .lr{padding-left:10px}
-#layers .dh{cursor:grab;color:#b3aba0;padding:0 2px;touch-action:none;user-select:none;-webkit-user-select:none;flex:none;font-size:14px;letter-spacing:-3px;line-height:1}
-#layers .drg{opacity:.45}
+#layers .dh{font-size:14px;padding:0 2px}
 #layers .ic{border:0;background:transparent;padding:2px;flex:none;color:#b3aba0;display:flex;border-radius:4px}
 #layers .ic:hover{background:#eef0f5;color:var(--ink)}
 #layers .ic.off,#layers .ic.on{color:var(--ink)}
 #layers .icg{display:flex;gap:0;flex:none}
 #layers .hd .ln,#layers .hd .kd,#layers .hd .sz{opacity:.4}
 #layers .hd .ln{text-decoration:line-through}
-#lyInd{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;pointer-events:none;z-index:2}
 #lyTool{align-items:center}#lyTool button{padding:3px 8px;font-size:12px}#lyTool button:disabled{opacity:.4;cursor:default}
 .lyw{font-size:11px;color:var(--sub);flex-basis:100%}
 /* 頒布物の一覧：種別ごとのまとまりと、並べ替えのつまみ */
@@ -105,9 +103,11 @@ h2:first-child{margin-top:0}
 .ig{margin-bottom:12px}
 .igh{display:flex;align-items:center;gap:8px;padding:2px 2px 6px;font-size:13px}
 .igh .sp{margin-left:auto}
-#list .dh{cursor:grab;color:#b3aba0;touch-action:none;user-select:none;-webkit-user-select:none;flex:none;font-size:15px;letter-spacing:-3px;line-height:1;padding:4px 6px 4px 0}
-#list .drg{opacity:.45}
-#liInd{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;pointer-events:none;z-index:2}
+#list .dh{font-size:15px;padding:4px 6px 4px 0}
+/* ドラッグで並べ替え（頒布物の一覧・レイヤー一覧で共通）：つまみ、ドラッグ中の行、落とす位置の線 */
+.dh{cursor:grab;color:#b3aba0;touch-action:none;user-select:none;-webkit-user-select:none;flex:none;letter-spacing:-3px;line-height:1}
+.drg{opacity:.45}
+.dropInd{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;pointer-events:none;z-index:2}
 label.bk{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}label.bk select{width:auto;flex:1;margin:0}.kd.k-set{background:var(--ac2)}
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -163,10 +163,6 @@ body.view #cv{touch-action:auto}
   #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
   #split:focus-visible{outline:none}
   nav button{font-size:13px}
-}
-/* 幅の狭いスマホ（iPhone SE・mini など）でもヘッダーを1行に収める */
-@media(max-width:400px){
-  header h1{font-size:12px}header{gap:3px;padding:6px 6px}header button,header .fbtn{padding:3px 5px}
   footer{flex-wrap:wrap;gap:4px 8px;padding:4px 8px}footer .pc,footer #stat{display:none}
   #hint{display:inline;color:var(--ac2);font-size:12px} /* 箱を選んでいないときの操作のヒント（スマホのみ） */
   /* プロパティパネルは画面下から出るシートにする（画面下のボタン列の上に重ねる。--fh＝画面下の高さ） */
@@ -177,6 +173,12 @@ body.view #cv{touch-action:auto}
   #props input[type=color]{height:32px!important}
   #props .lg,#props .lf{display:none}
   #props .pb{flex-direction:row;margin-top:8px}#props .pb button{flex:1;padding:7px 2px;font-size:12px}
+}
+/* タブレットの幅ではヘッダーの補足（入力 → 自動レイアウト → …）を省いて1行に収める */
+@media(max-width:1023px){header h1 small{display:none}}
+/* 幅の狭いスマホ（iPhone SE・mini など）でもヘッダーを1行に収める */
+@media(max-width:400px){
+  header h1{font-size:12px}header{gap:3px;padding:6px 6px}header button,header .fbtn{padding:3px 5px}
 }
 </style>
 </head>
@@ -726,7 +728,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -752,18 +754,14 @@ function norm(j){const b=blank();
   {const ts=mkTs(),o=(j.design&&j.design.ts)||{},tc=j.design&&j.design.tc;CATS.forEach(c=>Object.assign(ts[c[0]],o[c[0]]));
     if(tc&&tc.on){ts.title.c=ts.desc.c=tc.title;ts.price.c=tc.price;ts.spec.c=tc.sub;} // 旧「文字色を上書き」の設定を引き継ぐ
     s.design.ts=ts;}
-  s.design.box=Object.assign(blank().design.box,j.design&&j.design.box);
-  s.design.bg=Object.assign(blank().design.bg,j.design&&j.design.bg);
+  {const D0=blank().design,jd=j.design||{};['box','bg','fs','pg'].forEach(k=>{s.design[k]=Object.assign(D0[k],jd[k]);});} // 入れ子の設定は既定値に上書きして欠けを補う
   // 箱の透過素材は design.bframe。design.frame は「ヘッダー下ライン」のオン・オフ（以前の版で同じ名前を使ってしまっていたので形を整える）
   {const jd=j.design||{},old=jd.frame&&typeof jd.frame==='object'?jd.frame:null;
     s.design.bframe=Object.assign(blank().design.bframe,old,jd.bframe&&typeof jd.bframe==='object'?jd.bframe:null);
     s.design.frame=old?true:typeof jd.frame==='boolean'?jd.frame:true;}
   if(!BSID.has(s.design.bs))s.design.bs='std';
-  s.design.fs=Object.assign(blank().design.fs,j.design&&j.design.fs);
   {const o=(j.design&&j.design.fs)||{};if(o.sub!=null){if(o.spec==null)s.design.fs.spec=o.sub;if(o.desc==null)s.design.fs.desc=o.sub;}delete s.design.fs.sub;} // 旧「仕様・説明」を仕様と説明の両方に引き継ぐ
-  s.design.tc=Object.assign(blank().design.tc,j.design&&j.design.tc);
-  s.design.tc.on=false;
-  s.design.pg=Object.assign(blank().design.pg,j.design&&j.design.pg);
+  delete s.design.tc; // 旧「文字色を上書き」は上で文字タブへ引き継ぎ済み
   // 種別：形を整える（保存データに無ければ初期の6種類）。各種別にページの設定を用意し、一覧に無い種別の頒布物は「既刊」へ
   {const seen=new Set(),src=Array.isArray(j.design&&j.design.kinds)?j.design.kinds:[];
     s.design.kinds=src.filter(k=>k&&/^[\w-]+$/.test(String(k.id))&&!seen.has(String(k.id))&&seen.add(String(k.id)))
@@ -803,8 +801,7 @@ function build(S,M,page){
   const d=S.design,I=S.info,P=PAPERS[d.paper],W=P.w,H=P.h,T=getTheme(d),u=Math.min(W,H)/210,ops=[];let warn='';
   const items=S.items.filter(i=>pageOf(i,d)===(page||1));
   // 文字サイズ倍率（%）と文字色の上書き
-  const pc=v=>Math.max(.3,Math.min(3,(+v||100)/100)),fs0=d.fs||{},FS={title:pc(fs0.title),price:pc(fs0.price),spec:pc(fs0.spec!=null?fs0.spec:fs0.sub),desc:pc(fs0.desc!=null?fs0.desc:fs0.sub),circle:pc(fs0.circle),sec:pc(fs0.sec)};
-  const tcOn=d.tc&&d.tc.on,inkC=tcOn?d.tc.title:T.ink,subC=tcOn?d.tc.sub:T.sub,priceC=tcOn?d.tc.price:T.accent;
+  const pc=v=>Math.max(.3,Math.min(3,(+v||100)/100)),fs0=d.fs||{},FS={title:pc(fs0.title),price:pc(fs0.price),spec:pc(fs0.spec),desc:pc(fs0.desc),circle:pc(fs0.circle),sec:pc(fs0.sec)};
   // 手動配置：ドラッグで動かした箱は自動位置の代わりに保存した位置・大きさを使う
   const F=d.free||{},hits=[];
   const place=(key,x,y,w,h,rs)=>{const f=F[key],r=f?{x:f.x,y:f.y,w:rs?f.w:w,h:rs?f.h:h}:{x,y,w,h};hits.push({key,x:r.x,y:r.y,w:r.w,h:r.h,rs,ax:x,ay:y,aw:w,ah:h});return r;}; // ax〜ah：自動配置のときの位置と大きさ（「位置だけ戻す」で使う）
@@ -826,9 +823,9 @@ function build(S,M,page){
 
   const m=8*u,hH=Math.min(36*u,H*.22);
   // 背景画像（任意）：用紙全体に敷き、帯と箱の濃さを下げると透けて見える
-  const B0=d.bg||{},bgOn=!!B0.img,al=v=>v===''||v==null||isNaN(+v)?1:Math.max(0,Math.min(1,+v/100)),bandA=bgOn?al(B0.band):1,cardA=bgOn?al(B0.card):1;
+  const B0=d.bg||{},bgOn=!!B0.img,bandA=bgOn?alp(B0.band):1,cardA=bgOn?alp(B0.card):1;
   R(0,0,W,H,T.bg,{L:0,g:'背景色'});
-  if(bgOn)ops.push({t:'img',x:0,y:0,w:W,h:H,id:'bg',name:B0.name||'',fit:'cover',a:al(B0.alpha),L:0,g:'背景画像'});
+  if(bgOn)ops.push({t:'img',x:0,y:0,w:W,h:H,id:'bg',name:B0.name||'',fit:'cover',a:alp(B0.alpha),L:0,g:'背景画像'});
   R(0,0,W,hH,T.band,{L:0,a:bandA,g:'ヘッダー帯'});
   const fr=d.frame?1.2*u:0;if(fr)R(0,hH,W,fr,T.accent,{L:0,g:'ヘッダー下ライン'});
   // ヘッダー
@@ -903,7 +900,7 @@ function build(S,M,page){
     if(st==='dash'){const rad=2.5*u;box(rad,null,0);R(x,y,w,h,null,{r:rad,stroke:isNew?kc:T.sub,sw:(isNew?.6:.4)*u,dash:[1.6*u,1.1*u],g:G});return{r:rad,ins};}
     if(st==='frame'){const Fr=d.bframe,cm=Math.max(.5,+Fr.cm||5)*u;
       if(Fr.fill)box(0,null,0);
-      put({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:al(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
+      put({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,a:alp(Fr.a),L:1,g:G}); // a：素材の濃さ（Illustrator では不透明度）
       ins.fill(Math.min(cm*.3,Math.min(w,h)*.08));return{r:0,ins};} // 枠の飾りに文字が重なりにくいよう、少しだけ内側へ
     const rad=2.5*u;box(rad,lc,lw);return{r:rad,ins};} // 標準
   function card(x,y,w,h,it){BK=it.id;
@@ -932,7 +929,7 @@ function build(S,M,page){
     if(it.few&&!it.sold)badge('残りわずか','#f08a00');
     cy+=bh2+1.6*u*k;
     // 文字の大きさ＝基準 × 文字タブの種類ごとの％ × 箱の「字」（その箱の文字全体）× 箱の要素ごとの％（fsT/fsP/fsS/fsD）
-    const ifs=pc(it.fs),tcol=it.tcol||inkC;
+    const ifs=pc(it.fs),tcol=it.tcol||T.ink;
     const ps=9.5*u*k*FS.price*ifs*pc(it.fsP),pstr=priceStr(it.price,d),limit=ty+th-(pstr&&!wide?ps*1.05:0);
     const txw=wide&&pstr?tw-M(pstr,ps,1)-3*u:tw; // 横長カードは価格を右に並べる
     const ts=6.2*u*k*FS.title*ifs*pc(it.fsT);
@@ -940,10 +937,10 @@ function build(S,M,page){
     wrap(tt,txw,ts,2,1).forEach(l=>{X(l,tx,cy+ts*.88,ts,tcol,{cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm});cy+=ts*1.24;});
     cy+=.6*u*k;
     const ss=3.5*u*k*FS.spec*ifs*pc(it.fsS);
-    if(it.spec&&cy+ss<=limit+.1){X(it.spec,tx,cy+ss*.9,fit(it.spec,txw,ss,0),it.tcol?tcol:subC,{b:0,cat:'spec',keep:!!it.tcol,ia,g:'仕様：'+nm});cy+=ss*1.55;}
+    if(it.spec&&cy+ss<=limit+.1){X(it.spec,tx,cy+ss*.9,fit(it.spec,txw,ss,0),it.tcol?tcol:T.sub,{b:0,cat:'spec',keep:!!it.tcol,ia,g:'仕様：'+nm});cy+=ss*1.55;}
     if(d.showDesc&&it.desc){const ds=3.3*u*k*FS.desc*ifs*pc(it.fsD),lh=ds*1.45;
       wrap(it.desc,txw,ds,Math.floor((limit-cy)/lh),0).forEach(l=>{X(l,tx,cy+ds*.92,ds,tcol,{b:0,cat:'desc',keep:!!it.tcol,ia,g:'説明：'+nm});cy+=lh;});}
-    if(pstr){const s2=fit(pstr,tw,ps,1);X(pstr,tx+tw,ty+th-s2*.1,s2,priceC,{al:'r',cat:'price',ia,g:'価格：'+nm});}
+    if(pstr){const s2=fit(pstr,tw,ps,1);X(pstr,tx+tw,ty+th-s2*.1,s2,T.accent,{al:'r',cat:'price',ia,g:'価格：'+nm});}
     if(it.sold){R(x,y,w,h,'#000000',{r:r.r,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(w/3.2,h/2.6,22*u);X('完売',x+w/2,mid(y,h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
     BK=null;}
   // 自由テキスト：好きな場所に置ける文字（位置はドラッグで決める）
@@ -1075,15 +1072,17 @@ $('#themes').innerHTML=Object.keys(THEMES).map(k=>{const t=THEMES[k];
   return `<button type="button" data-th="${k}"><i style="background:linear-gradient(90deg,${t.band} 0 45%,${t.bg} 45% 75%,${t.accent} 75%)"></i><span>${t.n}</span></button>`;}).join('');
 $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.design.theme=b.dataset.th;
   if(!S.design.override){S.design.band=THEMES[b.dataset.th].band;S.design.accent=THEMES[b.dataset.th].accent;}
-  if(!S.design.box.on){S.design.box.fill=THEMES[b.dataset.th].card;S.design.box.line=THEMES[b.dataset.th].line;}
-  if(!S.design.tc.on){const t=THEMES[b.dataset.th];S.design.tc.title=t.ink;S.design.tc.price=t.accent;S.design.tc.sub=t.sub;}fillForm();schedule();});
+  if(!S.design.box.on){S.design.box.fill=THEMES[b.dataset.th].card;S.design.box.line=THEMES[b.dataset.th].line;}fillForm();schedule();});
 $$('nav button').forEach(b=>b.addEventListener('click',()=>{$$('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
   $$('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));if(b.dataset.t==='t6')renderLayers(true);}));
 /* ---------- 箱の手動配置（ドラッグ / リサイズ / キー操作） ---------- */
 const toMM=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/lastSc,y:(e.clientY-r.top)/lastSc};};
 // 非表示・ロックの箱は画面では選べない（その下の箱を選べる）。重なっているときは選択中の箱、次に前面（z の大きい）箱を優先
 const pickable=h=>!h.hid&&!h.lock;
-const hitAt=p=>{const inb=h=>p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h,cur=sel&&lastB.hits.find(h=>h.key===sel);if(cur&&pickable(cur)&&inb(cur))return cur;
+// 箱（頒布物・見出し・自由テキスト）を消したときに、その箱の手動配置・非表示・ロック・選択を片付ける
+const forgetBox=key=>{['free','hid','lock'].forEach(f=>{delete S.design[f][key];});if(sel===key)sel=null;};
+const selHit=()=>sel&&lastB?lastB.hits.find(h=>h.key===sel):null; // 選択中の箱（表示中のページになければ null）
+const hitAt=p=>{const inb=h=>p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h,cur=selHit();if(cur&&pickable(cur)&&inb(cur))return cur;
   let best=null;for(const h of lastB.hits)if(pickable(h)&&inb(h)&&(!best||(h.z||0)>(best.z||0)))best=h;return best;};
 // つかんだ位置から伸縮方向を決める（n/s/e/w とその組み合わせ。内側は移動）
 const dirAt=(h,p)=>{if(!h.rs)return'';const hs=Math.min(Math.max(2.5,9/lastSc),h.w/4,h.h/4);
@@ -1123,7 +1122,7 @@ const endDrag=()=>{drag=null;guides=[];schedule();};cv.addEventListener('pointer
 $('#stage').addEventListener('click',e=>{const st=e.currentTarget;if(e.target!==st||!sel)return;
   if(e.offsetX>=st.clientWidth||e.offsetY>=st.clientHeight)return;sel=null;schedule();});
 cv.addEventListener('dblclick',e=>{if(UI.view)return;const h=hitAt(toMM(e));if(h){delete S.design.free[h.key];schedule();}});
-cv.addEventListener('keydown',e=>{if(UI.view)return;const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h)return;
+cv.addEventListener('keydown',e=>{if(UI.view)return;const h=selHit();if(!h)return;
   if(e.key==='Escape'){sel=null;e.preventDefault();schedule();return;} // Esc は選択を外すだけ（以前は手動配置を消していた）
   if(h.lock)return; // ロック中は動かさない
   if(e.key==='Delete'||e.key==='Backspace'){delete S.design.free[sel];e.preventDefault();schedule();return;}
@@ -1131,7 +1130,7 @@ cv.addEventListener('keydown',e=>{if(UI.view)return;const h=sel&&lastB&&lastB.hi
   const n=(e.ctrlKey||e.metaKey)?.5:1,f={x:h.x,y:h.y,w:h.w,h:h.h};
   if(e.shiftKey&&h.rs){f.w=Math.max(15,f.w+mv[0]*n);f.h=Math.max(8,f.h+mv[1]*n);}else{f.x+=mv[0]*n;f.y+=mv[1]*n;}
   S.design.free[sel]=f;schedule();});
-$('#al').addEventListener('click',e=>{const a=e.target.dataset.al,h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!a||!h||h.lock)return;
+$('#al').addEventListener('click',e=>{const a=e.target.dataset.al,h=selHit();if(!a||!h||h.lock)return;
   const m=pageM(lastB),f={x:h.x,y:h.y,w:h.w,h:h.h};
   if(a==='l')f.x=m;if(a==='c')f.x=(lastB.W-f.w)/2;if(a==='r')f.x=lastB.W-m-f.w;
   if(a==='w'&&h.rs){f.x=m;f.w=lastB.W-2*m;}
@@ -1147,7 +1146,7 @@ function updProps(h){props.hidden=MOB.matches?!h:!S.design.showProps;if(props.hi
   const it=h&&S.items.find(i=>i.id===h.key);
   $('#pName').textContent=!h?'箱を選択してください':it?kName(kOf(S.design,it.kind))+'：'+(it.title||'（無題）'):h.key.startsWith('t:')?'文字：'+String((S.texts.find(t=>'t:'+t.id===h.key)||{}).s||'').split('\n')[0]:'見出し：'+kName(kOf(S.design,h.key.slice(4)));
   $('#pMode').textContent=!h?'':(h.hid?'非表示・':'')+(h.lock?'ロック中・':'')+(S.design.free[h.key]?'手動配置':'自動配置');
-  const th=getTheme(S.design),ink=S.design.tc.on?S.design.tc.title:th.ink,fi=$('[data-i=fs]',props),ci=$('[data-i=tcol]',props),ai=$('[data-i=ta]',props);
+  const th=getTheme(S.design),ink=th.ink,fi=$('[data-i=fs]',props),ci=$('[data-i=tcol]',props),ai=$('[data-i=ta]',props);
   {const bi=$('[data-i=bcol]',props);bi.disabled=!it;bi.value=it&&it.bcol||th.card;}
   {const ii=$('[data-i=is]',props);ii.disabled=!it||!it.img;if(document.activeElement!==ii)ii.value=it&&it.img?(+it.is||100):'';
     const n=$('#pIsN'),t=capMsg(h);n.hidden=!t;n.textContent=t;}
@@ -1157,7 +1156,7 @@ function updProps(h){props.hidden=MOB.matches?!h:!S.design.showProps;if(props.hi
   $('#pTxt').disabled=!it||(!it.tcol&&!it.bcol&&(it.ta==null||+it.ta===100)&&['fs','is'].concat(FE).every(f=>(+it[f]||100)===100));
   $$('input[data-p]',props).forEach(i=>{const k=i.dataset.p;i.disabled=!h||h.lock||(!h.rs&&(k==='w'||k==='h'));if(document.activeElement!==i)i.value=h?Math.round(h[k]*10)/10:'';});
   $('#pReset').disabled=$('#pPos').disabled=!h||h.lock||!S.design.free[h.key];}
-props.addEventListener('change',e=>{const k=e.target.dataset.p,h=sel&&lastB&&lastB.hits.find(x=>x.key===sel),v=parseFloat(e.target.value);
+props.addEventListener('change',e=>{const k=e.target.dataset.p,h=selHit(),v=parseFloat(e.target.value);
   if(!k||!h||h.lock||isNaN(v))return;const f={x:h.x,y:h.y,w:h.w,h:h.h};f[k]=k==='w'?Math.max(15,v):k==='h'?Math.max(8,v):v;S.design.free[sel]=f;schedule();});
 props.addEventListener('input',e=>{const k=e.target.dataset.i,it=sel&&S.items.find(i=>i.id===sel);if(!k||!it)return;
   if(PCT[k]){const v=+e.target.value;if(!v)return;it[k]=Math.max(PCT[k][0],Math.min(PCT[k][1],v));syncF(it,k);}
@@ -1180,12 +1179,12 @@ $('#pReset').addEventListener('click',()=>{if(sel&&!(S.design.lock||{})[sel]){de
 $('#bFree').addEventListener('click',()=>{const L=S.design.lock||{},nf={};Object.keys(S.design.free).forEach(k=>{if(L[k])nf[k]=S.design.free[k];});S.design.free=nf;sel=null;schedule();}); // ロックした箱はそのまま
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
 // 2枚構成：種別ごとに載せるページ（種別の一覧から作る）
-function renderPgmap(){if(typeof renderBsKinds==='function'&&$('#selBs').options.length){renderBsKinds();renderBulkKind();}const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
-renderPgmap();
+// 種別の一覧から作る選択欄をまとめて作り直す（ページ分け・種別ごとの箱のデザイン・追加するときの種別）
+function kindViews(){renderPgmap();renderBsKinds();renderBulkKind();}
+function renderPgmap(){const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
 // 箱のデザイン：全体の選択肢と、種別ごとの上書き（種別の id で持つので、並べ替えても崩れない）
 $('#selBs').innerHTML=BOX_STYLES.map(b=>`<option value="${b[0]}">${b[1]}</option>`).join('');
 function renderBsKinds(){$('#bsKinds').innerHTML=S.design.kinds.map(k=>`<label>${esc(kName(k))}<select data-bk="${k.id}"><option value="">全体と同じ</option>${BOX_STYLES.map(b=>`<option value="${b[0]}" ${k.bs===b[0]?'selected':''}>${b[1]}</option>`).join('')}</select></label>`).join('');}
-renderBsKinds();
 $('#bsKinds').addEventListener('change',e=>{const k=S.design.kinds.find(x=>x.id===e.target.dataset.bk);if(!k)return;k.bs=e.target.value;schedule();});
 $('#fFrame').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{S.design.bframe.img=await readImg(f);S.design.bframe.name=f.name;if(S.design.bs!=='frame'&&!S.design.kinds.some(k=>k.bs==='frame'))S.design.bs='frame';}
@@ -1225,7 +1224,7 @@ applyUI();applyPMin();
 
 /* ---------- 箱の位置だけ戻す ---------- */
 // 大きさはそのままで、位置だけ自動配置の場所（左上）に戻す。大きさも自動のままなら、手動配置そのものを外す
-function resetPos(){const h=sel&&lastB&&lastB.hits.find(x=>x.key===sel);if(!h||h.lock||!S.design.free[h.key])return;
+function resetPos(){const h=selHit();if(!h||h.lock||!S.design.free[h.key])return;
   if(!h.rs||(Math.abs(h.w-h.aw)<.05&&Math.abs(h.h-h.ah)<.05))delete S.design.free[h.key];
   else S.design.free[h.key]={x:h.ax,y:h.ay,w:h.w,h:h.h};schedule();}
 $('#pPos').addEventListener('click',resetPos);$('#bPos').addEventListener('click',resetPos);
@@ -1252,17 +1251,40 @@ document.addEventListener('pointerdown',()=>{curKey=null;},true);
 cv.addEventListener('keydown',e=>{curKey=/^Arrow/.test(e.key)?'key:'+sel:null;},true);
 // 入力中の欄があれば先に確定させる（作り直しで欄が消えるときに出る change を、新しい操作として記録しないため）。プレビューやボタンのフォーカスはそのまま
 const blurField=()=>{const ae=document.activeElement;if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))ae.blur();};
-function restore(snap){blurField();
+function restore(snap){
   restoring=true;try{restoreNow(snap);}finally{restoring=false;}}
 function restoreNow(snap){S=clone(snap);drag=null;guides=[];
   if(sel&&!S.items.some(i=>i.id===sel)&&!S.texts.some(t=>'t:'+t.id===sel)&&!sel.startsWith('sec:'))sel=null;
-  renderKinds();renderPgmap();fillForm();renderList();renderTexts();
+  renderKinds();kindViews();fillForm();renderList();renderTexts();
   base=snap;baseSig=sigOf(S);lastKey=curKey=null;updHist();schedule();}
 function undo(){if(drag)return;blurField();checkpoint();if(!undoS.length)return;redoS.push(base);restore(undoS.pop());}
 function redo(){if(drag)return;blurField();checkpoint();if(!redoS.length)return;undoS.push(base);restore(redoS.pop());}
 $('#bUndo').addEventListener('click',undo);$('#bRedo').addEventListener('click',redo);
 document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey||document.querySelector('dialog[open]'))return;const k=e.key.toLowerCase();
   if(k==='z'&&!e.shiftKey){e.preventDefault();undo();}else if(k==='y'||(k==='z'&&e.shiftKey)){e.preventDefault();redo();}});
+
+/* ---------- ドラッグで並べ替え（頒布物の一覧・レイヤー一覧で共通） ---------- */
+// root の中の ⋮⋮（.dh）をつかんで動かす。指でも使え、一覧の端に近づくと自動でスクロールする。
+// start(つまみ) → {el:動かす要素, els:並べ替える要素の並び（el を含む）, block:要素の範囲（省略時は要素そのもの）, …}
+// 離したときに順が変わっていれば drop(start の戻り値, 並べ替えた後の要素の並び) を呼ぶ。戻り値は「ドラッグ中か」を返す関数
+function dragSort(root,start,drop){let D=null;const rect=el=>el.getBoundingClientRect();
+  root.addEventListener('pointerdown',e=>{const dh=e.target.closest('.dh');if(!dh)return;e.preventDefault();
+    const s=start(dh);if(!s||s.els.length<2)return;
+    dh.setPointerCapture(e.pointerId);s.el.classList.add('drg');D=Object.assign(s,{dh,block:s.block||rect,to:s.els.indexOf(s.el),moved:false});});
+  root.addEventListener('pointermove',e=>{if(!D)return;D.moved=true;const y=e.clientY,box=root.getBoundingClientRect(),ind=$('.dropInd',root);
+    const sc=root.closest('.tab'),sr=sc.getBoundingClientRect();if(y<sr.top+36)sc.scrollTop-=10;else if(y>sr.bottom-36)sc.scrollTop+=10;
+    const others=D.els.filter(x=>x!==D.el);let to=others.length;
+    for(let i=0;i<others.length;i++){const b=D.block(others[i]);if(y<(b.top+b.bottom)/2){to=i;break;}}
+    D.to=to;const ref=to<others.length?D.block(others[to]).top-3:D.block(others[others.length-1]).bottom+1;
+    ind.hidden=false;ind.style.top=(ref-box.top)+'px';});
+  const end=e=>{const d=D;if(!d)return;D=null;d.el.classList.remove('drg');const ind=$('.dropInd',root);if(ind)ind.hidden=true;
+    try{d.dh.releasePointerCapture(e.pointerId);}catch(x){}
+    if(!d.moved||e.type==='pointercancel')return;
+    const order=d.els.filter(x=>x!==d.el);order.splice(d.to,0,d.el);if(order.indexOf(d.el)!==d.els.indexOf(d.el))drop(d,order);};
+  root.addEventListener('pointerup',end);root.addEventListener('pointercancel',end);
+  return()=>!!D;}
+// 並べ替えた分だけを、もとの場所（枠）に入れ直す（並べ替えに入っていないものの位置は変えない）
+const refill=(arr,key,order)=>{const set=new Set(order),by={};arr.forEach(x=>{by[key(x)]=x;});let j=0;return arr.map(x=>set.has(key(x))?by[order[j++]]:x);};
 
 /* ---------- 頒布物リスト ---------- */
 const list=$('#list');
@@ -1274,11 +1296,11 @@ const kindOpts=cur=>S.design.kinds.map(k=>`<option value="${k.id}" ${k.id===cur?
 function listGroups(){const d=S.design;if(!d.group)return[{K:null,its:S.items.slice()}];
   return d.kinds.map(K=>({K,its:S.items.filter(i=>kOf(d,i.kind).id===K.id)})).filter(g=>g.its.length);}
 function renderList(openId){
-  const open=new Set($$('details[open]',list).map(d=>d.dataset.id));if(openId)open.add(openId);renderList.open=open;
+  const open=new Set($$('details[open]',list).map(d=>d.dataset.id));if(openId)open.add(openId);
   const gs=listGroups();
   list.innerHTML=gs.map(g=>`<section class="ig" data-kind="${g.K?esc(g.K.id):''}">`+(g.K?`<div class="igh"><span class="dh" title="ドラッグで種別の順番を変更" aria-hidden="true">⋮⋮</span><span class="kd k-${g.K.id}" style="${chipCss(g.K.id)}">${esc(kName(g.K))}</span><span class="sp">${g.its.length}点</span></div>`:'')+
-    g.its.map(itemHtml).join('')+'</section>').join('')+'<div id="liInd" hidden></div>';}
-const itemHtml=it=>`<details class="it" data-id="${it.id}" ${renderList.open&&renderList.open.has(it.id)?'open':''}>
+    g.its.map(it=>itemHtml(it,open.has(it.id))).join('')+'</section>').join('')+'<div class="dropInd" hidden></div>';}
+const itemHtml=(it,isOpen)=>`<details class="it" data-id="${it.id}" ${isOpen?'open':''}>
 <summary><span class="dh" title="ドラッグで並べ替え" aria-hidden="true">⋮⋮</span><span class="kd k-${kOf(S.design,it.kind).id}" style="${chipCss(it.kind)}">${esc(kName(kOf(S.design,it.kind)))}</span><b class="st">${esc(String(it.title||'').trim())||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
 <div class="body">
 <div class="row"><label>種別<select data-f="kind">${kindOpts(kOf(S.design,it.kind).id)}</select></label>
@@ -1310,33 +1332,17 @@ list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.t
   schedule();});
 list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target);if(!a||!it)return;
   const i=S.items.indexOf(it);
-  if(a==='del'){S.items.splice(i,1);['free','hid','lock'].forEach(f=>{delete S.design[f][it.id];});if(sel===it.id)sel=null;}
+  if(a==='del'){S.items.splice(i,1);forgetBox(it.id);}
   if(a==='dup')S.items.splice(i+1,0,Object.assign({},it,{id:uid()}));
   if(a==='up'||a==='down'){const same=S.items.filter(x=>!S.design.group||kOf(S.design,x.kind).id===kOf(S.design,it.kind).id),k=same.indexOf(it),t=a==='up'?k-1:k+1; // 種別の中で入れ替え
     if(t>=0&&t<same.length){const o=same[t],io=S.items.indexOf(o);S.items[i]=o;S.items[io]=it;}}
   if(a==='noimg'){it.img='';it.imgName='';}
   renderList();schedule();});
-// ⋮⋮ をドラッグして並べ替え：種別の見出し → 種別の順番（デザインタブの種別の順）、頒布物 → その種別の中の順。指でも使える
-let liDrag=null;
+// ⋮⋮ のドラッグで並べ替え：種別の見出し → 種別の順番（デザインタブの種別の順）、頒布物 → その種別の中の順
 list.addEventListener('click',e=>{if(e.target.closest('.dh'))e.preventDefault();},true); // つまみを押しても開閉しない
-list.addEventListener('pointerdown',e=>{const dh=e.target.closest('.dh');if(!dh)return;e.preventDefault();
-  const isG=!!dh.closest('.igh'),el=isG?dh.closest('.ig'):dh.closest('details'),els=isG?$$('.ig',list):$$('details.it',el.parentElement);if(els.length<2)return;
-  dh.setPointerCapture(e.pointerId);el.classList.add('drg');liDrag={isG,el,els,to:els.indexOf(el),dh,moved:false};});
-list.addEventListener('pointermove',e=>{const D=liDrag;if(!D)return;D.moved=true;const y=e.clientY,box=list.getBoundingClientRect(),ind=$('#liInd');
-  const sc=list.closest('.tab'),sr=sc.getBoundingClientRect();if(y<sr.top+36)sc.scrollTop-=10;else if(y>sr.bottom-36)sc.scrollTop+=10; // 端に近づいたら自動でスクロール
-  const others=D.els.filter(x=>x!==D.el);let to=others.length;
-  for(let i=0;i<others.length;i++){const r=others[i].getBoundingClientRect();if(y<(r.top+r.bottom)/2){to=i;break;}}
-  D.to=to;const ref=to<others.length?others[to].getBoundingClientRect().top-(D.isG?6:4):others[others.length-1].getBoundingClientRect().bottom+(D.isG?2:2);
-  ind.hidden=false;ind.style.top=(ref-box.top)+'px';});
-const liEnd=e=>{const D=liDrag;if(!D)return;liDrag=null;D.el.classList.remove('drg');$('#liInd').hidden=true;try{D.dh.releasePointerCapture(e.pointerId);}catch(x){}
-  if(!D.moved||e.type==='pointercancel')return;
-  const ids=D.els.map(x=>D.isG?x.dataset.kind:x.dataset.id),mine=D.isG?D.el.dataset.kind:D.el.dataset.id,from=ids.indexOf(mine);ids.splice(from,1);ids.splice(D.to,0,mine);
-  if(ids.indexOf(mine)===from)return;
-  // 並べ替えた分だけを、もとの場所（枠）に入れ直す（一覧にない種別・ほかの種別の頒布物の位置は変えない）
-  const refill=(arr,key,order)=>{const set=new Set(order),by={};arr.forEach(x=>{by[key(x)]=x;});let j=0;return arr.map(x=>set.has(key(x))?by[order[j++]]:x);};
-  if(D.isG){S.design.kinds=refill(S.design.kinds,k=>k.id,ids);kindsChanged(true);}
-  else{S.items=refill(S.items,i=>i.id,ids);renderList();schedule();}};
-list.addEventListener('pointerup',liEnd);list.addEventListener('pointercancel',liEnd);
+dragSort(list,dh=>{const g=dh.closest('.igh');return g?{el:g.closest('.ig'),els:$$('.ig',list),isG:true}:{el:dh.closest('details'),els:$$('details.it',dh.closest('.ig'))};},
+  (d,order)=>{if(d.isG){S.design.kinds=refill(S.design.kinds,k=>k.id,order.map(x=>x.dataset.kind));kindsChanged(true);}
+    else{S.items=refill(S.items,i=>i.id,order.map(x=>x.dataset.id));renderList();schedule();}});
 const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:''},o);
 $('#bAdd').addEventListener('click',()=>{const it=newItem(addKind());S.items.push(it);renderList(it.id);schedule();
   const d=$(`details[data-id="${it.id}"]`,list);d.scrollIntoView({block:'nearest'});$('[data-f=title]',d).focus();});
@@ -1386,7 +1392,6 @@ let bulkKind='';
 const addKind=()=>S.design.kinds.some(k=>k.id===bulkKind)?{kind:bulkKind}:{};
 function renderBulkKind(){const K=S.design.kinds,el=$('#selBulkKind');if(!K.some(k=>k.id===bulkKind))bulkKind=K.some(k=>k.id==='new')?'new':K[0].id;
   el.innerHTML=kindOpts(bulkKind);el.value=bulkKind;}
-renderBulkKind();
 $('#selBulkKind').addEventListener('change',e=>{bulkKind=e.target.value;});
 $('#fBulk').addEventListener('change',async e=>{const ak=addKind();
   for(const f of e.target.files){try{S.items.push(newItem(Object.assign({title:f.name.replace(/\.[^.]+$/,''),img:await readImg(f),imgName:f.name},ak)));}catch(x){setErr(f.name+'：'+((x&&x.message)||'読めませんでした'));}}
@@ -1407,12 +1412,12 @@ function renderKinds(){const d=S.design,T=getTheme(d),n=d.kinds.length;
 <button type="button" data-ka="del" ${n>1?'':'disabled'}>削除</button></div>`).join('');
   $('#bKindBack').hidden=DEF_KINDS.every(([id])=>d.kinds.some(k=>k.id===id));nkLabel();}
 // 種別が変わったら、頒布物タブ・ページ分け・プレビューにも反映する（追加・削除・並べ替えは作り直し、名前・色は書き換えだけ）
-function kindsChanged(rebuild){renderBsKinds();renderBulkKind();
+function kindsChanged(rebuild){
   if(rebuild){renderKinds();renderList();}
   else{$$('.ig[data-kind]',list).forEach(g=>{const c=$('.igh .kd',g);if(c&&g.dataset.kind)paintChip(c,g.dataset.kind);}); // まとまりの見出しの札
     $$('details.it',list).forEach(dt=>{const it=S.items.find(i=>i.id===dt.dataset.id);if(it)paintChip($('summary .kd',dt),it.kind);
       $$('select[data-f=kind] option',dt).forEach(o=>{o.textContent=kName(kOf(S.design,o.value));});});nkLabel();}
-  renderPgmap();schedule();}
+  kindViews();schedule();}
 kindsEl.addEventListener('input',e=>{const f=e.target.dataset.kf,r=e.target.closest('.kr'),k=r&&S.design.kinds.find(x=>x.id===r.dataset.id);if(!f||!k)return;
   if(f==='n')k.n=e.target.value;
   if(f==='c'){k.c=e.target.value;$('[data-ka=cx]',r).disabled=false;}
@@ -1425,7 +1430,7 @@ kindsEl.addEventListener('click',e=>{const a=e.target.dataset.ka,r=e.target.clos
     const rest=d.kinds.filter(x=>x!==k),to=rest.find(x=>x.id==='old')||rest[0],n=kCount(k.id); // 頒布物の移り先は「既刊」（無ければ先頭）
     if(n&&!confirm(`種別「${kName(k)}」を削除しますか？\nこの種別の頒布物 ${n} 点は「${kName(to)}」に移ります。`))return;
     d.kinds.splice(i,1);S.items.forEach(it=>{if(it.kind===k.id)it.kind=to.id;});
-    ['free','hid','lock'].forEach(f=>{delete d[f]['sec:'+k.id];});delete d.pg[k.id];if(sel==='sec:'+k.id)sel=null;}
+    forgetBox('sec:'+k.id);delete d.pg[k.id];}
   kindsChanged(true);});
 $('#bKindAdd').addEventListener('click',()=>{const d=S.design,k={id:newKindId(),n:'新しい種別',c:''};d.kinds.push(k);d.pg[k.id]=1;kindsChanged(true);
   const inp=$(`.kr[data-id="${k.id}"] [data-kf=n]`,kindsEl);inp.focus();inp.select();});
@@ -1441,7 +1446,7 @@ function download(name,data,type){const b=data instanceof Blob?data:new Blob([da
   a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
 const baseName=()=>'oshinagaki'+(S.info.event?'_'+S.info.event.replace(/[\\/:*?"<>|\s]+/g,''):'');
 const readText=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(f);});
-function reset(s){S=s;clearImgs();sel=null;renderKinds();renderPgmap();fillForm();list.innerHTML='';renderList();renderTexts();schedule();}
+function reset(s){S=s;clearImgs();sel=null;renderKinds();kindViews();fillForm();list.innerHTML='';renderList();renderTexts();schedule();}
 $('#bSave').addEventListener('click',()=>download(baseName()+'.json',JSON.stringify(S),'application/json'));
 $('#fOpen').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{reset(norm(JSON.parse(await readText(f))));}catch(x){setErr('プロジェクトファイルを読めませんでした');}});
@@ -1466,7 +1471,7 @@ $('#fCsv').addEventListener('change',async e=>{const f=e.target.files[0];e.targe
     if(!k){k={id:newKindId(),n:v,c:''};K.push(k);S.design.pg[k.id]=1;added.push(v);}return k.id;};
   const byName={};S.items.forEach(i=>{if(i.imgName&&i.img)byName[i.imgName]=i.img;});
   rows.forEach(r=>S.items.push(newItem({kind:kindOf(r[0]),title:r[1]||'',price:r[2]||'',spec:r[3]||'',desc:r[4]||'',r18:truthy(r[5]),sold:truthy(r[6]),few:truthy(r[7]),imgName:r[8]||'',img:byName[r[8]]||''})));
-  if(added.length){renderKinds();renderPgmap();setErr('CSVにあった種別を追加しました：'+added.join('、'));}
+  if(added.length){renderKinds();kindViews();setErr('CSVにあった種別を追加しました：'+added.join('、'));}
   renderList();schedule();});
 $('#bCsv').addEventListener('click',()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   const rows=[CSVH].concat(S.items.map(i=>[kName(kOf(S.design,i.kind)),i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',i.imgName]));
@@ -1505,7 +1510,7 @@ function renderTexts(){tlist.innerHTML=S.texts.map(t=>`<div class="it" data-id="
 const textOf=el=>{const d=el.closest('.it');return d&&S.texts.find(t=>t.id===d.dataset.id);};
 tlist.addEventListener('input',e=>{const f=e.target.dataset.f,t=textOf(e.target);if(!f||!t)return;t[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;schedule();});
 tlist.addEventListener('click',e=>{const a=e.target.dataset.a,t=textOf(e.target);if(!a||!t)return;
-  if(a==='del'){S.texts.splice(S.texts.indexOf(t),1);['free','hid','lock'].forEach(f=>{delete S.design[f]['t:'+t.id];});if(sel==='t:'+t.id)sel=null;renderTexts();}
+  if(a==='del'){S.texts.splice(S.texts.indexOf(t),1);forgetBox('t:'+t.id);renderTexts();}
   if(a==='sel')sel='t:'+t.id;schedule();});
 $('#bTxtAdd').addEventListener('click',()=>{const t={id:uid(),s:'ここに文字',size:8,color:getTheme(S.design).ink,a:100,b:true,al:'l',pg:curPg};S.texts.push(t);sel='t:'+t.id;renderTexts();schedule();
   const ta=$(`.it[data-id="${t.id}"] textarea`,tlist);ta.focus();ta.select();});
@@ -1582,7 +1587,7 @@ $('#bPsd').addEventListener('click',async e=>{const btn=e.target,v=$('#selRes').
 /* ---------- レイヤー一覧（配置している箱の一覧：選択・強調・重なり順・非表示・ロック） ---------- */
 // 並びは描く順の逆（上にあるほど前面）。まとまり（自由テキスト・種別ごと）は build が返す groups（前面→背面）をそのまま使う。
 // 一覧は表示中のときだけ、中身が変わったときだけ書き換える（ドラッグ中に毎フレーム作り直さない）
-let hoverKey=null,lySig='',lySel=null,lyDrag=null;const lyClosed=new Set();
+let hoverKey=null,lySig='',lySel=null;const lyClosed=new Set();
 const lyEl=$('#layers'),lyTool=$('#lyTool');
 const SVG=(p)=>`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const IC={eye:SVG('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
@@ -1621,7 +1626,7 @@ function renderLayers(force){if(!force&&!$('#t6').classList.contains('on'))retur
       `${r.kind?chip(r.kind):''}<span class="ln">${esc(r.name)}</span>${tags(r)}<span class="sz">${r.w}×${r.h}</span>${rs(r)}</div>`;});});
   if(!m.groups.length)h+='<div class="em">このページに置いている箱はありません</div>';
   m.fixed.forEach(n=>{h+=`<div class="lg fx"><span class="tw" aria-hidden="true">${IC.lock}</span><span class="ln">${n}</span><span class="tg">固定</span></div>`;});
-  lyEl.innerHTML=h+'<div id="lyInd" hidden></div>';
+  lyEl.innerHTML=h+'<div class="dropInd" hidden></div>';
   updLyTool(m);
   if(sel!==lySel){lySel=sel;const e=sel&&lyEl.querySelector('.sel');if(e)e.scrollIntoView({block:'nearest'});}
   if(hoverKey&&!lyEl.querySelector(`[data-key="${CSS.escape(hoverKey)}"]`)){hoverKey=null;schedule();}}
@@ -1641,7 +1646,7 @@ function toggleFlag(f,key){const d=S.design,o=d[f];
   if(key.startsWith('g:')){const g=layerModel().groups.find(g=>g.id===key.slice(2));if(!g)return;const mem=gMembers(g),on=!mem.every(k=>o[k]);mem.forEach(k=>{if(on)o[k]=true;else delete o[k];});}
   else{if(o[key])delete o[key];else o[key]=true;}
   schedule();}
-lyEl.addEventListener('click',e=>{if(lyDrag)return;
+lyEl.addEventListener('click',e=>{if(lyDragging())return;
   const tw=e.target.closest('[data-tw]');if(tw){const id=tw.dataset.tw;lyClosed.has(id)?lyClosed.delete(id):lyClosed.add(id);renderLayers(true);return;}
   const hb=e.target.closest('[data-hid]');if(hb){toggleFlag('hid',hb.dataset.hid);return;}
   const lb=e.target.closest('[data-lock]');if(lb){toggleFlag('lock',lb.dataset.lock);return;}
@@ -1649,31 +1654,14 @@ lyEl.addEventListener('click',e=>{if(lyDrag)return;
   if(e.target.closest('.dh'))return;
   const r=e.target.closest('[data-key]');if(r){sel=r.dataset.key;schedule();}});
 lyEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.key){e.preventDefault();sel=e.target.dataset.key;schedule();}});
-lyEl.addEventListener('pointerover',e=>{if(e.pointerType==='touch'||lyDrag)return;const r=e.target.closest('[data-key]'),k=r?r.dataset.key:null;if(k!==hoverKey){hoverKey=k;schedule();}});
+lyEl.addEventListener('pointerover',e=>{if(e.pointerType==='touch'||lyDragging())return;const r=e.target.closest('[data-key]'),k=r?r.dataset.key:null;if(k!==hoverKey){hoverKey=k;schedule();}});
 lyEl.addEventListener('pointerleave',()=>{if(hoverKey){hoverKey=null;schedule();}});
-// ドラッグで重なり順を入れ替える（⋮⋮ をつかむ。行はまとまりの中で、まとまりの行はまとまりごと）。指でも使える
-lyEl.addEventListener('pointerdown',e=>{const dh=e.target.closest('.dh');if(!dh)return;e.preventDefault();
-  const row=dh.closest('[data-gid]'),isG=row.classList.contains('lg'),gid=row.dataset.gid;
-  const els=isG?$$('.lg[data-gid]',lyEl):$$(`.lr[data-gid="${CSS.escape(gid)}"]`,lyEl);if(els.length<2)return;
-  dh.setPointerCapture(e.pointerId);row.classList.add('drg');hoverKey=null;
-  lyDrag={isG,gid,row,els,from:els.indexOf(row),to:els.indexOf(row),dh,moved:false};});
-// まとまりの範囲（見出しの行から次のまとまりの手前まで）
-const lyBlock=(el,isG)=>{const r=el.getBoundingClientRect();if(!isG)return{top:r.top,bottom:r.bottom};
-  let b=r.bottom,n=el.nextElementSibling;while(n&&n.classList.contains('lr')){b=n.getBoundingClientRect().bottom;n=n.nextElementSibling;}return{top:r.top,bottom:b};};
-lyEl.addEventListener('pointermove',e=>{if(!lyDrag)return;const D=lyDrag,y=e.clientY,box=lyEl.getBoundingClientRect(),ind=$('#lyInd');D.moved=true;
-  const sc=lyEl.closest('.tab'),sr=sc.getBoundingClientRect();if(y<sr.top+36)sc.scrollTop-=10;else if(y>sr.bottom-36)sc.scrollTop+=10; // 端に近づいたら自動でスクロール
-  const others=D.els.filter(x=>x!==D.row);let to=others.length;
-  for(let i=0;i<others.length;i++){const bl=lyBlock(others[i],D.isG);if(y<(bl.top+bl.bottom)/2){to=i;break;}}
-  D.to=to;const ref=to<others.length?lyBlock(others[to],D.isG).top:lyBlock(others[others.length-1],D.isG).bottom;
-  ind.hidden=false;ind.style.top=(ref-box.top+lyEl.scrollTop-1)+'px';});
-const lyEnd=e=>{const D=lyDrag;if(!D)return;lyDrag=null;D.row.classList.remove('drg');const ind=$('#lyInd');if(ind)ind.hidden=true;
-  try{D.dh.releasePointerCapture(e.pointerId);}catch(x){}
-  if(!D.moved||e.type==='pointercancel'){renderLayers(true);return;}
-  const G=lastB.groups,list=D.isG?G.map(g=>g.id):(G.find(g=>g.id===D.gid)||{keys:[]}).keys.slice(),mine=D.isG?D.gid:D.row.dataset.key;
-  const i=list.indexOf(mine);if(i<0)return;list.splice(i,1);list.splice(D.to,0,mine);
-  if(D.isG)S.design.lo.g=list;else S.design.lo.i[D.gid]=list;
-  if(!D.isG)sel=mine;schedule();renderLayers(true);};
-lyEl.addEventListener('pointerup',lyEnd);lyEl.addEventListener('pointercancel',lyEnd);
+// ⋮⋮ のドラッグで重なり順を入れ替える（行はまとまりの中で、まとまりの行はまとまりごと）
+// まとまりの範囲は、見出しの行から次のまとまりの手前まで
+const lyBlock=el=>{const r=el.getBoundingClientRect();let b=r.bottom,n=el.nextElementSibling;while(n&&n.classList.contains('lr')){b=n.getBoundingClientRect().bottom;n=n.nextElementSibling;}return{top:r.top,bottom:b};};
+const lyDragging=dragSort(lyEl,dh=>{const row=dh.closest('[data-gid]'),gid=row.dataset.gid;hoverKey=null;
+    return row.classList.contains('lg')?{el:row,els:$$('.lg[data-gid]',lyEl),isG:true,block:lyBlock}:{el:row,els:$$(`.lr[data-gid="${CSS.escape(gid)}"]`,lyEl),gid};},
+  (d,order)=>{if(d.isG)S.design.lo.g=order.map(x=>x.dataset.gid);else{S.design.lo.i[d.gid]=order.map(x=>x.dataset.key);sel=d.el.dataset.key;}schedule();renderLayers(true);});
 // キーボード：Ctrl+] 前面へ / Ctrl+[ 背面へ（Shift で最前面・最背面）。入力欄の中では使わない
 document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!sel||/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||''))return;
   const k=e.key,fw=k===']'||k==='}',bw=k==='['||k==='{';if(!fw&&!bw)return;e.preventDefault();
@@ -1687,7 +1675,7 @@ help.addEventListener('click',e=>{if(e.target===help)help.close();
   const a=e.target.closest('.hn a');if(a){e.preventDefault();$(a.getAttribute('href'),help).scrollIntoView({block:'start'});}});
 document.addEventListener('keydown',e=>{if(e.key==='F1'){e.preventDefault();if(!help.open)help.showModal();}});
 
-renderKinds();fillForm();renderList();renderTexts();draw();
+renderKinds();kindViews();fillForm();renderList();renderTexts();draw();
 </script>
 </body>
 </html>
