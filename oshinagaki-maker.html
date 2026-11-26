@@ -20,6 +20,7 @@ header button,header .fbtn{background:transparent;color:#fff;border-color:rgba(2
 header button:hover,header .fbtn:hover{background:rgba(255,255,255,.14);border-color:#fff}
 button.pri{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
 .fbtn input{display:none}
+header .fbtn{margin:0} /* label の既定の下余白で「開く」だけ上にずれていたのを直す */
 main{flex:1;display:flex;min-height:0}
 aside{width:390px;max-width:46vw;background:var(--pn);border-right:1px solid var(--ln);display:flex;flex-direction:column;min-height:0}
 nav{display:flex;border-bottom:1px solid var(--ln)}
@@ -51,6 +52,9 @@ h2:first-child{margin-top:0}
 #props{position:fixed;top:68px;right:14px;width:214px;background:var(--pn);border:1px solid var(--ln);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 12px;z-index:5;font-size:12px;max-height:calc(100vh - 82px);overflow:auto}
 #props h2{margin:0 0 6px;display:flex;align-items:center}#props #pClose{width:22px;height:22px;padding:0;margin-left:8px;line-height:1;font-size:15px;border-radius:50%;flex:none}
 #props h2 span{margin-left:auto;font-weight:400;letter-spacing:0;color:var(--sub)}
+#props #pMin{width:22px;height:22px;padding:0;margin-left:8px;line-height:1;font-size:12px;border-radius:50%;flex:none}
+#props.min #pName{margin-bottom:0}
+#props .pb{display:flex;flex-direction:column;gap:6px}
 #pName{font-weight:700;font-size:13px;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #props .g{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
 #props label{margin:0;display:flex;align-items:center;gap:5px;color:var(--sub)}
@@ -119,6 +123,14 @@ body.view #cv{touch-action:auto}
   #split.on::before,#split:focus-visible::before{background:var(--ac);opacity:1}
   #split:focus-visible{outline:none}
   footer{flex-wrap:wrap;gap:4px 8px;padding:4px 8px}footer .pc,footer #stat{display:none}
+  /* プロパティパネルは画面下から出るシートにする（画面下のボタン列の上に重ねる。--fh＝画面下の高さ） */
+  #props{top:auto;left:0;right:0;bottom:var(--fh,0px);width:auto;max-height:min(52vh,calc(100% - 140px));border-radius:14px 14px 0 0;border-width:1px 0 0;padding:8px 12px 10px;box-shadow:0 -6px 24px rgba(0,0,0,.2);font-size:13px}
+  #props h2{font-size:13px}#props #pMin,#props #pClose{width:30px;height:30px;font-size:15px}
+  #props .g{grid-template-columns:repeat(4,1fr);gap:6px}
+  #props input{font-size:16px;padding:4px 5px;min-width:0} /* 16px 未満だと iPhone で入力時に画面が拡大される */
+  #props input[type=color]{height:32px!important}
+  #props .lg,#props .lf{display:none}
+  #props .pb{flex-direction:row;margin-top:8px}#props .pb button{flex:1;padding:7px 2px;font-size:12px}
 }
 </style>
 </head>
@@ -285,15 +297,16 @@ body.view #cv{touch-action:auto}
   </div>
 </aside>
 <div id="props" hidden role="group" aria-labelledby="pT">
-  <h2 id="pT">プロパティ<span id="pMode"></span><button type="button" id="pClose" aria-label="プロパティパネルを閉じる" title="閉じる">×</button></h2>
+  <h2 id="pT">プロパティ<span id="pMode"></span><button type="button" id="pMin" aria-expanded="true" aria-controls="pBody" aria-label="プロパティパネルを折りたたむ" title="折りたたむ／広げる">▾</button><button type="button" id="pClose" aria-label="プロパティパネルを閉じる" title="閉じる">×</button></h2>
   <div id="pName"></div>
+  <div id="pBody">
   <div class="g">
     <label><b>X</b><input type="number" step="0.5" data-p="x" aria-label="X 位置 mm"></label>
     <label><b>Y</b><input type="number" step="0.5" data-p="y" aria-label="Y 位置 mm"></label>
     <label><b>W</b><input type="number" step="0.5" min="15" data-p="w" aria-label="幅 mm"></label>
     <label><b>H</b><input type="number" step="0.5" min="8" data-p="h" aria-label="高さ mm"></label>
   </div>
-  <div class="u">単位 mm・用紙の左上が原点</div>
+  <div class="u lg">単位 mm・用紙の左上が原点</div>
   <div class="g">
     <label title="この箱だけの文字サイズ倍率"><b>字</b><input type="number" min="50" max="200" step="5" data-i="fs" aria-label="この箱の文字サイズ ％"></label>
     <label title="この箱だけの文字色"><b>色</b><input type="color" data-i="tcol" aria-label="この箱の文字色" style="height:26px;margin:0"></label>
@@ -309,10 +322,13 @@ body.view #cv{touch-action:auto}
     <label title="この箱の仕様だけの文字サイズ"><b>仕</b><input type="number" min="50" max="200" step="5" data-i="fsS" aria-label="この箱の仕様の文字サイズ ％"></label>
     <label title="この箱の説明だけの文字サイズ"><b>説</b><input type="number" min="50" max="200" step="5" data-i="fsD" aria-label="この箱の説明の文字サイズ ％"></label>
   </div>
-  <div class="u">字＝文字サイズ％（この箱の文字全体）　題・価・仕・説＝タイトル・価格・仕様・説明だけの文字サイズ％　色＝文字色　濃＝文字の濃さ％　箱＝箱の色　画＝表紙画像の大きさ％（すべてこの箱だけ）</div>
-  <button type="button" id="pTxt" style="margin-bottom:6px">この箱の色・文字・画像の設定を戻す</button>
-  <button type="button" id="pPos" style="margin-bottom:6px">位置だけ戻す（大きさはそのまま）</button>
-  <button type="button" id="pReset">この箱を自動配置に戻す</button>
+  <div class="u lg">字＝文字サイズ％（この箱の文字全体）　題・価・仕・説＝タイトル・価格・仕様・説明だけの文字サイズ％　色＝文字色　濃＝文字の濃さ％　箱＝箱の色　画＝表紙画像の大きさ％（すべてこの箱だけ）</div>
+  <div class="pb">
+  <button type="button" id="pTxt"><span class="lf">この箱の色・文字・画像の</span>設定を戻す</button>
+  <button type="button" id="pPos">位置だけ戻す<span class="lf">（大きさはそのまま）</span></button>
+  <button type="button" id="pReset"><span class="lf">この箱を</span>自動配置に戻す</button>
+  </div>
+  </div>
 </div>
 <div id="split" role="separator" tabindex="0" aria-orientation="horizontal" aria-valuemin="15" aria-valuemax="85" aria-label="プレビューと入力パネルの境目。上下にドラッグ、または矢印キーで比率を変更。ダブルクリックで 1:3 に戻す" title="ドラッグで比率を変更／ダブルクリックで 1:3 に戻す"></div>
 <section id="stage"><canvas id="cv" tabindex="0" aria-label="お品書きプレビュー。箱を選んで矢印キーで移動、Shift＋矢印でサイズ変更、Deleteで自動配置に戻す"></canvas></section>
@@ -369,7 +385,7 @@ body.view #cv{touch-action:auto}
 <li>動かしていない箱は自動配置のまま。動かした箱は頒布物を増減しても位置が変わりません</li>
 <li>デザインタブの「すべて自動配置に戻す」で一括リセット。用紙サイズを変えたときも箱はリセットされます（自由テキストは位置を保ちます）</li>
 <li>デザインタブの「目安線を常に表示」で、余白と中央の線（水色）を出しっぱなしにできます。書き出しには出ません</li>
-<li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）</li>
+<li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）。パネル右上の「▾」で折りたたむと、箱の名前だけの 1 行になります。スマホでは画面下から出るシートになり、箱を選んでいるときだけ表示されます</li>
 <li>ヘッダーとフッターは固定です</li>
 </ul>
 
@@ -954,7 +970,7 @@ const FE=['fsT','fsP','fsS','fsD'];
 // 箱ごとの％設定の範囲
 const PCT={fs:[50,200],is:[20,200],fsT:[50,200],fsP:[50,200],fsS:[50,200],fsD:[50,200]};
 const capMsg=h=>h&&h.icap?'この箱では '+h.icap+'% が上限です（箱を広げると大きくなります）':'';
-function updProps(h){props.hidden=!S.design.showProps;if(props.hidden)return;
+function updProps(h){props.hidden=!S.design.showProps||(MOB.matches&&!h);if(props.hidden)return; // スマホでは箱を選んでいるときだけシートを出す
   const it=h&&S.items.find(i=>i.id===h.key);
   $('#pName').textContent=!h?'箱を選択してください':it?kName(kOf(S.design,it.kind))+'：'+(it.title||'（無題）'):h.key.startsWith('t:')?'文字：'+String((S.texts.find(t=>'t:'+t.id===h.key)||{}).s||'').split('\n')[0]:'見出し：'+kName(kOf(S.design,h.key.slice(4)));
   $('#pMode').textContent=!h?'':S.design.free[h.key]?'手動配置':'自動配置';
@@ -980,6 +996,11 @@ $('#fBg').addEventListener('change',async e=>{const f=e.target.files[0];e.target
   try{S.design.bg.img=await readImg(f);S.design.bg.name=f.name;}catch(x){setErr((x&&x.message)||'画像を読めませんでした');}fillForm();schedule();});
 $('#bBgX').addEventListener('click',()=>{S.design.bg.img='';S.design.bg.name='';fillForm();schedule();});
 $('#bFs').addEventListener('click',()=>{S.design.fs=blank().design.fs;fillForm();schedule();});
+// 画面の幅がスマホかどうか。プロパティパネルの折りたたみ
+const MOB=matchMedia('(max-width:760px)');
+function applyPMin(){const m=!!UI.pmin;props.classList.toggle('min',m);$('#pBody').hidden=m;
+  const b=$('#pMin');b.textContent=m?'▴':'▾';b.setAttribute('aria-expanded',!m);b.setAttribute('aria-label',m?'プロパティパネルを広げる':'プロパティパネルを折りたたむ');}
+$('#pMin').addEventListener('click',()=>{UI.pmin=!UI.pmin;applyPMin();saveUI();});
 $('#pClose').addEventListener('click',()=>{S.design.showProps=false;fillForm();schedule();});
 $('#pReset').addEventListener('click',()=>{if(sel){delete S.design.free[sel];schedule();}});
 $('#bFree').addEventListener('click',()=>{S.design.free={};sel=null;schedule();});
@@ -990,13 +1011,15 @@ renderPgmap();
 $('#zoom').addEventListener('input',e=>{zoom=+e.target.value;schedule();});
 window.addEventListener('resize',schedule);
 // プレビュー枠の大きさが変わったら描き直す（境目のドラッグ、確認モードの切り替えなど）
-if(window.ResizeObserver)new ResizeObserver(schedule).observe($('#stage'));
+if(window.ResizeObserver){new ResizeObserver(schedule).observe($('#stage'));
+  // 画面下の高さを CSS に渡す（スマホのプロパティシートをその上に出すため）
+  const ft=$('footer');new ResizeObserver(()=>document.documentElement.style.setProperty('--fh',ft.offsetHeight+'px')).observe(ft);}
 
 /* ---------- 画面の使い方：確認モード／調整モード、スマホの境目の位置 ---------- */
 // 作品データとは別に、この端末の画面の好みとして保存する
 const UI_LS='oshinagaki-ui',AH_DEF=75; // 入力パネルの高さ％（初期値 75％＝プレビュー 1：入力パネル 3）
-const UI={view:false,ah:AH_DEF};
-try{const j=JSON.parse(localStorage.getItem(UI_LS));if(j){UI.view=!!j.view;if(isFinite(j.ah))UI.ah=+j.ah;}}catch(e){}
+const UI={view:false,ah:AH_DEF,pmin:false}; // pmin：プロパティパネルを折りたたんでいるか
+try{const j=JSON.parse(localStorage.getItem(UI_LS));if(j){UI.view=!!j.view;UI.pmin=!!j.pmin;if(isFinite(j.ah))UI.ah=+j.ah;}}catch(e){}
 const saveUI=()=>{try{localStorage.setItem(UI_LS,JSON.stringify(UI));}catch(e){}};
 const mainEl=$('main'),split=$('#split');
 function applyUI(){document.body.classList.toggle('view',UI.view);mainEl.style.setProperty('--ah',UI.ah+'%');
@@ -1015,7 +1038,7 @@ split.addEventListener('pointerup',endSplit);split.addEventListener('pointercanc
 split.addEventListener('dblclick',()=>{setAh(AH_DEF);saveUI();});
 split.addEventListener('keydown',e=>{const d={ArrowUp:5,ArrowDown:-5}[e.key];
   if(d){e.preventDefault();setAh(UI.ah+d);saveUI();}else if(e.key==='Home'||e.key==='End'){e.preventDefault();setAh(AH_DEF);saveUI();}});
-applyUI();
+applyUI();applyPMin();
 
 /* ---------- 箱の位置だけ戻す ---------- */
 // 大きさはそのままで、位置だけ自動配置の場所（左上）に戻す。大きさも自動のままなら、手動配置そのものを外す
