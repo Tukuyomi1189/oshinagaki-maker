@@ -148,7 +148,8 @@ dialog::backdrop{background:rgba(20,22,35,.5)}
 .hb{padding:6px 20px 20px;overflow:auto;max-height:calc(88vh - 52px)}
 .hn{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
 .hn a{font-size:12px;color:var(--ac2);border:1px solid var(--ln);border-radius:99px;padding:2px 10px;text-decoration:none;background:#fff}
-.hn a:hover{border-color:var(--ac2)}
+.hn a:hover{border-color:var(--ac2)}.hn a.on{background:var(--ac2);border-color:var(--ac2);color:#fff}
+.hb kbd{white-space:nowrap}
 .hb h3{font-size:14px;margin:20px 0 6px;padding-left:8px;border-left:4px solid var(--ac);scroll-margin-top:8px}
 .hb p,.hb li{font-size:13px;margin:4px 0}.hb ol,.hb ul{padding-left:22px;margin:4px 0}
 .hb table{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}
@@ -183,6 +184,20 @@ body.view #cv{touch-action:auto}
   #props input[type=color]{height:32px!important}
   #props .lg,#props .lf{display:none}
   #props .pb{flex-direction:row;margin-top:8px}#props .pb button{flex:1;padding:7px 2px;font-size:12px}
+  /* ヘルプ：画面いっぱいに出し、目次は上に固定した横スクロールの1行、表は「見出し → 説明」の縦積みにする */
+  #help{width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;margin:0;border-radius:0}
+  #help[open]{display:flex;flex-direction:column}
+  #help .hh{flex:none;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top))}
+  #help .hb{flex:1;min-height:0;max-height:none;padding:0 14px calc(28px + env(safe-area-inset-bottom));overscroll-behavior:contain}
+  #help .hn{position:sticky;top:0;z-index:1;flex-wrap:nowrap;overflow-x:auto;margin:0 -14px;padding:8px 14px;background:#fff;border-bottom:1px solid var(--ln);scrollbar-width:none}
+  #help .hn::-webkit-scrollbar{display:none}
+  #help .hn a{flex:none;font-size:13px;padding:5px 12px}
+  #help h3{font-size:15px;margin-top:22px;scroll-margin-top:54px}
+  #help p,#help li{font-size:14px;line-height:1.7}
+  #help table,#help tbody,#help tr,#help th,#help td{display:block;width:auto}
+  #help table{font-size:14px;margin:8px 0}
+  #help tr{border:1px solid var(--ln);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  #help th,#help td{border:0;white-space:normal;padding:7px 11px;line-height:1.65}
 }
 /* タブレットの幅ではヘッダーの補足（入力 → 自動レイアウト → …）を省いて1行に収める */
 @media(max-width:1023px){header h1 small{display:none}}
@@ -439,7 +454,7 @@ body.view #cv{touch-action:auto}
 <li><b>文字</b>タブで文字の大きさ・色・濃さを調整し、必要なら自由テキストを追加</li>
 <li><b>書き出し</b>タブで PNG / PSD / Illustrator 用スクリプトを出力</li>
 </ol>
-<p>変更はすべて右のプレビューにすぐ反映されます。</p>
+<p>変更はすべてプレビュー（PC では右、スマホでは上）にすぐ反映されます。</p>
 
 <h3 id="h-item">頒布物の入力</h3>
 <table>
@@ -1771,6 +1786,13 @@ $('#bHelpX').addEventListener('click',()=>help.close());
 help.addEventListener('click',e=>{if(e.target===help)help.close();
   const a=e.target.closest('.hn a');if(a){e.preventDefault();$(a.getAttribute('href'),help).scrollIntoView({block:'start'});}});
 document.addEventListener('keydown',e=>{if(e.key==='F1'){e.preventDefault();if(!help.open)help.showModal();}});
+// ヘルプの目次：いま読んでいる節のリンクを目立たせ、目次が横スクロールのとき（スマホ）は見える位置に寄せる
+{const hb=$('.hb',help),hn=$('.hn',help),links=[...hn.querySelectorAll('a')],secs=links.map(a=>$(a.getAttribute('href'),help));let cur=-1;
+  const mark=()=>{const top=hb.getBoundingClientRect().top+hn.offsetHeight+24;let i=0;secs.forEach((h,k)=>{if(h&&h.getBoundingClientRect().top<=top)i=k;});
+    if(hb.scrollTop+hb.clientHeight>=hb.scrollHeight-2)i=secs.length-1; // いちばん下まで来たら最後の節
+    if(i===cur)return;cur=i;links.forEach((a,k)=>a.classList.toggle('on',k===i));const a=links[i];
+    if(hn.scrollWidth>hn.clientWidth)hn.scrollLeft=Math.max(0,a.offsetLeft-(hn.clientWidth-a.offsetWidth)/2);};
+  hb.addEventListener('scroll',mark,{passive:true});$('#bHelp').addEventListener('click',()=>{cur=-1;mark();});}
 
 renderKinds();kindViews();fillForm();renderList();renderTexts();draw();
 </script>
