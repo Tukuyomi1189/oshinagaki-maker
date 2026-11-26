@@ -69,7 +69,7 @@ h2:first-child{margin-top:0}
 #tsgrid{display:grid;grid-template-columns:1fr 54px 64px 34px;gap:5px 6px;align-items:center;margin-bottom:10px;font-size:12px}
 #tsgrid input{margin:0}#tsgrid input[type=color]{height:28px}#tsgrid button{padding:2px 0;font-size:11px}#tsgrid .hd{color:var(--sub);font-size:11px}
 #tlist .body{padding:10px}
-#pgmap{flex-wrap:wrap}#pgmap label{flex:1 0 28%}.kd.k-set{background:var(--ac2)}
+#pgmap{flex-wrap:wrap}#pgmap label{flex:1 0 28%}#bsKinds{flex-wrap:wrap}#bsKinds label{flex:1 0 40%}.kd.k-set{background:var(--ac2)}
 .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sp{color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
 .imgrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
@@ -228,6 +228,19 @@ body.view #cv{touch-action:auto}
       <label>枠線・区切り線の色<input type="color" data-k="design.box.line"></label>
     </div>
     <p class="note">新刊の箱の枠線はアクセント色です。箱を1つだけ変えたいときは、プロパティパネルを表示して箱を選び「箱」の色を指定します。</p>
+    <h2>箱のデザイン</h2>
+    <label>全体のデザイン<select data-k="design.bs" id="selBs"></select></label>
+    <div class="cap">種別ごとに変える（「全体と同じ」以外を選ぶと、その種別だけ変わります）</div>
+    <div class="row" id="bsKinds"></div>
+    <div class="cap">透過素材（「透過素材」を選んだ箱の枠になります）</div>
+    <div class="imgrow"><span class="nm" id="frName">透過素材なし</span>
+      <label class="fbtn">素材を選ぶ<input type="file" id="fFrame" accept="image/png,image/*,.psd,.psb"></label><button type="button" id="bFrX">外す</button></div>
+    <div class="row">
+      <label>素材の角の範囲 ％<input type="number" min="5" max="50" step="1" data-k="design.frame.sl"></label>
+      <label>角の大きさ<input type="number" min="1" max="30" step="0.5" data-k="design.frame.cm"></label>
+    </div>
+    <div class="chk"><label><input type="checkbox" data-k="design.frame.fill">素材の下に箱の色を塗る</label></div>
+    <p class="note">透過素材は、四隅の形を保ったまま辺と中央だけを伸ばして箱に合わせます（9スライス）。<b>素材の角の範囲</b>は、素材の短い辺のうち何％を角として扱うか、<b>角の大きさ</b>は箱に描く角の大きさです。透過を活かすには PNG を使ってください。Illustrator 用スクリプトでは、素材を箱の大きさに引き伸ばして配置します。<br>配布素材を使うときは、同人誌・お品書きでの使用や加工が利用規約で認められているか確認してください。</p>
     <h2>背景画像</h2>
     <div class="imgrow"><span class="nm" id="bgName">背景画像なし</span>
       <label class="fbtn">画像を選ぶ<input type="file" id="fBg" accept="image/*,.psd,.psb"></label><button type="button" id="bBgX">外す</button></div>
@@ -444,6 +457,7 @@ body.view #cv{touch-action:auto}
 <tr><th>表紙画像の大きさを変えても文字の大きさを変えない</th><td>オフ（初期値）：表紙画像の大きさ（％）を変えると、残りの場所に収まるよう文字の大きさも自動で変わります。オン：文字は表紙が100％のときの大きさのまま、画像だけが大きく・小さくなります（文字の位置は画像に合わせて動きます）。入りきらない文字は省略されたり価格と重なったりするので、そのときは箱を広げてください</td></tr>
 <tr><th>色を上書きする</th><td>テーマの帯色とアクセント色を好きな色に変更</td></tr>
 <tr><th>箱の色を上書きする</th><td>すべての箱の色と、枠線・区切り線の色を変更（新刊の枠線はアクセント色）。箱を1つだけ変えるときは、プロパティパネルで箱を選んで「箱」の色を指定</td></tr>
+<tr><th>箱のデザイン</th><td>標準・角なし・影付き・二重線・見出し帯・左ライン・角飾り・点線・透過素材から選択。「種別ごとに変える」でその種別の箱だけ変えられます。透過素材は四隅の形を保ったまま伸ばして箱に合わせます（Illustrator では引き伸ばして配置。素材ファイルも表紙画像と同じフォルダへ）</td></tr>
 <tr><th>PC内のフォント名</th><td>インストール済みフォントの名前を入れるとプレビューと PNG に使われます</td></tr>
 </table>
 
@@ -528,7 +542,7 @@ for(var n=0;n<D.ops.length;n++){
     var p=(o.r>0)?ly.pathItems.roundedRectangle(Y(o.y),X(o.x),o.w*MM,o.h*MM,o.r*MM,o.r*MM)
                  :ly.pathItems.rectangle(Y(o.y),X(o.x),o.w*MM,o.h*MM);
     if(o.fill){p.filled=true;p.fillColor=col(o.fill);}else{p.filled=false;}
-    if(o.stroke){p.stroked=true;p.strokeColor=col(o.stroke);p.strokeWidth=o.sw*MM;}else{p.stroked=false;}
+    if(o.stroke){p.stroked=true;p.strokeColor=col(o.stroke);p.strokeWidth=o.sw*MM;if(o.dash){p.strokeDashes=[o.dash[0]*MM,o.dash[1]*MM];}}else{p.stroked=false;}
     if(o.a<1){p.opacity=o.a*100;}
     if(o.g){try{p.name=o.g;}catch(e){}}
   }else if(o.t=='text'){
@@ -546,10 +560,12 @@ for(var n=0;n<D.ops.length;n++){
     if(fl&&fl.exists){
       var pi=ly.placedItems.add();pi.file=fl;
       var cover=(o.fit=='cover');
+      if(o.fit=='nine'){pi.width=o.w*MM;pi.height=o.h*MM;pi.left=X(o.x);pi.top=Y(o.y);} // 箱の透過素材：Illustrator では箱の大きさに引き伸ばして配置
+      else{
       var k2=(cover?Math.max(o.w*MM/pi.width,o.h*MM/pi.height):Math.min(o.w*MM/pi.width,o.h*MM/pi.height))*100;
       pi.resize(k2,k2);
       pi.left=X(o.x)+(o.w*MM-pi.width)/2;
-      pi.top=Y(o.y)-(o.h*MM-pi.height)/2;
+      pi.top=Y(o.y)-(o.h*MM-pi.height)/2;}
       if(o.a!=null&&o.a<1){pi.opacity=o.a*100;}
       if(o.g){try{pi.name=o.g;}catch(e){}}
       if(cover){
@@ -558,6 +574,8 @@ for(var n=0;n<D.ops.length;n++){
         var cr=cg.pathItems.rectangle(Y(o.y),X(o.x),o.w*MM,o.h*MM);
         cr.filled=false;cr.stroked=false;cr.clipping=true;cg.clipped=true;
       }
+    }else if(o.fit=='nine'){
+      var mn=o.name||'（箱の透過素材）';if((','+miss.join(',')+',').indexOf(','+mn+',')<0){miss.push(mn);}
     }else if(o.fit=='cover'){
       miss.push(o.name||'（背景画像）');
     }else{
@@ -594,7 +612,7 @@ const PAPERS={
 // 種別：初期の6種類。実際に使う一覧（名前・並び順・色）は S.design.kinds にあり、デザインタブで追加・変更・削除できる
 // 「新刊」(id:new) は名前を変えても、強調表示・「新刊を大きく」・新刊の列数がそのまま効く
 const DEF_KINDS=[['new','新刊'],['semi','準新刊'],['set','セット'],['old','既刊'],['itaku','委託'],['goods','グッズ']];
-const mkKinds=()=>DEF_KINDS.map(([id,n])=>({id,n,c:''}));
+const mkKinds=()=>DEF_KINDS.map(([id,n])=>({id,n,c:'',bs:''}));
 const fbKind=d=>d.kinds.find(k=>k.id==='old')||d.kinds[0]; // 見つからない種別は「既刊」（無ければ先頭）として扱う
 const kOf=(d,id)=>d.kinds.find(k=>k.id===id)||fbKind(d);
 const kName=k=>String(k.n==null?'':k.n).trim()||'（名前なし）';
@@ -620,6 +638,11 @@ const FONTS={
     fr:['ZenMaruGothic-Regular','HiraMaruProN-W4','BIZ-UDGothic','YuGothic-Regular']}
 };
 const LS='oshinagaki-maker-v1';
+// 箱のデザイン（すべてプログラムで描く図形。外部の素材は使わない）。frame は利用者が読み込む透過素材
+const BOX_STYLES=[['std','標準（角丸）'],['sq','角なし'],['shadow','影付き（ポップ）'],['double','二重線'],['band','見出し帯'],['left','左ライン'],['corner','角飾り（和風）'],['dash','点線（チケット風）'],['frame','透過素材']];
+const BSID=new Set(BOX_STYLES.map(b=>b[0]));
+// 種別の指定 → 全体の指定。透過素材が未設定なら標準で描く
+const boxStyleOf=(d,K)=>{const v=(K&&BSID.has(K.bs)?K.bs:'')||d.bs||'std';return v==='frame'&&!(d.frame&&d.frame.img)?'std':v;};
 let uidN=Date.now();const uid=()=>'i'+(uidN++).toString(36);
 
 const CATS=[['circle','サークル名'],['event','イベント名・日付'],['pen','ペンネーム'],['space','スペース番号'],['sec','種別の見出し'],['badge','バッジ'],['title','タイトル'],['spec','仕様'],['desc','説明'],['price','価格'],['foot','フッター（支払い・お知らせ）'],['sns','SNS / 連絡先']];
@@ -627,7 +650,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',frame:{img:'',name:'',sl:30,cm:5,fill:true},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -652,6 +675,7 @@ function norm(j){const b=blank();
     s.design.ts=ts;}
   s.design.box=Object.assign(blank().design.box,j.design&&j.design.box);
   s.design.bg=Object.assign(blank().design.bg,j.design&&j.design.bg);
+  s.design.frame=Object.assign(blank().design.frame,j.design&&j.design.frame);if(!BSID.has(s.design.bs))s.design.bs='std';
   s.design.fs=Object.assign(blank().design.fs,j.design&&j.design.fs);
   {const o=(j.design&&j.design.fs)||{};if(o.sub!=null){if(o.spec==null)s.design.fs.spec=o.sub;if(o.desc==null)s.design.fs.desc=o.sub;}delete s.design.fs.sub;} // 旧「仕様・説明」を仕様と説明の両方に引き継ぐ
   s.design.tc=Object.assign(blank().design.tc,j.design&&j.design.tc);
@@ -660,7 +684,7 @@ function norm(j){const b=blank();
   // 種別：形を整える（保存データに無ければ初期の6種類）。各種別にページの設定を用意し、一覧に無い種別の頒布物は「既刊」へ
   {const seen=new Set(),src=Array.isArray(j.design&&j.design.kinds)?j.design.kinds:[];
     s.design.kinds=src.filter(k=>k&&/^[\w-]+$/.test(String(k.id))&&!seen.has(String(k.id))&&seen.add(String(k.id)))
-      .map(k=>({id:String(k.id),n:String(k.n==null?'':k.n),c:/^#[0-9a-f]{6}$/i.test(k.c)?k.c:''}));
+      .map(k=>({id:String(k.id),n:String(k.n==null?'':k.n),c:/^#[0-9a-f]{6}$/i.test(k.c)?k.c:'',bs:BSID.has(k.bs)?k.bs:''}));
     if(!s.design.kinds.length)s.design.kinds=mkKinds();
     s.design.kinds.forEach(k=>{if(!s.design.pg[k.id])s.design.pg[k.id]=1;});
     const ids=new Set(s.design.kinds.map(k=>k.id)),fb=fbKind(s.design).id;s.items.forEach(i=>{if(!ids.has(i.kind))i.kind=fb;});}
@@ -672,7 +696,7 @@ let saveT=0;
 function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
 function saveNow(){clearTimeout(saveT);saveT=0;
   try{localStorage.setItem(LS,JSON.stringify(S));}
-  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:''}))})));}catch(e2){}}}
+  catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''}),frame:Object.assign({},S.design.frame,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:''}))})));}catch(e2){}}}
 const flushSave=()=>{if(saveT)saveNow();};
 addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave();});
 
@@ -776,13 +800,34 @@ function build(S,M,page){
   if(secs.length&&minUnit<14*u)warn='頒布物が多くて窮屈です。列数を増やすか、大きい用紙か2枚構成にしてください。';
   if(!secs.length)X(d.twoPage?'このページに載せる頒布物がありません':'「頒布物」タブから追加してください',W/2,by+bh/2,6*u,T.sub,{al:'c',b:0});
 
+  // 箱を描く。戻り値 r：角の丸み、ins：中身を内側へ寄せる量 [左,上,右,下]
+  function boxDraw(st,x,y,w,h,bc,kc,isNew,G){
+    const lc=isNew?kc:T.line,lw=(isNew?.8:.35)*u,ins=[0,0,0,0];
+    const box=(rad,stroke,sw,o)=>{ // 塗りと枠線。箱の濃さを下げているときは、枠線は薄くしない
+      if(cardA<1||!stroke){R(x,y,w,h,bc,Object.assign({r:rad,a:cardA,g:G},o));if(stroke)R(x,y,w,h,null,{r:rad,stroke,sw,g:G});}
+      else R(x,y,w,h,bc,{r:rad,stroke,sw,g:G});};
+    if(st==='sq'){box(0,lc,lw);return{r:0,ins};}
+    if(st==='shadow'){const o=1.3*u;R(x+o,y+o,w,h,isNew?kc:T.ink,{r:0,g:G});box(0,T.ink,.5*u);return{r:0,ins};}
+    if(st==='double'){const g=1.1*u;box(1.2*u,lc,(isNew?.6:.4)*u);R(x+g,y+g,w-2*g,h-2*g,null,{r:.6*u,stroke:lc,sw:.25*u,g:G});ins.fill(g*.8);return{r:1.2*u,ins};}
+    if(st==='band'){const bh=Math.min(h*.2,2.6*u);box(0,kc,.45*u);R(x,y,w,bh,kc,{r:0,g:G});ins[1]=bh;return{r:0,ins};}
+    if(st==='left'){const bw=1.8*u;box(0,null,0);R(x,y,bw,h,kc,{r:0,g:G});ins[0]=bw;return{r:0,ins};}
+    if(st==='corner'){box(0,null,0);const L=Math.min(w,h)*.2,t=.7*u;
+      [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(([cx,cy,sx,sy])=>{
+        R(sx>0?cx:cx-L,sy>0?cy:cy-t,L,t,kc,{r:0,g:G});R(sx>0?cx:cx-t,sy>0?cy:cy-L,t,L,kc,{r:0,g:G});});
+      ins.fill(t);return{r:0,ins};}
+    if(st==='dash'){const rad=2.5*u;box(rad,null,0);R(x,y,w,h,null,{r:rad,stroke:isNew?kc:T.sub,sw:(isNew?.6:.4)*u,dash:[1.6*u,1.1*u],g:G});return{r:rad,ins};}
+    if(st==='frame'){const Fr=d.frame,cm=Math.max(.5,+Fr.cm||5)*u;
+      if(Fr.fill)box(0,null,0);
+      ops.push({t:'img',id:'frame',name:Fr.name||'',x,y,w,h,fit:'nine',sl:+Fr.sl||30,cm,L:1,g:G});
+      ins.fill(Math.min(cm*.3,Math.min(w,h)*.08));return{r:0,ins};} // 枠の飾りに文字が重なりにくいよう、少しだけ内側へ
+    const rad=2.5*u;box(rad,lc,lw);return{r:rad,ins};} // 標準
   function card(x,y,w,h,it){
     const q=place(it.id,x,y,w,h,1),ia=alp(it.ta),nm=it.title||'（無題）',bc=it.bcol||T.card;x=q.x;y=q.y;w=q.w;h=q.h;
     // 種別の色：指定が無ければテーマの色（新刊はアクセント色、ほかは補助色）。新刊は箱の枠もこの色
-    const K=kOf(d,it.kind),isNew=K.id==='new',kc=K.c||(isNew?T.accent:T.sub),r=2.5*u;
-    if(cardA<1){R(x,y,w,h,bc,{r,a:cardA,g:'箱：'+nm});R(x,y,w,h,null,{r,stroke:isNew?kc:T.line,sw:(isNew?.8:.35)*u,g:'箱：'+nm});}
-    else R(x,y,w,h,bc,{r,stroke:isNew?kc:T.line,sw:(isNew?.8:.35)*u,g:'箱：'+nm});
-    const p=Math.min(w,h)*.06+1.2*u;let tx=x+p,ty=y+p,tw=w-2*p,th=h-2*p,kw=0,kh=0; // kw/kh：表紙が100％のときの文字の場所（文字サイズ固定モード用）
+    const K=kOf(d,it.kind),isNew=K.id==='new',kc=K.c||(isNew?T.accent:T.sub);
+    // 箱のデザイン（種別ごとの指定 → 全体の指定）。ins：デザインのぶん中身を内側へ寄せる量（左・上・右・下）
+    const r=boxDraw(boxStyleOf(d,K),x,y,w,h,bc,kc,isNew,'箱：'+nm),ins=r.ins;
+    const p=Math.min(w,h)*.06+1.2*u;let tx=x+p+ins[0],ty=y+p+ins[1],tw=w-2*p-ins[0]-ins[2],th=h-2*p-ins[1]-ins[3],kw=0,kh=0; // kw/kh：表紙が100％のときの文字の場所（文字サイズ固定モード用）
     if(it.img){
       // 表紙の大きさ（箱ごと・％）。100％未満は縦横とも縮小。100％超は画像の縦横比と箱の中身の大きさが上限（文字の場所を2割は残す）
       const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),asp=imgAsp(it.id)||.74,io={id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm},hit=hits[hits.length-1];let got;
@@ -813,7 +858,7 @@ function build(S,M,page){
     if(d.showDesc&&it.desc){const ds=3.3*u*k*FS.desc*ifs*pc(it.fsD),lh=ds*1.45;
       wrap(it.desc,txw,ds,Math.floor((limit-cy)/lh),0).forEach(l=>{X(l,tx,cy+ds*.92,ds,tcol,{b:0,cat:'desc',keep:!!it.tcol,ia,g:'説明：'+nm});cy+=lh;});}
     if(pstr){const s2=fit(pstr,tw,ps,1);X(pstr,tx+tw,ty+th-s2*.1,s2,priceC,{al:'r',cat:'price',ia,g:'価格：'+nm});}
-    if(it.sold){R(x,y,w,h,'#000000',{r,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(w/3.2,h/2.6,22*u);X('完売',x+w/2,mid(y,h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
+    if(it.sold){R(x,y,w,h,'#000000',{r:r.r,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(w/3.2,h/2.6,22*u);X('完売',x+w/2,mid(y,h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
   }
   // 自由テキスト：好きな場所に置ける文字（位置はドラッグで決める）
   (S.texts||[]).forEach((t,i)=>{if((d.twoPage?(+t.pg||1):1)!==(page||1)||!String(t.s||'').trim())return;
@@ -830,7 +875,7 @@ const dropImg=c=>{if(c&&c.bm&&c.bm.close)c.bm.close();};
 function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
 // 読み込み済みの画像の縦横比（幅÷高さ）。まだなら 0
 function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
-function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('bg',S.design.bg.img);
+function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('bg',S.design.bg.img);want.set('frame',S.design.frame.img);
   for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
   want.forEach((data,id)=>{if(!data)return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
     const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
@@ -840,19 +885,27 @@ function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('b
 function rr(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();
   if(r<=0){ctx.rect(x,y,w,h);return;}
   ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+// 9スライス：素材の四隅（sl＝素材の短い辺に対する％）は形を保ったまま角の大きさ（cm）で描き、辺と中央だけを伸ばす
+function nine(ctx,src,nw,nh,o,sc){const s=Math.max(1,Math.min(nw,nh)*Math.max(1,Math.min(50,+o.sl||30))/100),c=Math.max(0,Math.min(o.cm,o.w/2,o.h/2));
+  const sx=[0,s,nw-s,nw],sy=[0,s,nh-s,nh],dx=[o.x,o.x+c,o.x+o.w-c,o.x+o.w],dy=[o.y,o.y+c,o.y+o.h-c,o.y+o.h];
+  ctx.save();ctx.globalAlpha=o.a==null?1:o.a;ctx.imageSmoothingQuality='high';
+  for(let j=0;j<3;j++)for(let i=0;i<3;i++){const sw=sx[i+1]-sx[i],sh=sy[j+1]-sy[j],dw=dx[i+1]-dx[i],dh=dy[j+1]-dy[j];
+    if(sw>0&&sh>0&&dw>0&&dh>0)ctx.drawImage(src,sx[i],sy[j],sw,sh,dx[i]*sc,dy[j]*sc,dw*sc,dh*sc);}
+  ctx.restore();}
 function render(ctx,B,sc,f,only){
   const list=B.ops.map((o,i)=>[o,i]).sort((a,b)=>a[0].L-b[0].L||a[1]-b[1]);
   ctx.textBaseline='alphabetic';
   for(const [o] of list){if(only!=null&&o.L!==only)continue;
     if(o.t==='rect'){ctx.globalAlpha=o.a;rr(ctx,o.x*sc,o.y*sc,o.w*sc,o.h*sc,o.r*sc);
       if(o.fill){ctx.fillStyle=o.fill;ctx.fill();}
-      if(o.stroke){ctx.strokeStyle=o.stroke;ctx.lineWidth=o.sw*sc;ctx.stroke();}
+      if(o.stroke){ctx.strokeStyle=o.stroke;ctx.lineWidth=o.sw*sc;if(o.dash)ctx.setLineDash(o.dash.map(v=>v*sc));ctx.stroke();if(o.dash)ctx.setLineDash([]);}
       ctx.globalAlpha=1;}
     else if(o.t==='text'){ctx.font=(o.b?700:400)+' '+(o.size*sc)+'px '+f;ctx.fillStyle=o.color;ctx.globalAlpha=o.a==null?1:o.a;
       ctx.textAlign=o.al==='c'?'center':o.al==='r'?'right':'left';ctx.fillText(o.s,o.x*sc,o.y*sc);ctx.globalAlpha=1;}
     else if(o.t==='img'){const c=IMG.get(o.id),im=c&&c.im;
       if(im&&im.complete&&im.naturalWidth){const src=c.bm||im,nw=im.naturalWidth,nh=im.naturalHeight;
-        if(o.fit==='cover'){const k=Math.max(o.w/nw,o.h/nh),w=nw*k,h=nh*k;
+        if(o.fit==='nine'){nine(ctx,src,nw,nh,o,sc);}
+        else if(o.fit==='cover'){const k=Math.max(o.w/nw,o.h/nh),w=nw*k,h=nh*k;
           ctx.save();ctx.globalAlpha=o.a==null?1:o.a;ctx.beginPath();ctx.rect(o.x*sc,o.y*sc,o.w*sc,o.h*sc);ctx.clip();
           ctx.imageSmoothingQuality='high';ctx.drawImage(src,(o.x+(o.w-w)/2)*sc,(o.y+(o.h-h)/2)*sc,w*sc,h*sc);ctx.restore();}
         else{const k=Math.min(o.w/nw,o.h/nh),w=nw*k,h=nh*k;
@@ -896,7 +949,8 @@ const setP=(k,v)=>{const a=k.split('.'),l=a.pop();a.reduce((o,p)=>o[p],S)[l]=v;}
 function fillForm(){$$('[data-k]').forEach(e=>{const v=getP(e.dataset.k);if(e.type==='checkbox')e.checked=!!v;else e.value=v;});
   $$('#themes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===S.design.theme));
   refTs();
-  $('#bgName').textContent=S.design.bg.img?(S.design.bg.name||'背景画像あり'):'背景画像なし';$('#bBgX').hidden=!S.design.bg.img;}
+  $('#bgName').textContent=S.design.bg.img?(S.design.bg.name||'背景画像あり'):'背景画像なし';$('#bBgX').hidden=!S.design.bg.img;
+  $('#frName').textContent=S.design.frame.img?(S.design.frame.name||'透過素材あり'):'透過素材なし';$('#bFrX').hidden=!S.design.frame.img;}
 // 用紙を変えたとき：箱の手動配置はリセットする。自由テキストは、用紙の中での相対位置（左寄り・中央・右寄り、上・下など）を保ったまま新しい用紙へ移す
 function paperChanged(prev){const A=PAPERS[prev],P=PAPERS[S.design.paper],F=S.design.free,nf={};
   if(A&&P){const M=mkMeasure(S.design),mv=(v,size,from,to)=>(from-size>0?Math.max(0,Math.min(1,v/(from-size))):.5)*(to-size);
@@ -1009,8 +1063,17 @@ $('#pReset').addEventListener('click',()=>{if(sel){delete S.design.free[sel];sch
 $('#bFree').addEventListener('click',()=>{S.design.free={};sel=null;schedule();});
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
 // 2枚構成：種別ごとに載せるページ（種別の一覧から作る）
-function renderPgmap(){const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
+function renderPgmap(){if(typeof renderBsKinds==='function'&&$('#selBs').options.length)renderBsKinds();const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
 renderPgmap();
+// 箱のデザイン：全体の選択肢と、種別ごとの上書き（種別の id で持つので、並べ替えても崩れない）
+$('#selBs').innerHTML=BOX_STYLES.map(b=>`<option value="${b[0]}">${b[1]}</option>`).join('');
+function renderBsKinds(){$('#bsKinds').innerHTML=S.design.kinds.map(k=>`<label>${esc(kName(k))}<select data-bk="${k.id}"><option value="">全体と同じ</option>${BOX_STYLES.map(b=>`<option value="${b[0]}" ${k.bs===b[0]?'selected':''}>${b[1]}</option>`).join('')}</select></label>`).join('');}
+renderBsKinds();
+$('#bsKinds').addEventListener('change',e=>{const k=S.design.kinds.find(x=>x.id===e.target.dataset.bk);if(!k)return;k.bs=e.target.value;schedule();});
+$('#fFrame').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{S.design.frame.img=await readImg(f);S.design.frame.name=f.name;if(S.design.bs!=='frame'&&!S.design.kinds.some(k=>k.bs==='frame'))S.design.bs='frame';}
+  catch(x){setErr((x&&x.message)||'画像を読めませんでした');}fillForm();schedule();});
+$('#bFrX').addEventListener('click',()=>{S.design.frame.img='';S.design.frame.name='';fillForm();schedule();});
 $('#zoom').addEventListener('input',e=>{zoom=+e.target.value;schedule();});
 window.addEventListener('resize',schedule);
 // プレビュー枠の大きさが変わったら描き直す（境目のドラッグ、確認モードの切り替えなど）
@@ -1189,7 +1252,7 @@ function renderKinds(){const d=S.design,T=getTheme(d),n=d.kinds.length;
 <button type="button" data-ka="del" ${n>1?'':'disabled'}>削除</button></div>`).join('');
   $('#bKindBack').hidden=DEF_KINDS.every(([id])=>d.kinds.some(k=>k.id===id));nkLabel();}
 // 種別が変わったら、頒布物タブ・ページ分け・プレビューにも反映する（追加・削除・並べ替えは作り直し、名前・色は書き換えだけ）
-function kindsChanged(rebuild){
+function kindsChanged(rebuild){renderBsKinds();
   if(rebuild){renderKinds();renderList();}
   else{$$('details.it',list).forEach(dt=>{const it=S.items.find(i=>i.id===dt.dataset.id);if(it)paintChip($('.kd',dt),it.kind);
       $$('select[data-f=kind] option',dt).forEach(o=>{o.textContent=kName(kOf(S.design,o.value));});});nkLabel();}
