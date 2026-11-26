@@ -147,6 +147,8 @@ footer label{display:flex;align-items:center;gap:6px;margin:0 0 0 auto}
 input[type=color]{width:100%;height:30px;padding:0;border:1px solid var(--ln);border-radius:6px;background:#fff;display:block;margin-top:2px}
 dialog{border:0;border-radius:12px;padding:0;width:min(760px,94vw);max-height:88vh;color:var(--ink);box-shadow:0 12px 50px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(20,22,35,.5)}
+#vidDlg{width:fit-content;max-width:94vw}#vidDlg .vb{padding:12px;display:flex;justify-content:center;background:#3a3a44}#vidCv{display:block}
+.grc{display:flex;gap:4px}.grc input{flex:1;min-width:0}
 .hh{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--ac2);color:#fff;position:sticky;top:0}
 .hh h2{margin:0 auto 0 0;padding:0;border:0;font-size:16px;color:#fff;letter-spacing:.08em}
 .hh button{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
@@ -352,6 +354,21 @@ body.view #cv{touch-action:auto}
       <label title="0 ならくっきりした影">箱の影のぼかし mm<input type="number" min="0" max="10" step="0.1" data-k="design.bsh.b"></label>
     </div>
     <p class="note">透過素材は、四隅の形を保ったまま辺と中央だけを伸ばして箱に合わせます（9スライス）。<b>素材の角の範囲</b>は、素材の短い辺のうち何％を角として扱うか、<b>角の大きさ</b>は箱に描く角の大きさ、<b>素材の濃さ</b>を下げると素材が淡くなります（Illustrator では不透明度として入るので、あとから変えられます）。透過を活かすには PNG を使ってください。Illustrator 用スクリプトでは、素材を箱の大きさに引き伸ばして配置します。<br>配布素材を使うときは、同人誌・お品書きでの使用や加工が利用規約で認められているか確認してください。</p>
+    <h2>背景のグラデーション</h2>
+    <div class="chk"><label><input type="checkbox" data-k="design.grad.on">背景をグラデーションにする（書き出しタブの「動画」では動きます）</label></div>
+    <div class="row">
+      <label>動き方<select data-k="design.grad.type"><option value="flow">流れる</option><option value="blob">ゆらめく</option><option value="spin">回る</option></select></label>
+      <label>向き<select data-k="design.grad.ang"><option value="45">↘ 斜め（左上から）</option><option value="315">↗ 斜め（左下から）</option><option value="0">→ 横</option><option value="90">↓ 縦</option></select></label>
+    </div>
+    <div class="row">
+      <label>色の数<select data-k="design.grad.n"><option value="2">2色</option><option value="3">3色</option><option value="4">4色</option></select></label>
+      <label>色<span class="grc"><input type="color" data-k="design.grad.c1" aria-label="グラデーションの1色目"><input type="color" data-k="design.grad.c2" aria-label="グラデーションの2色目"><input type="color" data-k="design.grad.c3" aria-label="グラデーションの3色目"><input type="color" data-k="design.grad.c4" aria-label="グラデーションの4色目"></span></label>
+    </div>
+    <div class="row">
+      <label title="下げると背景色と混ざって淡くなります">濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.grad.a"></label>
+      <span></span>
+    </div>
+    <p class="note">プレビュー・PNG・PSD は動き始めの絵（静止画）になります。動きは書き出しタブの「▶ 動きを確認」で見られ、「MP4を書き出す」で動画にできます（1周の秒数も書き出しタブで決めます）。<br><b>流れる</b>：色が向きに沿って流れる　<b>ゆらめく</b>：色のかたまりがゆっくり円を描く　<b>回る</b>：グラデーションの向きが1周する<br>グラデーションは帯と箱の後ろにあります。もっと見せたいときは、下の「背景画像」の<b>帯の濃さ・箱の濃さ</b>を下げます（背景画像がなくても効きます）。</p>
     <h2>背景画像</h2>
     <div class="imgrow"><span class="nm" id="bgName">背景画像なし</span>
       <label class="fbtn">画像を選ぶ<input type="file" id="fBg" accept="image/*,.psd,.psb"></label><button type="button" id="bBgX">外す</button></div>
@@ -360,7 +377,9 @@ body.view #cv{touch-action:auto}
       <label>帯の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.bg.band"></label>
       <label>箱の濃さ ％<input type="number" min="0" max="100" step="5" data-k="design.bg.card"></label>
     </div>
-    <p class="note">画像は用紙全体に、はみ出す分を切り落として敷きます。<b>画像の濃さ</b>を下げると淡くなり、<b>帯・箱の濃さ</b>を下げると背景が透けて見えます。</p>
+    <label title="動画（書き出しタブ）で、画像を並べて流します。静止画は今までどおり">動かし方（動画）<select data-k="design.bg.mv"><option value="">動かさない</option><option value="x">→ 横に流す</option><option value="y">↓ 縦に流す</option><option value="xy">↘ 斜めに流す（右下へ）</option><option value="xu">↗ 斜めに流す（右上へ）</option></select></label>
+    <p class="note" id="bgTileMsg" hidden></p>
+    <p class="note">画像は用紙全体に、はみ出す分を切り落として敷きます。<b>画像の濃さ</b>を下げると淡くなり、<b>帯・箱の濃さ</b>を下げると背景が透けて見えます。<br><b>動かし方</b>を選ぶと、動画では画像を並べて流します。縞・チェック・水玉など柄がくり返している画像は、くり返しの単位を自動で見つけて、つなぎ目が出ないように並べます（1周でくり返し1つ分進みます）。写真など、くり返しのない画像は画像ごと並べるので、境目が見えます。</p>
     <h2>フォント</h2>
     <label>系統<select data-k="design.font" id="selFont"></select></label>
     <label>PC内のフォント名を指定（プレビュー / PNG用・任意）<input data-k="design.customFont" placeholder="例：源ノ角ゴシック JP"></label>
@@ -404,6 +423,12 @@ body.view #cv{touch-action:auto}
       <option value="350">印刷用 350dpi</option><option value="300">印刷用 300dpi</option>
       <option value="web" selected>Web / SNS用（長辺2048px）</option></select></label>
     <button id="bPng" class="pri">PNGを書き出す</button>
+    <h2>動画（SNS告知用・MP4）</h2>
+    <label>大きさ<select id="selVid"><option value="1080" selected>短辺1080px（SNS用）</option><option value="720">短辺720px（軽い）</option></select></label>
+    <label title="動きが1周する秒数（2〜30）。動画の長さもこの秒数です">1周の秒数（動画の長さ）<input type="number" min="2" max="30" step="1" data-k="design.grad.sec"></label>
+    <div class="bar"><button type="button" id="bVidPlay">▶ 動きを確認</button><button type="button" id="bVid" class="pri">MP4を書き出す</button></div>
+    <p class="note" id="vidOff" style="color:var(--ac)">デザインタブで「背景のグラデーション」をオンにするか、背景画像の「動かし方」を選ぶと使えます。</p>
+    <p class="note">背景（グラデーション・背景画像）が動く動画（MP4・30fps・音声なし）を書き出します。長さは上の「1周の秒数」です。最後の絵が最初の絵につながるので、繰り返し再生してもつなぎ目が出ません。2枚構成のときは1枚ずつ書き出します。<br>Chrome・Edge で書き出せます（動画を作れないブラウザでは、その旨を表示します）。</p>
     <h2>PSD（Photoshop）</h2>
     <label style="margin-bottom:4px">要素ごとに別レイヤーにするもの</label>
     <div class="chk">
@@ -413,7 +438,7 @@ body.view #cv{touch-action:auto}
       <label><input type="checkbox" id="psdBg">背景・帯</label>
     </div>
     <button id="bPsd" class="pri">PSDを書き出す</button>
-    <p class="note">上の「解像度」の設定で、レイヤー分けした PSD を書き出します。チェックを入れた種類は<b>要素ごと</b>に1レイヤーになり、レイヤー名で見分けられます。<br><b>文字</b>：サークル名、見出し、頒布物ごとのタイトル・仕様・説明・価格・バッジ、自由テキストなど　<b>箱・図形</b>：頒布物の箱、バッジの地、見出しの飾り、スペース枠、完売の幕　<b>表紙画像</b>：表紙ごと　<b>背景・帯</b>：背景色、背景画像、ヘッダー帯、フッター帯、ライン<br>チェックを外した種類は「背景 / 装飾 / 画像 / テキスト / 最前面」にまとめます。文字は画像化（ラスター）されるので、移動や表示切替・色調整はできますが、打ち直すことはできません。<br>A3・350dpi など大きいサイズは数十秒かかることがあります。</p>
+    <p class="note">上の「解像度」の設定で、レイヤー分けした PSD を書き出します。チェックを入れた種類は<b>要素ごと</b>に1レイヤーになり、レイヤー名で見分けられます。<br><b>文字</b>：サークル名、見出し、頒布物ごとのタイトル・仕様・説明・価格・バッジ、自由テキストなど　<b>箱・図形</b>：頒布物の箱、バッジの地、見出しの飾り、スペース枠、完売の幕　<b>表紙画像</b>：表紙ごと　<b>背景・帯</b>：背景色（またはグラデーション）、背景画像、ヘッダー帯、フッター帯、ライン<br>チェックを外した種類は「背景 / 装飾 / 画像 / テキスト / 最前面」にまとめます。文字は画像化（ラスター）されるので、移動や表示切替・色調整はできますが、打ち直すことはできません。<br>A3・350dpi など大きいサイズは数十秒かかることがあります。</p>
     <h2>Illustrator（編集可能データ）</h2>
     <div class="chk"><label><input type="checkbox" data-k="design.cmyk">CMYKドキュメントで作る（印刷向け）</label></div>
     <div class="row">
@@ -472,10 +497,14 @@ body.view #cv{touch-action:auto}
 <footer><span id="hist"><button type="button" id="bUndo" disabled title="元に戻す（Ctrl+Z）" aria-label="元に戻す">↶<span class="pc"> 戻す</span></button> <button type="button" id="bRedo" disabled title="やり直し（Ctrl+Y / Ctrl+Shift+Z）" aria-label="やり直し">↷<span class="pc"> やり直し</span></button></span><span id="pgs" hidden><button type="button" data-p="1">1枚目</button> <button type="button" data-p="2">2枚目</button></span><span id="al" hidden><span class="pc">選択中の箱：</span><button type="button" data-al="l">左揃え</button> <button type="button" data-al="c">左右中央</button> <button type="button" data-al="r">右揃え</button> <button type="button" data-al="w">幅いっぱい</button> <button type="button" id="bPos" title="大きさはそのままで、位置だけ自動配置の場所に戻します">位置を戻す</button></span><span id="hint">箱をタップすると位置や大きさを調整できます</span><span id="stat"></span><span id="warn"></span>
   <label>表示倍率<input type="range" id="zoom" min="1" max="3" step="0.25" value="1"></label></footer>
 
+<dialog id="vidDlg" aria-labelledby="vidT">
+<div class="hh"><h2 id="vidT">動きの確認</h2><button type="button" id="bVidX">閉じる</button></div>
+<div class="vb"><canvas id="vidCv" aria-label="背景のグラデーションが動くお品書き"></canvas></div>
+</dialog>
 <dialog id="help" aria-labelledby="helpT">
 <div class="hh"><h2 id="helpT">お品書きメーカーの使い方</h2><button type="button" id="bHelpX">閉じる</button></div>
 <div class="hb">
-<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-layer">レイヤー</a><a href="#h-undo">元に戻す</a><a href="#h-text">文字</a><a href="#h-bg">背景画像</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
+<div class="hn"><a href="#h-flow">基本の流れ</a><a href="#h-item">頒布物</a><a href="#h-box">箱の調整</a><a href="#h-layer">レイヤー</a><a href="#h-undo">元に戻す</a><a href="#h-text">文字</a><a href="#h-bg">背景</a><a href="#h-page">2枚に分ける</a><a href="#h-layout">レイアウト</a><a href="#h-bulk">まとめて登録</a><a href="#h-out">書き出し</a><a href="#h-save">保存</a><a href="#h-view">確認と調整・スマホ</a><a href="#h-faq">困ったとき</a></div>
 
 <h3 id="h-flow">基本の流れ</h3>
 <ol>
@@ -576,13 +605,19 @@ body.view #cv{touch-action:auto}
 <li>自由テキストは、ダブルクリックで初期位置（用紙中央あたり）に戻ります。用紙サイズを変えたときは、新しい用紙の中のほぼ同じ位置（左寄り・中央・右寄り、上・下の関係を保つ）に移ります</li>
 </ul>
 
-<h3 id="h-bg">背景画像</h3>
+<h3 id="h-bg">背景（グラデーション・画像）</h3>
+<ul>
+<li>デザインタブ「背景のグラデーション」の「背景をグラデーションにする」で、背景を 2〜4 色のグラデーションにできます。<b>動き方</b>（流れる / ゆらめく / 回る）・<b>向き</b>・<b>色</b>・<b>濃さ</b>（下げると背景色と混ざる）を選べます。動きの速さ（1周の秒数）は書き出しタブで決めます</li>
+<li>プレビュー・PNG・PSD は動き始めの絵になります。動きは書き出しタブの「▶ 動きを確認」で見られ、「MP4を書き出す」で SNS 告知用の動画にできます</li>
+<li>グラデーションは帯と箱の後ろにあります。もっと見せたいときは、下の<b>帯の濃さ・箱の濃さ</b>を下げます（背景画像がなくても効きます）</li>
+</ul>
 <ul>
 <li>デザインタブ「背景画像」の「画像を選ぶ」で、好きな画像（PNG / JPG / PSD）を用紙全体に敷けます。「外す」で解除</li>
 <li><b>画像の濃さ</b>：下げると画像が淡くなり、文字が読みやすくなります</li>
 <li><b>帯の濃さ</b>：下げるとヘッダー・フッターの帯が半透明になり、背景が透けます</li>
 <li><b>箱の濃さ</b>：下げると頒布物の箱が半透明になります（枠線と文字はそのまま）</li>
 <li>画像は縦横比を保ったまま用紙を覆い、はみ出す分は切り落とされます</li>
+<li><b>動かし方（動画）</b>：→ 横 / ↓ 縦 / ↘ / ↗ に流すを選ぶと、動画では画像を並べて流します（静止画は今までどおり）。縞・チェック・水玉など柄がくり返している画像は、くり返しの単位を自動で見つけて、つなぎ目が出ないように並べます。写真など、くり返しのない画像は画像ごと並べるので境目が見えます。縞に沿った向きなど、柄が変わらない向きを選ぶと動いて見えないので、注意が出たらほかの向きにしてください</li>
 <li>Illustrator に書き出す場合は、背景画像のファイルも表紙画像と同じフォルダに置いてください</li>
 </ul>
 
@@ -623,6 +658,7 @@ body.view #cv{touch-action:auto}
 <h3 id="h-out">書き出し</h3>
 <table>
 <tr><th>PNG</th><td>印刷用は 350dpi / 300dpi、SNS 用は「Web / SNS用（長辺2048px）」。2枚構成では2ファイル出ます</td></tr>
+<tr><th>動画（MP4）</th><td>背景（グラデーション・流す背景画像）が動く動画（H.264・30fps・音声なし）。大きさは短辺1080px（SNS用）か720px（軽い）。長さは「1周の秒数」（2〜30秒）で、最後と最初がつながるので繰り返し再生してもつなぎ目が出ません。「▶ 動きを確認」で先に動きを見られます。Chrome・Edge で使えます</td></tr>
 <tr><th>PSD</th><td>PNG と同じ解像度設定で、レイヤー分けした PSD を出力。「要素ごとに別レイヤーにするもの」で 文字 / 箱・図形 / 表紙画像 / 背景・帯 を選ぶと、選んだ種類は要素1つずつが別レイヤーになります（外した種類は 背景 / 装飾 / 画像 / テキスト / 最前面 にまとめる）。文字は画像化されます（移動は可、打ち直し不可）</td></tr>
 <tr><th>Illustrator用 .jsx</th><td>Illustrator の「ファイル ＞ スクリプト ＞ その他のスクリプト…」で実行 → 表紙画像のフォルダを選択 → レイヤー分けされた編集可能なドキュメントができます</td></tr>
 </table>
@@ -699,6 +735,17 @@ for(var n=0;n<D.ops.length;n++){
     if(o.a<1){p.opacity=o.a*100;}
     if(o.blur>0){try{p.applyEffect('<LiveEffect name="Adobe PSL Gaussian Blur"><Dict data="R blur '+(o.blur*MM)+' "/></LiveEffect>');}catch(e){}} // 表紙の影のぼかし（使えない版ではぼかし無しの半透明の影のまま）
     if(o.g){try{p.name=o.g;}catch(e){}}
+    if(o.gr){var gq=null;try{ // 背景のグラデーション：静止画と同じ向きの線形グラデーションを重ねる（「ゆらめく」も線形で近似）。うまく作れない版では背景色のまま
+        try{p.name='背景色';}catch(e){} // 下に敷く単色は背景色、上に重ねるのがグラデーション
+        var gs=o.gr.cs.slice(0);if(o.gr.type=='flow'){gs.push(gs[0]);}
+        gq=ly.pathItems.rectangle(Y(o.y),X(o.x),o.w*MM,o.h*MM);gq.stroked=false;
+        var gd=doc.gradients.add();gd.type=GradientType.LINEAR;while(gd.gradientStops.length<gs.length){gd.gradientStops.add();}
+        for(var gi=0;gi<gs.length;gi++){var st=gd.gradientStops[gi];st.rampPoint=gi/(gs.length-1)*100;st.midPoint=50;st.color=col(gs[gi]);}
+        var gc=new GradientColor();gc.gradient=gd;gq.filled=true;gq.fillColor=gc;
+        if(o.gr.ang){gq.rotate(-o.gr.ang,false,false,true,false,Transformation.CENTER);}
+        if(o.gr.a<1){gq.opacity=o.gr.a*100;}
+        try{gq.name='背景のグラデーション';}catch(e){}
+      }catch(e){if(gq){try{gq.remove();}catch(e2){}}}}
   }else if(o.t=='text'){
     var t=ly.textFrames.pointText([X(o.x),Y(o.y)]);
     t.contents=o.s;
@@ -763,6 +810,13 @@ const PAPERS={
   S169:{n:'SNS 16:9 横',w:320,h:180},S43:{n:'SNS 4:3 横',w:280,h:210},
   S11:{n:'SNS 正方形',w:210,h:210},S45:{n:'SNS 4:5 縦',w:208,h:260}
 };
+// 背景のグラデーションの動き方（流れる / ゆらめく / 回る）と、使う色（色の数だけ）
+const GRT=['flow','blob','spin'];
+const BGMV=['','x','y','xy','xu']; // 背景画像の動かし方（動画）：動かさない / 横 / 縦 / 右下 / 右上
+// 動画にできるか（背景のグラデーションがオン、または背景画像を流す）
+const animOn=()=>!!(S.design.grad.on||(S.design.bg.img&&S.design.bg.mv));
+let vidBusy=false,vidRaf=0; // 動画を書き出し中か / 動きの確認の再生（requestAnimationFrame の番号）
+const grCols=G=>[G.c1,G.c2,G.c3,G.c4].slice(0,Math.max(2,Math.min(4,Math.round(+G.n)||3)));
 // 種別：初期の6種類。実際に使う一覧（名前・並び順・色）は S.design.kinds にあり、デザインタブで追加・変更・削除できる
 // 「新刊」(id:new) は名前を変えても、強調表示・「新刊を大きく」・新刊の列数がそのまま効く
 const DEF_KINDS=[['new','新刊'],['semi','準新刊'],['set','セット'],['old','既刊'],['itaku','委託'],['goods','グッズ']];
@@ -812,7 +866,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},cvb:{on:false,c:'#333333',w:.5},cvs:{on:false,c:'#000000',a:35,d:1.2,b:1},bsh:{on:false,c:'#000000',a:35,d:1.5,b:1},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},csHead:true,csMark:true,fit:'eq',panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100,mv:''},bs:'std',bframe:{img:'',name:'',sl:30,cm:5,a:100,fill:true},cvb:{on:false,c:'#333333',w:.5},cvs:{on:false,c:'#000000',a:35,d:1.2,b:1},bsh:{on:false,c:'#000000',a:35,d:1.5,b:1},grad:{on:false,type:'flow',n:3,c1:'#ffc8dd',c2:'#bde0fe',c3:'#fff1b0',c4:'#caf0c4',ang:45,a:100,sec:8},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},showProps:false,showGuides:false,imgFix:false,free:{},lo:{g:[],i:{}},hid:{},lock:{},csHead:true,csMark:true,fit:'eq',panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -841,7 +895,10 @@ function norm(j){const b=blank();
   {const ts=mkTs(),o=(j.design&&j.design.ts)||{},tc=j.design&&j.design.tc;CATS.forEach(c=>Object.assign(ts[c[0]],o[c[0]]));
     if(tc&&tc.on){ts.title.c=ts.desc.c=tc.title;ts.price.c=tc.price;ts.spec.c=tc.sub;} // 旧「文字色を上書き」の設定を引き継ぐ
     s.design.ts=ts;}
-  {const D0=blank().design,jd=j.design||{};['box','bg','fs','pg','cvb','cvs','bsh'].forEach(k=>{s.design[k]=Object.assign(D0[k],jd[k]);});} // 入れ子の設定は既定値に上書きして欠けを補う（cvb：表紙の枠、cvs：表紙の影、bsh：透過素材の箱の影）
+  {const D0=blank().design,jd=j.design||{};['box','bg','fs','pg','cvb','cvs','bsh','grad'].forEach(k=>{s.design[k]=Object.assign(D0[k],jd[k]);});} // 入れ子の設定は既定値に上書きして欠けを補う（cvb：表紙の枠、cvs：表紙の影、bsh：透過素材の箱の影、grad：背景のグラデーション）
+  {const G=s.design.grad,G0=blank().design.grad;G.on=!!G.on;if(!GRT.includes(G.type))G.type='flow'; // 背景のグラデーション：色は #rrggbb だけ（描くときに色の指定として使うため）
+    ['c1','c2','c3','c4'].forEach(k=>{if(!/^#[0-9a-f]{6}$/i.test(G[k]))G[k]=G0[k];});G.n=Math.max(2,Math.min(4,Math.round(+G.n)||3));
+    G.ang=[0,45,90,315].includes(+G.ang)?+G.ang:45;if(!BGMV.includes(s.design.bg.mv))s.design.bg.mv='';G.a=G.a===''||G.a==null||isNaN(+G.a)?100:Math.max(0,Math.min(100,+G.a));G.sec=Math.max(2,Math.min(30,Math.round(+G.sec)||8));}
   // 箱の透過素材は design.bframe。design.frame は「ヘッダー下ライン」のオン・オフ（以前の版で同じ名前を使ってしまっていたので形を整える）
   {const jd=j.design||{},old=jd.frame&&typeof jd.frame==='object'?jd.frame:null;
     s.design.bframe=Object.assign(blank().design.bframe,old,jd.bframe&&typeof jd.bframe==='object'?jd.bframe:null);
@@ -954,9 +1011,11 @@ function build(S,M,page){
 
   const m=8*u,hH=Math.min(36*u,H*.22);
   // 背景画像（任意）：用紙全体に敷き、帯と箱の濃さを下げると透けて見える
-  const B0=d.bg||{},bgOn=!!B0.img,bandA=bgOn?alp(B0.band):1,cardA=bgOn?alp(B0.card):1;
-  R(0,0,W,H,T.bg,{L:0,g:'背景色'});
-  if(bgOn)ops.push({t:'img',x:0,y:0,w:W,h:H,id:'bg',name:B0.name||'',fit:'cover',a:alp(B0.alpha),L:0,g:'背景画像'});
+  // 背景のグラデーション（任意）：背景色の四角に gr を付けて描く（render が描き分け、動画では gr の部分だけ動かす）。帯と箱の濃さは背景画像と同じく効かせる
+  const B0=d.bg||{},bgOn=!!B0.img,GR=d.grad||{},grOn=!!GR.on,fade=bgOn||grOn,bandA=fade?alp(B0.band):1,cardA=fade?alp(B0.card):1;
+  if(grOn)R(0,0,W,H,T.bg,{L:0,g:'背景のグラデーション',gr:{type:GRT.includes(GR.type)?GR.type:'flow',cs:grCols(GR),ang:+GR.ang||0,a:alp(GR.a)}});
+  else R(0,0,W,H,T.bg,{L:0,g:'背景色'});
+  if(bgOn)ops.push(Object.assign({t:'img',x:0,y:0,w:W,h:H,id:'bg',name:B0.name||'',fit:'cover',a:alp(B0.alpha),L:0,g:'背景画像'},B0.mv?{mv:B0.mv}:null)); // mv：動画で並べて流す向き（静止画は今までどおり）
   R(0,0,W,hH,T.band,{L:0,a:bandA,g:'ヘッダー帯'});
   const fr=d.frame?1.2*u:0;if(fr)R(0,hH,W,fr,T.accent,{L:0,g:'ヘッダー下ライン'});
   // ヘッダー
@@ -1288,10 +1347,59 @@ function nine(ctx,src,nw,nh,o,sc){const s=Math.max(1,Math.min(nw,nh)*Math.max(1,
   for(let j=0;j<3;j++)for(let i=0;i<3;i++){const sw=sx[i+1]-sx[i],sh=sy[j+1]-sy[j],dw=dx[i+1]-dx[i],dh=dy[j+1]-dy[j];
     if(sw>0&&sh>0&&dw>0&&dh>0)ctx.drawImage(src,sx[i],sy[j],sw,sh,dx[i]*sc,dy[j]*sc,dw*sc,dh*sc);}
   ctx.restore();}
+// 背景のグラデーション（op.gr）。ph＝動きの位置（0〜1）。ph=1 は ph=0 と同じ絵になるので、動画の最後と最初がつながる。静止画（プレビュー・PNG・PSD）は ph=0
+// flow：色の並び（1色目→…→最後の色→1色目）を向きに沿って流す / spin：向きが1周回る / blob：向きに沿ったグラデーションの上で、色ごとのぼんやりした丸が円を描いて動く
+function paintGrad(ctx,o,sc,ph){const G=o.gr,cs=G.cs,n=cs.length,x=o.x*sc,y=o.y*sc,w=o.w*sc,h=o.h*sc,cx=x+w/2,cy=y+h/2;
+  const axis=a=>{const r=a*Math.PI/180,dx=Math.cos(r),dy=Math.sin(r);return[dx,dy,(Math.abs(w*dx)+Math.abs(h*dy))/2];}, // 向きの単位ベクトルと、その向きで見た用紙の長さの半分
+    lin=(a,s,e,stops)=>{const[dx,dy]=axis(a),g=ctx.createLinearGradient(cx+dx*s,cy+dy*s,cx+dx*e,cy+dy*e);stops.forEach(([t,c])=>g.addColorStop(t,c));ctx.fillStyle=g;ctx.fillRect(x,y,w,h);},
+    even=a=>a.map((c,i)=>[i/(a.length-1),c]);
+  ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+  ctx.globalAlpha=1;ctx.fillStyle=o.fill;ctx.fillRect(x,y,w,h); // 下に背景色（濃さを下げると混ざる）
+  ctx.globalAlpha=G.a;
+  if(G.type==='flow'){const hf=axis(G.ang)[2],P=2*hf,s=-hf-P+ph*P,st=[];for(let k=0;k<=2*n;k++)st.push([k/(2*n),cs[k%n]]);lin(G.ang,s,s+2*P,st);} // 2周期ぶんの帯を1周期ずらす
+  else if(G.type==='spin'){const a=G.ang+360*ph,hf=axis(a)[2];lin(a,-hf,hf,even(cs));}
+  else{const hf=axis(G.ang)[2],R=Math.max(w,h)*.6;lin(G.ang,-hf,hf,even(cs));
+    cs.forEach((c,i)=>{const t=2*Math.PI*(ph*(i%2?-1:1)+i/n),bx=cx+w*.3*Math.cos(t),by=cy+h*.3*Math.sin(t),g=ctx.createRadialGradient(bx,by,0,bx,by,R);
+      g.addColorStop(0,c);g.addColorStop(1,c+'00');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);});}
+  ctx.restore();}
+// 背景画像のくり返しの単位（縞・チェック・水玉などの柄）。横・縦それぞれ、ずらすと画像自身にぴったり重なる幅を探す。
+// 縮小した画像で候補を探し（くり返しの何倍にも重なるので、いちばん小さいもの）、元の大きさの数行・数列で 1px 単位に詰める。
+// 見つからない向きは画像の大きさのまま（並べると境目が見える）。結果は画像ごとに覚えておく（c.tile）
+function tileOf(c){if(c.tile)return c.tile;const src=c.bm||c.im,nw=c.im.naturalWidth,nh=c.im.naturalHeight;let px=nw,py=nh,an=null;
+  try{const s=Math.min(1,360/Math.max(nw,nh)),w=Math.max(8,Math.round(nw*s)),h=Math.max(8,Math.round(nh*s)),cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    const g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(src,0,0,w,h);const D=g.getImageData(0,0,w,h).data,st=Math.max(1,Math.round(Math.min(w,h)/90));
+    const dif=(i,j)=>Math.abs(D[i]-D[j])+Math.abs(D[i+1]-D[j+1])+Math.abs(D[i+2]-D[j+2]);
+    const err=(sx,sy)=>{let e=0,n=0;for(let y=Math.max(0,-sy);y<h-Math.max(0,sy);y+=st)for(let x=Math.max(0,-sx);x<w-Math.max(0,sx);x+=st){e+=dif((y*w+x)*4,((y+sy)*w+x+sx)*4);n++;}return n?e/n:1e9;};an={err,s};
+    const find=(L,f)=>{const lo=Math.max(4,Math.round(L*.06)),hi=Math.round(L*.85),es=[];for(let p=lo;p<=hi;p++)es.push(f(p));if(!es.length)return 0;
+      const mn=Math.min(...es),med=es.slice().sort((a,b)=>a-b)[es.length>>1];if(mn>12||mn>med*.2)return 0; // はっきり重なるずれがない＝くり返しなし
+      for(let i=0;i<es.length;i++)if(es[i]<=mn*1.5+2&&(i===0||es[i]<=es[i-1])&&(i===es.length-1||es[i]<=es[i+1]))return lo+i;return 0;};
+    // 元の大きさで詰める：一続きの画素の列 line(k) を、ずれ q で比べる
+    const refine=(p0,L,lines)=>{let best=[1e9,p0];const r=Math.ceil(2/s);for(let q=Math.max(2,p0-r);q<=Math.min(L-2,p0+r);q++){let e=0,n=0;
+        for(const a of lines)for(let i=0;i+q<a.length/4;i+=2){const u=i*4,v=(i+q)*4;e+=Math.abs(a[u]-a[v])+Math.abs(a[u+1]-a[v+1])+Math.abs(a[u+2]-a[v+2]);n++;}
+        e/=n||1;if(e<best[0])best=[e,q];}return best[1];};
+    const grab=(sx,sy,sw,sh)=>{const t=document.createElement('canvas');t.width=sw;t.height=sh;const tg=t.getContext('2d',{willReadFrequently:true});tg.drawImage(src,sx,sy,sw,sh,0,0,sw,sh);return tg.getImageData(0,0,sw,sh).data;};
+    const hx=find(w,p=>err(p,0)),hy=find(h,p=>err(0,p));
+    if(hx)px=refine(Math.round(hx/s),nw,[.15,.35,.5,.65,.85].map(f=>grab(0,Math.round(nh*f),nw,1)));
+    if(hy)py=refine(Math.round(hy/s),nh,[.15,.35,.5,.65,.85].map(f=>grab(Math.round(nw*f),0,1,nh)));}catch(x){px=nw;py=nh;}
+  // 並べる1枚分（大きすぎるときは縮めて持つ。並べるときの倍率で元の大きさに戻す）
+  const k=Math.min(1,2400/Math.max(px,py)),cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(px*k));cv.height=Math.max(1,Math.round(py*k));
+  const g=cv.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(src,0,0,px,py,0,0,cv.width,cv.height);
+  return c.tile={px,py,rx:px<nw,ry:py<nh,cv,an};}
+// その向きに流しても柄が変わらない（縞に沿って流すなど）と、動いて見えない。1周の 1/4 だけずらして、ほとんど同じなら true
+function mvStill(T,mv){const A=T.an;if(!A||!mv)return false;const vx=mv==='y'?0:T.px*A.s,vy=mv==='x'?0:(mv==='xu'?-1:1)*T.py*A.s;return A.err(Math.round(vx/4),Math.round(vy/4))<4;}
+// 動画で背景画像を並べて流す（op.mv）。ph=0 は静止画と同じ位置、ph=1 でくり返し1つ分進んで ph=0 と同じ絵になる
+const patOf=new WeakMap();
+function paintMv(ctx,o,sc,ph){const c=IMG.get(o.id),im=c&&c.im;if(!im||!im.complete||!im.naturalWidth)return;
+  const nw=im.naturalWidth,nh=im.naturalHeight,k=Math.max(o.w/nw,o.h/nh),t=tileOf(c),tw=t.px*k,th=t.py*k,m=o.mv;
+  const dx=m==='x'||m==='xy'||m==='xu'?ph*tw:0,dy=m==='y'||m==='xy'?ph*th:m==='xu'?-ph*th:0;
+  let p=patOf.get(ctx);if(!p||p.t!==t){p={t,pat:ctx.createPattern(t.cv,'repeat')};patOf.set(ctx,p);}
+  p.pat.setTransform(new DOMMatrix([tw*sc/t.cv.width,0,0,th*sc/t.cv.height,(o.x+(o.w-nw*k)/2+dx)*sc,(o.y+(o.h-nh*k)/2+dy)*sc]));
+  ctx.save();ctx.globalAlpha=o.a==null?1:o.a;ctx.imageSmoothingQuality='high';ctx.fillStyle=p.pat;ctx.fillRect(o.x*sc,o.y*sc,o.w*sc,o.h*sc);ctx.restore();}
 function render(ctx,B,sc,f,only){
   const list=drawOrder(B.ops);
   ctx.textBaseline='alphabetic';
   for(const o of list){if(only!=null&&o.L!==only)continue;
+    if(o.t==='rect'&&o.gr){paintGrad(ctx,o,sc,0);continue;}
     // ぼかした塗り（表紙の影）：図形を画面の外に置き、影だけを本来の位置へずらして描く（影の位置・ぼかしは座標変換を受けないので、変換の倍率を掛ける）
     // ko：[x,y,w,h] の内側には描かない（箱の影を箱の外側だけに出す。CSS の box-shadow と同じ）
     if(o.t==='rect'&&o.ko){ctx.save();ctx.beginPath();ctx.rect(-1e6,-1e6,2e6,2e6);ctx.rect(o.ko[0]*sc,o.ko[1]*sc,o.ko[2]*sc,o.ko[3]*sc);ctx.clip('evenodd');}
@@ -1339,6 +1447,10 @@ function draw(){
     if(hv){const k=fitSc*dpr;ctx.save();ctx.fillStyle='rgba(255,149,0,.12)';ctx.fillRect(hv.x*k,hv.y*k,hv.w*k,hv.h*k);
       ctx.strokeStyle='#ff9500';ctx.lineWidth=2*dpr;ctx.strokeRect(hv.x*k,hv.y*k,hv.w*k,hv.h*k);ctx.restore();}}
   $('#al').hidden=!sh;$('#hint').hidden=!!sh;$$('#al button').forEach(b=>{b.disabled=!sh||sh.lock||(b.id==='bPos'&&!S.design.free[sh.key]);});updProps(sh);
+  {const m=$('#bgTileMsg'),c=S.design.bg.img&&S.design.bg.mv?IMG.get('bg'):null,ok=c&&c.im.complete&&c.im.naturalWidth;let t='';
+    if(ok){const T=tileOf(c);t=T.rx&&T.ry?'くり返しの単位：'+T.px+' × '+T.py+' px（つなぎ目なしで流せます）':T.rx||T.ry?'くり返しの単位：'+(T.rx?'横 '+T.px+' px':'縦 '+T.py+' px')+'（もう一方の向きはくり返しがないため、そちらへ流すと境目が見えます）':'くり返しが見つからないため、画像ごと並べます（流すと境目が見えます）';
+      if(mvStill(T,S.design.bg.mv))t='この向きでは柄が変わらないため、流しても動いて見えません（縞に沿った向きなど）。ほかの向きを選んでください';}
+    m.hidden=!t;if(m.textContent!==t)m.textContent=t;m.style.color=t.startsWith('この向き')?'var(--ac)':'';}
   $$('.isn',list).forEach(e=>{const h=B.hits.find(x=>x.key===e.dataset.id),t=capMsg(h);if(e.textContent!==t)e.textContent=t;});
   // 種別の一覧：点数と、色を指定していない種別のテーマ由来の色を最新にする
   {const T=getTheme(S.design);$$('.kr',kindsEl).forEach(r=>{const k=S.design.kinds.find(x=>x.id===r.dataset.id);if(!k)return;
@@ -1355,7 +1467,12 @@ function fillForm(){$$('[data-k]').forEach(e=>{const v=getP(e.dataset.k);if(e.ty
   $$('#themes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===S.design.theme));
   refTs();
   $('#bgName').textContent=S.design.bg.img?(S.design.bg.name||'背景画像あり'):'背景画像なし';$('#bBgX').hidden=!S.design.bg.img;
-  $('#frName').textContent=S.design.bframe.img?(S.design.bframe.name||'透過素材あり'):'透過素材なし';$('#bFrX').hidden=!S.design.bframe.img;}
+  $('#frName').textContent=S.design.bframe.img?(S.design.bframe.name||'透過素材あり'):'透過素材なし';$('#bFrX').hidden=!S.design.bframe.img;
+  gradUI();}
+// 背景のグラデーション：色の数だけ色の欄を出す。動くもの（グラデーション・流す背景画像）がないときは動画のボタンを押せなくする
+function gradUI(){const G=S.design.grad,n=Math.max(2,Math.min(4,Math.round(+G.n)||3)),on=animOn();
+  $$('.grc input').forEach((e,i)=>{e.hidden=i>=n;});
+  $('#bVid').disabled=$('#bVidPlay').disabled=!on||vidBusy;$('#vidOff').hidden=on;}
 // 用紙を変えたとき：箱の手動配置はリセットする。自由テキストは、用紙の中での相対位置（左寄り・中央・右寄り、上・下など）を保ったまま新しい用紙へ移す
 function paperChanged(prev){const A=PAPERS[prev],P=PAPERS[S.design.paper],F=S.design.free,nf={};
   if(A&&P){const M=mkMeasure(S.design),mv=(v,size,from,to)=>(from-size>0?Math.max(0,Math.min(1,v/(from-size))):.5)*(to-size);
@@ -1364,7 +1481,7 @@ function paperChanged(prev){const A=PAPERS[prev],P=PAPERS[S.design.paper],F=S.de
 document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
   const t=e.target,prevPaper=S.design.paper;setP(k,t.type==='checkbox'?t.checked:t.type==='number'?Math.max(t.min===''?1:+t.min,Math.min(+t.max||9,t.value===''||isNaN(+t.value)?(t.min===''?1:+t.min):+t.value)):t.value);
   if(k==='design.paper'&&S.design.paper!==prevPaper)paperChanged(prevPaper);
-  if(k==='design.yen'||k==='design.group')renderList();schedule();});
+  if(k==='design.yen'||k==='design.group')renderList();if(k.startsWith('design.grad.')||k==='design.bg.mv')gradUI();schedule();});
 $('#selPaper').innerHTML=Object.keys(PAPERS).map(k=>`<option value="${k}">${PAPERS[k].n}</option>`).join('');
 $('#selFont').innerHTML=Object.keys(FONTS).map(k=>`<option value="${k}">${FONTS[k].n}</option>`).join('');
 $('#themes').innerHTML=Object.keys(THEMES).map(k=>{const t=THEMES[k];
@@ -1827,6 +1944,92 @@ $('#bPng').addEventListener('click',()=>{const v=$('#selRes').value,n=S.design.t
   for(let p=1;p<=n;p++){const B=build(S,mkMeasure(S.design),p),sc=v==='web'?2048/Math.max(B.W,B.H):(+v)/25.4,c=document.createElement('canvas');
     c.width=Math.round(B.W*sc);c.height=Math.round(B.H*sc);render(c.getContext('2d'),B,sc,fam(S.design));
     c.toBlob(b=>setTimeout(()=>download(baseName()+(n>1?'_p'+p:'')+'_'+c.width+'x'+c.height+'.png',b),(p-1)*600),'image/png');}});
+
+/* ---------- 動画（背景のグラデーションが動く MP4） ---------- */
+// 1コマの描き方：背景のグラデーションだけ毎回描き、ほか（帯・箱・文字・画像）は最初に1回だけ透明なキャンバスに描いて重ねる。
+// w×h は出来上がりの大きさ（動画は偶数にする）。用紙の比率とのわずかなずれは縦横の倍率で吸収する
+// 動くもの（グラデーション gr・流す背景画像 mv）は背景なので、描く順でそこまで（下側）を毎コマ描き、残り（上側）は1回だけ描いて重ねる
+function animMaker(B,sc,w,h){const list=drawOrder(B.ops),f=fam(S.design),last=list.reduce((a,o,i)=>o.gr||o.mv?i:a,-1),low=list.slice(0,last+1),fg=document.createElement('canvas'),kx=w/(B.W*sc),ky=h/(B.H*sc);fg.width=w;fg.height=h;
+  const fx=fg.getContext('2d');fx.setTransform(kx,0,0,ky,0,0);render(fx,{ops:list.slice(last+1)},sc,f);
+  return(ctx,ph)=>{ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);ctx.setTransform(kx,0,0,ky,0,0);
+    for(const o of low){if(o.gr)paintGrad(ctx,o,sc,ph);else if(o.mv)paintMv(ctx,o,sc,ph);else render(ctx,{ops:[o]},sc,f);}
+    ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(fg,0,0);};}
+// H.264 の設定：High → Main → Baseline の順に、このブラウザで作れるものを選ぶ（レベルは大きさから。3.1 / 4.0 / 5.0）
+async function pickAvc(w,h,fps,br){const mb=Math.ceil(w/16)*Math.ceil(h/16),lv=mb<=3600?'1f':mb<=8192?'28':'32';
+  for(const p of ['6400','4d00','42e0']){const c={codec:'avc1.'+p+lv,width:w,height:h,bitrate:br,framerate:fps,avc:{format:'avc'}};
+    try{if((await VideoEncoder.isConfigSupported(c)).supported)return c;}catch(e){}}
+  return null;}
+// RGB（キャンバス）→ I420（BT.709・リミテッドレンジ。動画のふつうの形）。キャンバスのままエンコーダーに渡すと、環境によって変換の式や範囲が違い、
+// しかもそれが動画に記録されないことがある（再生側の思い込みで色やコントラストがずれる）。自分で変換し、同じ情報を MP4 の colr に書く
+const YUV709={primaries:'bt709',transfer:'bt709',matrix:'bt709',fullRange:false};
+function toI420(d,w,h,o){const U=w*h,V=U+U/4,cw=w>>1;
+  for(let i=0,p=0;i<U;i++,p+=4)o[i]=16+(0.2126*d[p]+0.7152*d[p+1]+0.0722*d[p+2])*(219/255)+.5|0;
+  for(let y=0;y<h;y+=2)for(let x=0;x<w;x+=2){const p=(y*w+x)*4,q=p+w*4,k=(y>>1)*cw+(x>>1), // 色差は 2×2 画素の平均
+      r=(d[p]+d[p+4]+d[q]+d[q+4])/4,g=(d[p+1]+d[p+5]+d[q+1]+d[q+5])/4,b=(d[p+2]+d[p+6]+d[q+2]+d[q+6])/4;
+    o[U+k]=128+(-0.114572*r-0.385428*g+0.5*b)*(224/255)+.5|0;o[V+k]=128+(0.5*r-0.454153*g-0.045847*b)*(224/255)+.5|0;}}
+// make(ctx,ph) で描いたコマを nf 枚、WebCodecs で H.264 にして MP4 にまとめる。ph＝i/nf（最後のコマの次が最初のコマにつながる）
+async function encodeMp4(make,w,h,fps,nf,br,onProg){
+  const cfg=await pickAvc(w,h,fps,br);if(!cfg)throw new Error('codec');
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;const cx=cv.getContext('2d',{alpha:false,willReadFrequently:true}),yuv=new Uint8Array(w*h*3/2);
+  const chunks=[];let desc=null,err=null;
+  const enc=new VideoEncoder({output:(ch,meta)=>{const b=new Uint8Array(ch.byteLength);ch.copyTo(b);chunks.push({b,key:ch.type==='key',ts:ch.timestamp});
+      const d=meta&&meta.decoderConfig&&meta.decoderConfig.description;if(d&&!desc)desc=d instanceof ArrayBuffer?new Uint8Array(d.slice(0)):new Uint8Array(d.buffer.slice(d.byteOffset,d.byteOffset+d.byteLength));},
+    error:e=>{err=e;}});
+  try{enc.configure(cfg);
+    for(let i=0;i<nf;i++){if(err)throw err;make(cx,i/nf);toI420(cx.getImageData(0,0,w,h).data,w,h,yuv);
+      const vf=new VideoFrame(yuv,{format:'I420',codedWidth:w,codedHeight:h,timestamp:Math.round(i*1e6/fps),duration:Math.round(1e6/fps),colorSpace:YUV709});
+      enc.encode(vf,{keyFrame:i%(fps*2)===0});vf.close();
+      while(enc.encodeQueueSize>4&&!err)await new Promise(r=>setTimeout(r,2)); // エンコードが追いつくのを待つ（コマを溜めすぎない）
+      if(i%6===0){onProg(i/nf);await tick();}}
+    await enc.flush();}
+  finally{if(enc.state!=='closed')enc.close();}
+  if(err)throw err;if(!desc||!chunks.length)throw new Error('encode');
+  return muxMp4(chunks,desc,w,h,fps);}
+// MP4（ISO BMFF）にまとめる。moov を先頭に置く（読み込みながら再生できる形）。サンプルは全部を1つのチャンクに入れる
+function muxMp4(ch,avcC,w,h,fps){const TS=90000,dl=Math.round(TS/fps),n=ch.length,te=new TextEncoder();
+  const cat=a=>{let L=0;a.forEach(x=>L+=x.length);const o=new Uint8Array(L);let p=0;a.forEach(x=>{o.set(x,p);p+=x.length;});return o;};
+  const num=(v,b)=>{const o=new Uint8Array(b);for(let i=b-1;i>=0;i--){o[i]=v&255;v=Math.floor(v/256);}return o;};
+  const u8=v=>num(v,1),u16=v=>num(v,2),u32=v=>num(v>>>0,4),z=k=>new Uint8Array(k),s4=t=>te.encode(t);
+  const bx=(t,...p)=>{const body=cat(p.flat());return cat([u32(8+body.length),s4(t),body]);},fb=(t,v,f,...p)=>bx(t,u8(v),num(f,3),...p);
+  const mtx=cat([0x10000,0,0,0,0x10000,0,0,0,0x40000000].map(u32)),ms=Math.round(n*1000/fps);
+  const keys=[];ch.forEach((c,i)=>{if(c.key)keys.push(i+1);});
+  const dts=ch.map((c,i)=>i*dl),cts=ch.map(c=>Math.round(c.ts*TS/1e6)),ro=cts.some((v,i)=>v!==dts[i]); // 並べ替え（B フレーム）があれば ctts で表示時刻を補う
+  const moov=off=>bx('moov',
+    fb('mvhd',0,0,u32(0),u32(0),u32(1000),u32(ms),u32(0x10000),u16(0x100),z(10),mtx,z(24),u32(2)),
+    bx('trak',
+      fb('tkhd',0,3,u32(0),u32(0),u32(1),u32(0),u32(ms),z(8),u16(0),u16(0),u16(0),u16(0),mtx,u32(w*65536),u32(h*65536)),
+      bx('mdia',
+        fb('mdhd',0,0,u32(0),u32(0),u32(TS),u32(n*dl),u16(0x55c4),u16(0)),
+        fb('hdlr',0,0,u32(0),s4('vide'),z(12),s4('VideoHandler\0')),
+        bx('minf',fb('vmhd',0,1,z(8)),bx('dinf',fb('dref',0,0,u32(1),fb('url ',0,1))),
+          bx('stbl',
+            fb('stsd',0,0,u32(1),bx('avc1',z(6),u16(1),z(16),u16(w),u16(h),u32(0x480000),u32(0x480000),u32(0),u16(1),z(32),u16(0x18),u16(0xffff),bx('avcC',avcC),bx('colr',s4('nclx'),u16(1),u16(1),u16(1),u8(0)))), // colr：BT.709（原色・伝達・行列）・リミテッドレンジ
+            fb('stts',0,0,u32(1),u32(n),u32(dl)),
+            ro?fb('ctts',1,0,u32(n),...cts.map((v,i)=>[u32(1),u32(v-dts[i])])):[],
+            fb('stss',0,0,u32(keys.length),...keys.map(u32)),
+            fb('stsc',0,0,u32(1),u32(1),u32(n),u32(1)),
+            fb('stsz',0,0,u32(0),u32(n),...ch.map(c=>u32(c.b.length))),
+            fb('stco',0,0,u32(1),u32(off)))))));
+  const ftyp=bx('ftyp',s4('isom'),u32(512),s4('isomiso2avc1mp41')),off=ftyp.length+moov(0).length+8,size=ch.reduce((t,c)=>t+c.b.length,8);
+  return new Blob([ftyp,moov(off),u32(size),s4('mdat'),...ch.map(c=>c.b)],{type:'video/mp4'});}
+const evenPx=v=>Math.max(2,Math.round(v/2)*2);
+$('#bVid').addEventListener('click',async e=>{const btn=e.currentTarget,label=btn.textContent,G=S.design.grad;if(!animOn()||vidBusy)return;
+  if(typeof VideoEncoder==='undefined'||typeof VideoFrame==='undefined'){setErr('このブラウザでは動画を書き出せません（Chrome・Edge の新しい版で開いてください）');return;}
+  vidBusy=true;gradUI();const n=S.design.twoPage?2:1,fps=30,nf=Math.round(Math.max(2,Math.min(30,+G.sec||8))*fps),short=+$('#selVid').value||1080;
+  try{for(let p=1;p<=n;p++){const B=build(S,mkMeasure(S.design),p),sc=short/Math.min(B.W,B.H),w=evenPx(B.W*sc),h=evenPx(B.H*sc);
+      const blob=await encodeMp4(animMaker(B,sc,w,h),w,h,fps,nf,short>=1080?10e6:5e6,r=>{btn.textContent='書き出し中… '+Math.round((p-1+r)/n*100)+'%';});
+      download(baseName()+(n>1?'_p'+p:'')+'_'+w+'x'+h+'.mp4',blob);if(p<n)await new Promise(r=>setTimeout(r,600));}}
+  catch(x){setErr(x&&x.message==='codec'?'このブラウザでは MP4（H.264）を作れません（Chrome・Edge の新しい版で開いてください）':'動画を書き出せませんでした（大きさを「短辺720px」にして試してください）');}
+  vidBusy=false;btn.textContent=label;gradUI();});
+// 動きの確認：書き出しと同じ描き方で、画面に収まる大きさでくり返し再生する（表示中のページ）
+const vidDlg=$('#vidDlg');
+$('#bVidPlay').addEventListener('click',()=>{if(!animOn())return;const B=build(S,mkMeasure(S.design),curPg),dpr=devicePixelRatio||1;
+  const css=Math.min((Math.min(760,innerWidth*.94)-24)/B.W,(innerHeight*.88-110)/B.H),w=Math.round(B.W*css*dpr),h=Math.round(B.H*css*dpr),c=$('#vidCv');
+  c.width=w;c.height=h;c.style.width=w/dpr+'px';c.style.height=h/dpr+'px';
+  const make=animMaker(B,w/B.W,w,h),cx=c.getContext('2d'),sec=Math.max(2,Math.min(30,+S.design.grad.sec||8)),t0=performance.now();
+  cancelAnimationFrame(vidRaf);const loop=now=>{make(cx,((now-t0)/1000/sec)%1);vidRaf=requestAnimationFrame(loop);};make(cx,0);vidRaf=requestAnimationFrame(loop);vidDlg.showModal();});
+vidDlg.addEventListener('close',()=>{cancelAnimationFrame(vidRaf);vidRaf=0;});
+$('#bVidX').addEventListener('click',()=>vidDlg.close());
 function genJSX(){const d=S.design,F=FONTS[d.font],rd=n=>Math.round(n*1000)/1000,n=d.twoPage?2:1,ops=[];let W,H;
   for(let p=1;p<=n;p++){const B=build(S,mkMeasure(d),p);W=B.W;H=B.H;
     drawOrder(B.ops).forEach(o=>{const c={P:p-1};for(const k in o){if(k==='id'||k==='k'||k==='z')continue;c[k]=typeof o[k]==='number'?rd(o[k]):o[k];}ops.push(c);});}
