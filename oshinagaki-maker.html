@@ -7,6 +7,7 @@
 <style>
 :root{--bg:#eceae6;--pn:#faf9f7;--ink:#26221f;--sub:#7b736b;--ln:#dcd7cf;--ac:#b7282e;--ac2:#2b3a67}
 *{box-sizing:border-box}
+[hidden]{display:none!important} /* button の display 指定より優先して、hidden を確実に効かせる */
 html,body{height:100%;margin:0}
 body{font:14px/1.5 "Yu Gothic UI","Hiragino Sans","Noto Sans JP","Meiryo",sans-serif;color:var(--ink);background:var(--bg);display:flex;flex-direction:column}
 header{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--ac2);color:#fff;flex-wrap:wrap}
@@ -30,6 +31,12 @@ label{display:block;font-size:12px;color:var(--sub);margin-bottom:9px}
 input[type=text],input:not([type]),input[type=number],select,textarea{display:block;width:100%;font:inherit;color:var(--ink);padding:6px 8px;border:1px solid var(--ln);border-radius:6px;background:#fff;margin-top:2px}
 textarea{resize:vertical}
 .row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.cap{font-size:12px;color:var(--ink);margin:2px 0 3px}
+.kr{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.kr input[type=color]{width:34px;height:30px;padding:2px;margin:0;flex:none}
+.kr input[data-kf=n]{flex:1;width:auto;min-width:0;margin:0}
+.kr .kn{font-size:11px;color:var(--sub);white-space:nowrap;min-width:28px;text-align:right}
+.kr button{padding:3px 7px;font-size:12px;flex:none}.kr button:disabled{opacity:.4;cursor:default}
 .chk{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:9px}
 .chk label{display:flex;align-items:center;gap:5px;margin:0;color:var(--ink);font-size:13px}
 h2{font-size:12px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--ln);letter-spacing:.1em;color:var(--ac2)}
@@ -41,7 +48,7 @@ h2:first-child{margin-top:0}
 .it .body{padding:10px}
 .kd{font-size:11px;font-weight:700;color:#fff;background:var(--sub);border-radius:99px;padding:1px 8px;white-space:nowrap}
 .kd.k-new{background:var(--ac)}.kd.k-semi{background:#c9722e}.kd.k-itaku{background:#3d7a5f}
-#props{position:fixed;top:68px;right:14px;width:214px;background:var(--pn);border:1px solid var(--ln);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 12px;z-index:5;font-size:12px}
+#props{position:fixed;top:68px;right:14px;width:214px;background:var(--pn);border:1px solid var(--ln);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 12px;z-index:5;font-size:12px;max-height:calc(100vh - 82px);overflow:auto}
 #props h2{margin:0 0 6px;display:flex;align-items:center}#props #pClose{width:22px;height:22px;padding:0;margin-left:8px;line-height:1;font-size:15px;border-radius:50%;flex:none}
 #props h2 span{margin-left:auto;font-weight:400;letter-spacing:0;color:var(--sub)}
 #pName{font-weight:700;font-size:13px;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -151,17 +158,22 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
     <h2>配置</h2>
     <div class="row">
       <label>最小列数（既刊ほか）<input type="number" min="1" max="6" data-k="design.cols"></label>
-      <label>最小列数（新刊）<input type="number" min="1" max="4" data-k="design.newCols"></label>
+      <label>最小列数（<span class="nk">新刊</span>）<input type="number" min="1" max="4" data-k="design.newCols"></label>
     </div>
     <label>段組（左右に分ける）<select data-k="design.panels"><option value="auto">自動（横長の用紙は2段）</option><option value="1">1段</option><option value="2">2段</option></select></label>
     <div class="chk">
       <label><input type="checkbox" data-k="design.group">種別ごとに見出しで分ける</label>
-      <label><input type="checkbox" data-k="design.newBig">新刊を大きく</label>
+      <label><input type="checkbox" data-k="design.newBig"><span class="nk">新刊</span>を大きく</label>
       <label><input type="checkbox" data-k="design.showDesc">説明文を表示</label>
       <label><input type="checkbox" data-k="design.frame">ヘッダー下ライン</label>
+      <label><input type="checkbox" data-k="design.imgFix">表紙画像の大きさを変えても文字の大きさを変えない</label>
     </div>
+    <h2>種別</h2>
+    <div id="kinds"></div>
+    <div class="bar"><button type="button" id="bKindAdd">＋ 種別を追加</button><button type="button" id="bKindBack" hidden>消した初期の種別を戻す</button></div>
+    <p class="note">上から順に見出しが並びます（↑↓で入れ替え）。名前を変えると、見出し・バッジ・頒布物タブの選択肢・CSV に反映されます。<b>色</b>はその種別のバッジと見出しの色です（「戻」でテーマの色に戻す）。<br>初期の「新刊」は名前や色を変えても、強調表示（箱の枠）・「新刊を大きく」・新刊の列数がそのまま効きます。<br>種別を削除すると、その種別の頒布物は「既刊」に移ります。CSVで一覧に無い種別名を読み込むと、その名前の種別が自動で追加されます。</p>
     <h2>箱の手動調整</h2>
-    <p class="note">プレビュー上で箱を<b>ドラッグ</b>して移動、<b>辺や角</b>をドラッグして大きさ変更（上下左右の辺はその方向だけ、角は縦横同時）（中の文字も追従）。見出しも動かせます。<br>ドラッグ中は、ほかの箱の端・中心や用紙の中央・余白に吸着し、<b>ピンクの目安線</b>が出ます（<b>Alt</b>で無効）。<b>Shift</b>を押しながら辺や角をドラッグすると、中心を保ったまま大きさが変わります。箱を選ぶと画面下に揃えボタンが出ます。矢印キーで1mm移動、<b>Shift＋矢印</b>でサイズ変更、<b>Ctrl</b>併用で0.5mm。<br><b>ダブルクリック</b>か <b>Delete</b> でその箱だけ自動配置に戻ります。用紙サイズを変えると手動配置はリセットされます。</p>
+    <p class="note">プレビュー上で箱を<b>ドラッグ</b>して移動、<b>辺や角</b>をドラッグして大きさ変更（上下左右の辺はその方向だけ、角は縦横同時）（中の文字も追従）。見出しも動かせます。<br>ドラッグ中は、ほかの箱の端・中心や用紙の中央・余白に吸着し、<b>ピンクの目安線</b>が出ます（<b>Alt</b>で無効）。<b>Shift</b>を押しながら辺や角をドラッグすると、中心を保ったまま大きさが変わります。箱を選ぶと画面下に揃えボタンが出ます。矢印キーで1mm移動、<b>Shift＋矢印</b>でサイズ変更、<b>Ctrl</b>併用で0.5mm。<br><b>ダブルクリック</b>か <b>Delete</b> でその箱だけ自動配置に戻ります。用紙サイズを変えると箱の手動配置はリセットされます（自由テキストは新しい用紙のほぼ同じ位置に移ります）。</p>
     <div class="chk"><label><input type="checkbox" data-k="design.showProps">プロパティパネルを表示（選択中の箱の名前・位置・大きさ。数値入力可）</label></div>
     <div class="chk"><label><input type="checkbox" data-k="design.showGuides">目安線（余白・中央）を常に表示　※書き出しには出ません</label></div>
     <button type="button" id="bFree">すべて自動配置に戻す</button>
@@ -206,17 +218,19 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
     <div class="row">
       <label>タイトル<input type="number" min="50" max="200" step="5" data-k="design.fs.title"></label>
       <label>価格<input type="number" min="50" max="200" step="5" data-k="design.fs.price"></label>
-      <label>仕様・説明<input type="number" min="50" max="200" step="5" data-k="design.fs.sub"></label>
+      <label>仕様<input type="number" min="50" max="200" step="5" data-k="design.fs.spec"></label>
     </div>
     <div class="row">
+      <label>説明<input type="number" min="50" max="200" step="5" data-k="design.fs.desc"></label>
       <label>サークル名<input type="number" min="50" max="200" step="5" data-k="design.fs.circle"></label>
       <label>種別の見出し<input type="number" min="50" max="200" step="5" data-k="design.fs.sec"></label>
-      <label>&nbsp;<button type="button" id="bFs" style="width:100%;margin-top:2px">100%に戻す</button></label>
     </div>
+    <button type="button" id="bFs">文字サイズをすべて100%に戻す</button>
+    <p class="note">ここでの設定は<b>すべての頒布物</b>に効きます（例：タイトル 120・価格 100・仕様 80）。1つの頒布物だけ変えたいときは、頒布物タブの各項目の「この頒布物の文字サイズ」か、プロパティパネルで指定します（ここの％との掛け算）。</p>
     <h2>文字の色と濃さ（種類ごと）</h2>
     <div id="tsgrid"></div>
     <button type="button" id="bTs">色と濃さをすべて初期値に戻す</button>
-    <p class="note"><b>濃さ</b>は 100％で通常、下げると薄く（半透明に）なります。色を変えていない項目はテーマの色に従います。「戻」で色だけテーマ色に戻せます。<br>箱ごとに変えたいときは、プロパティパネルを表示して箱を選ぶと、その箱だけの文字サイズ・色・濃さを指定できます。</p>
+    <p class="note"><b>濃さ</b>は 100％で通常、下げると薄く（半透明に）なります。色を変えていない項目はテーマの色に従います。「戻」で色だけテーマ色に戻せます。<br>箱ごとに変えたいときは、プロパティパネルを表示して箱を選ぶと、その箱だけの文字サイズ（全体・要素ごと）・色・濃さ・表紙画像の大きさを指定できます。</p>
   </div>
 
   <div class="tab" id="t4">
@@ -266,9 +280,18 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
     <label title="この箱だけの文字色"><b>色</b><input type="color" data-i="tcol" aria-label="この箱の文字色" style="height:26px;margin:0"></label>
     <label title="この箱だけの文字の濃さ"><b>濃</b><input type="number" min="0" max="100" step="5" data-i="ta" aria-label="この箱の文字の濃さ ％"></label>
     <label title="この箱だけの箱の色"><b>箱</b><input type="color" data-i="bcol" aria-label="この箱の色" style="height:26px;margin:0"></label>
+    <label title="この箱の表紙画像の大きさ"><b>画</b><input type="number" min="20" max="200" step="5" data-i="is" aria-label="この箱の表紙画像の大きさ ％"></label>
   </div>
-  <div class="u">字＝文字サイズ％　色＝文字色　濃＝文字の濃さ％　箱＝箱の色（この箱だけ）</div>
-  <button type="button" id="pTxt" style="margin-bottom:6px">この箱の色・文字設定を戻す</button>
+  <div class="u" id="pIsN" hidden style="color:var(--ac)"></div>
+  <div class="u" style="margin-bottom:4px;color:var(--ink)">要素ごとの文字サイズ ％</div>
+  <div class="g">
+    <label title="この箱のタイトルだけの文字サイズ"><b>題</b><input type="number" min="50" max="200" step="5" data-i="fsT" aria-label="この箱のタイトルの文字サイズ ％"></label>
+    <label title="この箱の価格だけの文字サイズ"><b>価</b><input type="number" min="50" max="200" step="5" data-i="fsP" aria-label="この箱の価格の文字サイズ ％"></label>
+    <label title="この箱の仕様だけの文字サイズ"><b>仕</b><input type="number" min="50" max="200" step="5" data-i="fsS" aria-label="この箱の仕様の文字サイズ ％"></label>
+    <label title="この箱の説明だけの文字サイズ"><b>説</b><input type="number" min="50" max="200" step="5" data-i="fsD" aria-label="この箱の説明の文字サイズ ％"></label>
+  </div>
+  <div class="u">字＝文字サイズ％（この箱の文字全体）　題・価・仕・説＝タイトル・価格・仕様・説明だけの文字サイズ％　色＝文字色　濃＝文字の濃さ％　箱＝箱の色　画＝表紙画像の大きさ％（すべてこの箱だけ）</div>
+  <button type="button" id="pTxt" style="margin-bottom:6px">この箱の色・文字・画像の設定を戻す</button>
   <button type="button" id="pReset">この箱を自動配置に戻す</button>
 </div>
 <section id="stage"><canvas id="cv" tabindex="0" aria-label="お品書きプレビュー。箱を選んで矢印キーで移動、Shift＋矢印でサイズ変更、Deleteで自動配置に戻す"></canvas></section>
@@ -294,12 +317,13 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 
 <h3 id="h-item">頒布物の入力</h3>
 <table>
-<tr><th>種別</th><td>新刊 / 準新刊 / セット / 既刊 / 委託 / グッズ。この順に見出しで区切られます</td></tr>
+<tr><th>種別</th><td>初期は 新刊 / 準新刊 / セット / 既刊 / 委託 / グッズ。デザインタブの「種別」で、追加・名前の変更・色・並べ替え・削除ができ、その並び順で見出しが区切られます</td></tr>
 <tr><th>価格</th><td>数字は「¥500」形式に整形。0 は「無料」。文字を入れるとそのまま表示（例：応相談）</td></tr>
 <tr><th>タイトル</th><td>2行まで。入りきらない分は「…」で省略</td></tr>
 <tr><th>仕様・説明</th><td>箱に余白がある分だけ表示されます</td></tr>
 <tr><th>R18 / 残りわずか / 完売</th><td>バッジで表示。完売は箱全体に重ねて表示</td></tr>
-<tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）</td></tr>
+<tr><th>画像</th><td>表紙画像（PNG / JPG / PSD・PSB）。「表紙画像の大きさ ％」で、その箱の中での画像の大きさを 20〜200% で変えられます（プロパティパネルの「画」と同じ）。大きくできるのは箱に収まるところまでなので、もっと大きくしたいときは箱も広げてください。画像の大きさを変えたときに文字の大きさまで変わってほしくない場合は、デザインタブの「表紙画像の大きさを変えても文字の大きさを変えない」をオンにします</td></tr>
+<tr><th>この頒布物の文字サイズ ％</th><td>その頒布物だけ、タイトル / 価格 / 仕様 / 説明 の大きさを別々に 50〜200% で変えられます（例：タイトル 120・価格 100・仕様 80）。文字タブの「文字サイズ（％）」との掛け算です。プロパティパネルの「題・価・仕・説」と同じ</td></tr>
 <tr><th>↑ ↓ / 複製 / 削除</th><td>並べ替えと複製・削除</td></tr>
 </table>
 
@@ -320,7 +344,7 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 <ul>
 <li>箱が重なっているときは、選択中（青い点線）の箱が優先されます</li>
 <li>動かしていない箱は自動配置のまま。動かした箱は頒布物を増減しても位置が変わりません</li>
-<li>デザインタブの「すべて自動配置に戻す」で一括リセット。用紙サイズを変えたときもリセットされます</li>
+<li>デザインタブの「すべて自動配置に戻す」で一括リセット。用紙サイズを変えたときも箱はリセットされます（自由テキストは位置を保ちます）</li>
 <li>デザインタブの「目安線を常に表示」で、余白と中央の線（水色）を出しっぱなしにできます。書き出しには出ません</li>
 <li>デザインタブの「プロパティパネルを表示」をオンにすると、選択中の箱の名前と X / Y / W / H（mm）が右上に出ます。数値を直接入力して位置や大きさを指定でき、箱の下にも大きさが表示されます。パネル右上の「×」で閉じられます（再表示はデザインタブから）</li>
 <li>ヘッダーとフッターは固定です</li>
@@ -329,14 +353,14 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 <h3 id="h-text">文字（文字タブ）</h3>
 <table>
 <tr><th>自由テキスト</th><td>「＋ 文字を追加」で、好きな場所に置ける文字を追加。内容・大きさ（mm）・色・濃さ・太字・揃え・ページを指定し、プレビュー上でドラッグして配置します。改行もできます</td></tr>
-<tr><th>文字サイズ（％）</th><td>タイトル / 価格 / 仕様・説明 / サークル名 / 種別の見出し を 50〜200% で調整。「100%に戻す」で初期値</td></tr>
+<tr><th>文字サイズ（％）</th><td>タイトル / 価格 / 仕様 / 説明 / サークル名 / 種別の見出し を、それぞれ別々に 50〜200% で調整（例：タイトル 120・価格 100・仕様 80）。すべての頒布物に効きます。「文字サイズをすべて100%に戻す」で初期値</td></tr>
 <tr><th>文字の色と濃さ</th><td>サークル名・イベント名・スペース番号・見出し・バッジ・タイトル・仕様・説明・価格・フッター・SNS など、文字の種類ごとに色と濃さ（0〜100％）を指定。「戻」で色だけテーマ色に戻ります</td></tr>
-<tr><th>箱ごとの文字</th><td>プロパティパネルを表示して箱を選び、「字」（％）・「色」・「濃」（％）・「箱」（箱の色）を指定。その箱だけに適用。「この箱の色・文字設定を戻す」で解除</td></tr>
+<tr><th>箱ごとの文字</th><td>プロパティパネルを表示して箱を選び、「字」（その箱の文字全体の％）・「題・価・仕・説」（タイトル・価格・仕様・説明それぞれの％）・「色」・「濃」（％）・「箱」（箱の色）・「画」（表紙画像の大きさ％）を指定。その箱だけに適用。要素ごとの％は頒布物タブの「この頒布物の文字サイズ」でも変えられます。「この箱の色・文字・画像の設定を戻す」で解除</td></tr>
 </table>
 <ul>
 <li>濃さは 100％が通常で、下げるほど薄く（半透明に）なります。種類ごとの濃さと箱ごとの濃さは掛け算です</li>
-<li>文字サイズも、全体の倍率と箱ごとの倍率の掛け算になります。大きくしすぎると箱からはみ出すので、箱を広げるか倍率を下げてください</li>
-<li>自由テキストは、ダブルクリックで初期位置（用紙中央あたり）に戻ります。用紙サイズを変えたときも初期位置に戻ります</li>
+<li>文字サイズは「文字タブの種類ごとの％ × 箱の『字』 × 箱の要素ごとの％」の掛け算になります（例：文字タブのタイトル 120％ で、ある箱だけタイトル 90％ にすると、その箱のタイトルは 108％）。大きくしすぎると箱からはみ出したりタイトルが省略されたりするので、箱を広げるか倍率を下げてください</li>
+<li>自由テキストは、ダブルクリックで初期位置（用紙中央あたり）に戻ります。用紙サイズを変えたときは、新しい用紙の中のほぼ同じ位置（左寄り・中央・右寄り、上・下の関係を保つ）に移ります</li>
 </ul>
 
 <h3 id="h-bg">背景画像</h3>
@@ -352,7 +376,7 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 <h3 id="h-page">2枚に分ける</h3>
 <ol>
 <li>デザインタブの「2枚に分ける」をオン</li>
-<li>種別ごとに 1枚目 / 2枚目を選ぶ（初期値：新刊・準新刊・セットが1枚目、既刊・委託・グッズが2枚目）</li>
+<li>種別ごとに 1枚目 / 2枚目を選ぶ（初期値：新刊・準新刊・セットが1枚目、既刊・委託・グッズが2枚目。自分で追加した種別は1枚目）</li>
 <li>例外にしたい頒布物は、その項目の「載せるページ」で個別に指定</li>
 <li>画面左下の「1枚目 / 2枚目」でプレビューを切り替え</li>
 </ol>
@@ -362,7 +386,9 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 <tr><th>最小列数</th><td>1行に並べる箱の数の下限。窮屈なときは自動で列が増えます</td></tr>
 <tr><th>段組</th><td>本体を左右に分けるか。「自動」は横長の用紙で種別が3つ以上あると2段になります</td></tr>
 <tr><th>種別ごとに見出しで分ける</th><td>オフにすると見出しなしで登録順に並びます</td></tr>
+<tr><th>種別</th><td>「＋ 種別を追加」で自分の種別（例：ペーパー、無料配布）を作れます。名前の欄で名前を変更、色の四角でバッジと見出しの色を変更（「戻」でテーマの色）、↑↓で見出しの順番を入れ替え、「削除」で削除（その種別の頒布物は「既刊」に移ります）。初期の6種類を消した場合は「消した初期の種別を戻す」で戻せます。初期の「新刊」は名前を変えても、箱の枠の強調・「新刊を大きく」・新刊の列数がそのまま効きます</td></tr>
 <tr><th>新刊を大きく</th><td>新刊の行を約1.6倍の高さにします</td></tr>
+<tr><th>表紙画像の大きさを変えても文字の大きさを変えない</th><td>オフ（初期値）：表紙画像の大きさ（％）を変えると、残りの場所に収まるよう文字の大きさも自動で変わります。オン：文字は表紙が100％のときの大きさのまま、画像だけが大きく・小さくなります（文字の位置は画像に合わせて動きます）。入りきらない文字は省略されたり価格と重なったりするので、そのときは箱を広げてください</td></tr>
 <tr><th>色を上書きする</th><td>テーマの帯色とアクセント色を好きな色に変更</td></tr>
 <tr><th>箱の色を上書きする</th><td>すべての箱の色と、枠線・区切り線の色を変更（新刊の枠線はアクセント色）。箱を1つだけ変えるときは、プロパティパネルで箱を選んで「箱」の色を指定</td></tr>
 <tr><th>PC内のフォント名</th><td>インストール済みフォントの名前を入れるとプレビューと PNG に使われます</td></tr>
@@ -371,7 +397,7 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;background:#fff;border:1px solid
 <h3 id="h-bulk">まとめて登録</h3>
 <ul>
 <li><b>画像からまとめて追加</b>：表紙画像を複数選ぶと、ファイル名をタイトルにして一括登録</li>
-<li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名」。フラグ列は 1 や ○ でオン</li>
+<li><b>CSV読込</b>：列は「種別, タイトル, 価格, 仕様, 説明, R18, 完売, 残りわずか, 画像ファイル名」。フラグ列は 1 や ○ でオン。種別は名前で書きます。一覧に無い名前はその名前の種別として自動で追加され、空欄は「既刊」になります</li>
 <li><b>CSV保存</b>：出力したファイルがそのままひな形になります</li>
 </ul>
 
@@ -504,8 +530,15 @@ const PAPERS={
   S169:{n:'SNS 16:9 横',w:320,h:180},S43:{n:'SNS 4:3 横',w:280,h:210},
   S11:{n:'SNS 正方形',w:210,h:210},S45:{n:'SNS 4:5 縦',w:208,h:260}
 };
-const KINDS={new:'新刊',semi:'準新刊',set:'セット',old:'既刊',itaku:'委託',goods:'グッズ'},ORDER=['new','semi','set','old','itaku','goods'];
-const pageOf=(it,d)=>d.twoPage?(+it.pg||+d.pg[it.kind]||1):1;
+// 種別：初期の6種類。実際に使う一覧（名前・並び順・色）は S.design.kinds にあり、デザインタブで追加・変更・削除できる
+// 「新刊」(id:new) は名前を変えても、強調表示・「新刊を大きく」・新刊の列数がそのまま効く
+const DEF_KINDS=[['new','新刊'],['semi','準新刊'],['set','セット'],['old','既刊'],['itaku','委託'],['goods','グッズ']];
+const mkKinds=()=>DEF_KINDS.map(([id,n])=>({id,n,c:''}));
+const fbKind=d=>d.kinds.find(k=>k.id==='old')||d.kinds[0]; // 見つからない種別は「既刊」（無ければ先頭）として扱う
+const kOf=(d,id)=>d.kinds.find(k=>k.id===id)||fbKind(d);
+const kName=k=>String(k.n==null?'':k.n).trim()||'（名前なし）';
+const newKindId=()=>'k_'+uid().slice(1);
+const pageOf=(it,d)=>d.twoPage?(+it.pg||+d.pg[kOf(d,it.kind).id]||1):1;
 const THEMES={
   wa:{n:'和・藍朱',bg:'#f6f0e2',band:'#2b3a67',bandInk:'#f6f0e2',ink:'#2a2622',sub:'#7a6f5f',accent:'#b7282e',card:'#fffaf0',line:'#d8cbb0'},
   sakura:{n:'さくら',bg:'#fff5f7',band:'#e8557f',bandInk:'#ffffff',ink:'#3a2a30',sub:'#8a6f78',accent:'#d93a6a',card:'#ffffff',line:'#f3c6d3'},
@@ -533,7 +566,7 @@ const CATL={};CATS.forEach(c=>CATL[c[0]]=c[1]);
 const mkTs=()=>{const o={};CATS.forEach(c=>o[c[0]]={c:'',a:100});return o;};
 function blank(){return{
   info:{circle:'',space:'',pen:'',event:'',date:'',pay:'',sns:'',note:''},items:[],texts:[],
-  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),bg:{img:'',name:'',alpha:100,band:100,card:100},fs:{title:100,price:100,sub:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
+  design:{box:{on:false,fill:'#fffaf0',line:'#d8cbb0'},ts:mkTs(),kinds:mkKinds(),bg:{img:'',name:'',alpha:100,band:100,card:100},fs:{title:100,price:100,spec:100,desc:100,circle:100,sec:100},tc:{on:false,title:'#2a2622',price:'#b7282e',sub:'#7a6f5f'},showProps:false,showGuides:false,imgFix:false,free:{},panels:'auto',twoPage:false,pg:{new:1,semi:1,set:1,old:2,itaku:2,goods:2},paper:'A4P',cols:3,newCols:2,group:true,newBig:true,showDesc:true,frame:true,yen:'mark',theme:'wa',
     override:false,band:'#2b3a67',accent:'#b7282e',font:'gothic',customFont:'',cmyk:false,psBold:'',psReg:''}};}
 function sample(){const s=blank();
   s.info={circle:'月読書房',space:'東A-01a',pen:'つくよみ',event:'サンプル即売会 12',date:'2026.12.31（木）',pay:'現金のみ（千円札歓迎）',sns:'@your_id',note:'新刊はお一人様2冊まで。\n既刊はなくなり次第終了です。'};
@@ -550,7 +583,7 @@ function sample(){const s=blank();
   return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem(LS));if(j&&j.items)return norm(j);}catch(e){}return sample();}
 function norm(j){const b=blank();
-  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,tcol:'',ta:100,bcol:'',img:'',imgName:''},i))};
+  const s={info:Object.assign(b.info,j.info),design:Object.assign(b.design,j.design),items:(j.items||[]).map(i=>Object.assign({id:uid(),kind:'old',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',fs:100,fsT:100,fsP:100,fsS:100,fsD:100,tcol:'',ta:100,bcol:'',is:100,img:'',imgName:''},i))};
   if(!s.design.free||typeof s.design.free!=='object')s.design.free={};
   s.texts=(j.texts||[]).map(t=>Object.assign({id:uid(),s:'',size:8,color:'#2a2622',a:100,b:true,al:'l',pg:1},t));
   {const ts=mkTs(),o=(j.design&&j.design.ts)||{},tc=j.design&&j.design.tc;CATS.forEach(c=>Object.assign(ts[c[0]],o[c[0]]));
@@ -558,14 +591,29 @@ function norm(j){const b=blank();
     s.design.ts=ts;}
   s.design.box=Object.assign(blank().design.box,j.design&&j.design.box);
   s.design.bg=Object.assign(blank().design.bg,j.design&&j.design.bg);
-  s.design.fs=Object.assign(blank().design.fs,j.design&&j.design.fs);s.design.tc=Object.assign(blank().design.tc,j.design&&j.design.tc);
+  s.design.fs=Object.assign(blank().design.fs,j.design&&j.design.fs);
+  {const o=(j.design&&j.design.fs)||{};if(o.sub!=null){if(o.spec==null)s.design.fs.spec=o.sub;if(o.desc==null)s.design.fs.desc=o.sub;}delete s.design.fs.sub;} // 旧「仕様・説明」を仕様と説明の両方に引き継ぐ
+  s.design.tc=Object.assign(blank().design.tc,j.design&&j.design.tc);
   s.design.tc.on=false;
   s.design.pg=Object.assign(blank().design.pg,j.design&&j.design.pg);
+  // 種別：形を整える（保存データに無ければ初期の6種類）。各種別にページの設定を用意し、一覧に無い種別の頒布物は「既刊」へ
+  {const seen=new Set(),src=Array.isArray(j.design&&j.design.kinds)?j.design.kinds:[];
+    s.design.kinds=src.filter(k=>k&&/^[\w-]+$/.test(String(k.id))&&!seen.has(String(k.id))&&seen.add(String(k.id)))
+      .map(k=>({id:String(k.id),n:String(k.n==null?'':k.n),c:/^#[0-9a-f]{6}$/i.test(k.c)?k.c:''}));
+    if(!s.design.kinds.length)s.design.kinds=mkKinds();
+    s.design.kinds.forEach(k=>{if(!s.design.pg[k.id])s.design.pg[k.id]=1;});
+    const ids=new Set(s.design.kinds.map(k=>k.id)),fb=fbKind(s.design).id;s.items.forEach(i=>{if(!ids.has(i.kind))i.kind=fb;});}
   if(!PAPERS[s.design.paper])s.design.paper='A4P';if(!THEMES[s.design.theme])s.design.theme='wa';if(!FONTS[s.design.font])s.design.font='gothic';
-  s.items.forEach(i=>{if(!KINDS[i.kind])i.kind='old';});return s;}
+  return s;}
 let S=load();
-function persist(){try{localStorage.setItem(LS,JSON.stringify(S));}
+// 自動保存：画像入りだと数MBになるので、描画のたびではなく操作が落ち着いてからまとめて保存する（ドラッグ中の毎フレーム保存で重くなっていた）
+let saveT=0;
+function persist(){clearTimeout(saveT);saveT=setTimeout(saveNow,600);}
+function saveNow(){clearTimeout(saveT);saveT=0;
+  try{localStorage.setItem(LS,JSON.stringify(S));}
   catch(e){try{localStorage.setItem(LS,JSON.stringify(Object.assign({},S,{design:Object.assign({},S.design,{bg:Object.assign({},S.design.bg,{img:''})}),items:S.items.map(i=>Object.assign({},i,{img:''}))})));}catch(e2){}}}
+const flushSave=()=>{if(saveT)saveNow();};
+addEventListener('pagehide',flushSave);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave();});
 
 /* ---------- 色・文字 ---------- */
 const lum=h=>{const v=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255);return .299*v[0]+.587*v[1]+.114*v[2];};
@@ -578,13 +626,16 @@ function mkMeasure(d){const f=fam(d);return(s,size,b)=>{mctx.font=(b?700:400)+' 
 function priceStr(v,d){v=String(v==null?'':v).trim().replace(/[,，¥￥円]/g,'');if(!v)return'';
   if(/^\d+$/.test(v)){const n=+v;if(n===0)return'無料';return d.yen==='en'?n.toLocaleString('ja-JP')+'円':'¥'+n.toLocaleString('ja-JP');}return String(v);}
 const NOHEAD='、。，．）」』】！？ー…・ゃゅょっャュョッ';
+// 自由テキストの大きさ（mm）
+const tBox=(t,M)=>{const size=Math.max(1,+t.size||8),b=t.b?1:0,lines=String(t.s).split('\n'),lh=size*1.3;
+  return{size,b,lines,lh,w:Math.max(size,...lines.map(l=>M(l,size,b))),h:lines.length*lh};};
 
 /* ---------- レイアウト（単位mm）: 描画命令の配列を作る ---------- */
 function build(S,M,page){
   const d=S.design,I=S.info,P=PAPERS[d.paper],W=P.w,H=P.h,T=getTheme(d),u=Math.min(W,H)/210,ops=[];let warn='';
   const items=S.items.filter(i=>pageOf(i,d)===(page||1));
   // 文字サイズ倍率（%）と文字色の上書き
-  const pc=v=>Math.max(.3,Math.min(3,(+v||100)/100)),fs0=d.fs||{},FS={title:pc(fs0.title),price:pc(fs0.price),sub:pc(fs0.sub),circle:pc(fs0.circle),sec:pc(fs0.sec)};
+  const pc=v=>Math.max(.3,Math.min(3,(+v||100)/100)),fs0=d.fs||{},FS={title:pc(fs0.title),price:pc(fs0.price),spec:pc(fs0.spec!=null?fs0.spec:fs0.sub),desc:pc(fs0.desc!=null?fs0.desc:fs0.sub),circle:pc(fs0.circle),sec:pc(fs0.sec)};
   const tcOn=d.tc&&d.tc.on,inkC=tcOn?d.tc.title:T.ink,subC=tcOn?d.tc.sub:T.sub,priceC=tcOn?d.tc.price:T.accent;
   // 手動配置：ドラッグで動かした箱は自動位置の代わりに保存した位置・大きさを使う
   const F=d.free||{},hits=[];
@@ -635,7 +686,7 @@ function build(S,M,page){
   // 本体
   const g=3.5*u,by=hH+fr+m*.7,bh=H-fH-m*.7-by,sh=d.group?(2.1+6.4*FS.sec)*u:0;
   const secs=[];
-  if(d.group){for(const k of ORDER){const it=items.filter(i=>i.kind===k);if(it.length)secs.push({k,it});}}
+  if(d.group){for(const K of d.kinds){const it=items.filter(i=>kOf(d,i.kind).id===K.id);if(it.length)secs.push({k:K.id,it});}} // 種別の一覧の順に見出しを並べる
   else if(items.length)secs.push({k:null,it:items});
   const setC=(s,c)=>{s.c=Math.max(1,Math.min(s.it.length,c));s.r=Math.ceil(s.it.length/s.c);};
   secs.forEach(s=>{const big=s.k==='new'&&d.newBig;s.wt=big?1.6:1;setC(s,big?(+d.newCols||1):(+d.cols||1));});
@@ -653,7 +704,7 @@ function build(S,M,page){
       const c=ps.filter(s=>s.r>1&&(bw-s.c*g)/(s.c+1)>=38*u).sort((a,b)=>b.r*b.wt-a.r*a.wt)[0];if(!c)break;setC(c,c.c+1);}
     minUnit=Math.min(minUnit,unit);let y=by;
     ps.forEach(s=>{
-      if(sh){const lab=KINDS[s.k],ls=4.6*u*FS.sec,ph=6.4*u*FS.sec,pw=M(lab,ls,1)+7*u,pc=s.k==='new'?T.accent:T.ink;
+      if(sh){const K=kOf(d,s.k),lab=kName(K),ls=4.6*u*FS.sec,ph=6.4*u*FS.sec,pw=M(lab,ls,1)+7*u,pc=K.c||(s.k==='new'?T.accent:T.ink);
         const q=place('sec:'+s.k,bx,y,bw,ph,0);
         R(q.x,q.y,pw,ph,pc,{r:ph/2,g:'見出し：'+lab});X(lab,q.x+pw/2,mid(q.y,ph,ls),ls,on(pc),{al:'c',cat:'sec',g:'見出し：'+lab});
         R(q.x+pw+2*u,q.y+ph/2-.2*u,bw-pw-2*u,.4*u,T.line,{g:'見出し：'+lab});y+=sh;}
@@ -666,48 +717,65 @@ function build(S,M,page){
 
   function card(x,y,w,h,it){
     const q=place(it.id,x,y,w,h,1),ia=alp(it.ta),nm=it.title||'（無題）',bc=it.bcol||T.card;x=q.x;y=q.y;w=q.w;h=q.h;
-    const isNew=it.kind==='new',r=2.5*u;
-    if(cardA<1){R(x,y,w,h,bc,{r,a:cardA,g:'箱：'+nm});R(x,y,w,h,null,{r,stroke:isNew?T.accent:T.line,sw:(isNew?.8:.35)*u,g:'箱：'+nm});}
-    else R(x,y,w,h,bc,{r,stroke:isNew?T.accent:T.line,sw:(isNew?.8:.35)*u,g:'箱：'+nm});
-    const p=Math.min(w,h)*.06+1.2*u;let tx=x+p,ty=y+p,tw=w-2*p,th=h-2*p;
+    // 種別の色：指定が無ければテーマの色（新刊はアクセント色、ほかは補助色）。新刊は箱の枠もこの色
+    const K=kOf(d,it.kind),isNew=K.id==='new',kc=K.c||(isNew?T.accent:T.sub),r=2.5*u;
+    if(cardA<1){R(x,y,w,h,bc,{r,a:cardA,g:'箱：'+nm});R(x,y,w,h,null,{r,stroke:isNew?kc:T.line,sw:(isNew?.8:.35)*u,g:'箱：'+nm});}
+    else R(x,y,w,h,bc,{r,stroke:isNew?kc:T.line,sw:(isNew?.8:.35)*u,g:'箱：'+nm});
+    const p=Math.min(w,h)*.06+1.2*u;let tx=x+p,ty=y+p,tw=w-2*p,th=h-2*p,kw=0,kh=0; // kw/kh：表紙が100％のときの文字の場所（文字サイズ固定モード用）
     if(it.img){
-      if(w/h>1.25){const iw=Math.min(th*.74,tw*.45);ops.push({t:'img',x:tx,y:ty,w:iw,h:th,id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm});tx+=iw+p;tw-=iw+p;}
-      else{const ih=th*.6;ops.push({t:'img',x:tx,y:ty,w:tw,h:ih,id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm});ty+=ih+p*.7;th-=ih+p*.7;}}
-    const wide=tw/th>3.5,k=Math.max(.2,Math.min(1.7,tw/46/u,th/(wide?23:30)/u));
+      // 表紙の大きさ（箱ごと・％）。100％未満は縦横とも縮小。100％超は画像の縦横比と箱の中身の大きさが上限（文字の場所を2割は残す）
+      const s=Math.max(.2,Math.min(2,(+it.is||100)/100)),asp=imgAsp(it.id)||.74,io={id:it.id,name:it.imgName||'',L:2,g:'表紙：'+nm},hit=hits[hits.length-1];let got;
+      if(w/h>1.25){const b0=Math.min(th*.74,tw*.45),iw=s>1?Math.max(b0,Math.min(b0*s,th*asp,tw*.8)):b0*s,ih=th*Math.min(1,s);
+        got=Math.min(iw,ih*asp)/Math.min(b0,th*asp);kw=tw-(b0+p);kh=th;
+        ops.push(Object.assign({t:'img',x:tx,y:ty+(th-ih)/2,w:iw,h:ih},io));tx+=iw+p;tw-=iw+p;}
+      else{const b0=th*.6,ih=s>1?Math.max(b0,Math.min(b0*s,tw/asp,th*.8)):b0*s,iw=tw*Math.min(1,s);
+        got=Math.min(ih,iw/asp)/Math.min(b0,tw/asp);kw=tw;kh=th-(b0+p*.7);
+        ops.push(Object.assign({t:'img',x:tx+(tw-iw)/2,y:ty,w:iw,h:ih},io));ty+=ih+p*.7;th-=ih+p*.7;}
+      hit.icap=s>1&&got<s-.005?Math.floor(got*100+.001):0;} // 指定した％まで大きくできなかったとき、実際の上限（％）を画面に出す
+    // 文字の大きさは残りの場所から決める。「文字の大きさを変えない」がオンなら、表紙を100％にしたときの場所で決める（表紙の％を変えても文字は同じ大きさ）
+    const wide=tw/th>3.5,fx=d.imgFix&&kw>0&&kh>0,aw=fx?kw:tw,ah=fx?kh:th,k=Math.max(.2,Math.min(1.7,aw/46/u,ah/(aw/ah>3.5?23:30)/u));
     let cy=ty,cx=tx;const bh2=4.6*u*k,bs=3*u*k;
     const badge=(lab,c)=>{const pw=M(lab,bs,1)+bh2*.9;R(cx,cy,pw,bh2,c,{r:bh2/2,g:'バッジ：'+lab+'／'+nm});X(lab,cx+pw/2,mid(cy,bh2,bs),bs,on(c),{al:'c',cat:'badge',ia,g:'バッジ：'+lab+'／'+nm});cx+=pw+u*k;};
-    badge(KINDS[it.kind],isNew?T.accent:T.sub);
+    badge(kName(K),kc);
     if(it.r18)badge('R18','#d6002a');
     if(it.few&&!it.sold)badge('残りわずか','#f08a00');
     cy+=bh2+1.6*u*k;
+    // 文字の大きさ＝基準 × 文字タブの種類ごとの％ × 箱の「字」（その箱の文字全体）× 箱の要素ごとの％（fsT/fsP/fsS/fsD）
     const ifs=pc(it.fs),tcol=it.tcol||inkC;
-    const ps=9.5*u*k*FS.price*ifs,pstr=priceStr(it.price,d),limit=ty+th-(pstr&&!wide?ps*1.05:0);
+    const ps=9.5*u*k*FS.price*ifs*pc(it.fsP),pstr=priceStr(it.price,d),limit=ty+th-(pstr&&!wide?ps*1.05:0);
     const txw=wide&&pstr?tw-M(pstr,ps,1)-3*u:tw; // 横長カードは価格を右に並べる
-    const ts=6.2*u*k*FS.title*ifs;
+    const ts=6.2*u*k*FS.title*ifs*pc(it.fsT);
     wrap(it.title||'（無題）',txw,ts,2,1).forEach(l=>{X(l,tx,cy+ts*.88,ts,tcol,{cat:'title',keep:!!it.tcol,ia,g:'タイトル：'+nm});cy+=ts*1.24;});
     cy+=.6*u*k;
-    const ss=3.5*u*k*FS.sub*ifs;
+    const ss=3.5*u*k*FS.spec*ifs*pc(it.fsS);
     if(it.spec&&cy+ss<=limit+.1){X(it.spec,tx,cy+ss*.9,fit(it.spec,txw,ss,0),it.tcol?tcol:subC,{b:0,cat:'spec',keep:!!it.tcol,ia,g:'仕様：'+nm});cy+=ss*1.55;}
-    if(d.showDesc&&it.desc){const ds=3.3*u*k*FS.sub*ifs,lh=ds*1.45;
+    if(d.showDesc&&it.desc){const ds=3.3*u*k*FS.desc*ifs*pc(it.fsD),lh=ds*1.45;
       wrap(it.desc,txw,ds,Math.floor((limit-cy)/lh),0).forEach(l=>{X(l,tx,cy+ds*.92,ds,tcol,{b:0,cat:'desc',keep:!!it.tcol,ia,g:'説明：'+nm});cy+=lh;});}
     if(pstr){const s2=fit(pstr,tw,ps,1);X(pstr,tx+tw,ty+th-s2*.1,s2,priceC,{al:'r',cat:'price',ia,g:'価格：'+nm});}
     if(it.sold){R(x,y,w,h,'#000000',{r,a:.55,L:4,g:'完売：'+nm});const s3=Math.min(w/3.2,h/2.6,22*u);X('完売',x+w/2,mid(y,h,s3),s3,'#ffffff',{al:'c',L:4,g:'完売：'+nm});}
   }
   // 自由テキスト：好きな場所に置ける文字（位置はドラッグで決める）
   (S.texts||[]).forEach((t,i)=>{if((d.twoPage?(+t.pg||1):1)!==(page||1)||!String(t.s||'').trim())return;
-    const size=Math.max(1,+t.size||8),b=t.b?1:0,lines=String(t.s).split('\n'),w=Math.max(size,...lines.map(l=>M(l,size,b))),lh=size*1.3,h=lines.length*lh;
+    const{size,b,lines,lh,w,h}=tBox(t,M);
     const q=place('t:'+t.id,(W-w)/2,by+bh/2-h/2+(i%6)*4*u,w,h,0),ax=t.al==='c'?q.x+w/2:t.al==='r'?q.x+w:q.x;
     lines.forEach((l,k)=>X(l,ax,q.y+k*lh+size*.95,size,t.color||T.ink,{al:t.al||'l',b,a:alp(t.a),L:4,g:'自由テキスト：'+lines[0]}));});
   return{W,H,ops,warn,hits};
 }
 
 /* ---------- Canvas描画 ---------- */
+// 画像は読み込み後に ImageBitmap（デコード済み）にしておき、毎回の描画で再デコードが走らないようにする
 const IMG=new Map();
-function syncImgs(){const want=S.items.map(i=>[i.id,i.img]).concat([['bg',S.design.bg.img]]);
-  want.forEach(([id,data])=>{const c=IMG.get(id);
-    if(!data){if(c)IMG.delete(id);return;}
-    if(c&&c.data===data)return;
-    const im=new Image();im.onload=schedule;im.src=data;IMG.set(id,{im,data});});}
+const dropImg=c=>{if(c&&c.bm&&c.bm.close)c.bm.close();};
+function clearImgs(){IMG.forEach(dropImg);IMG.clear();}
+// 読み込み済みの画像の縦横比（幅÷高さ）。まだなら 0
+function imgAsp(id){const c=IMG.get(id),im=c&&c.im;return im&&im.complete&&im.naturalWidth?im.naturalWidth/im.naturalHeight:0;}
+function syncImgs(){const want=new Map(S.items.map(i=>[i.id,i.img]));want.set('bg',S.design.bg.img);
+  for(const [id,c] of IMG)if(!want.get(id)){dropImg(c);IMG.delete(id);} // 削除した頒布物の画像も手放す
+  want.forEach((data,id)=>{if(!data)return;const c=IMG.get(id);if(c&&c.data===data)return;dropImg(c);
+    const im=new Image(),e={im,data,bm:null};IMG.set(id,e);
+    im.onload=()=>{schedule();if(!window.createImageBitmap)return;
+      try{createImageBitmap(im,{imageOrientation:'from-image'}).then(bm=>{if(IMG.get(id)===e){e.bm=bm;schedule();}else bm.close();},()=>{});}catch(x){}};
+    im.src=data;});}
 function rr(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();
   if(r<=0){ctx.rect(x,y,w,h);return;}
   ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
@@ -722,11 +790,12 @@ function render(ctx,B,sc,f,only){
     else if(o.t==='text'){ctx.font=(o.b?700:400)+' '+(o.size*sc)+'px '+f;ctx.fillStyle=o.color;ctx.globalAlpha=o.a==null?1:o.a;
       ctx.textAlign=o.al==='c'?'center':o.al==='r'?'right':'left';ctx.fillText(o.s,o.x*sc,o.y*sc);ctx.globalAlpha=1;}
     else if(o.t==='img'){const c=IMG.get(o.id),im=c&&c.im;
-      if(im&&im.complete&&im.naturalWidth&&o.fit==='cover'){const k=Math.max(o.w/im.naturalWidth,o.h/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;
-        ctx.save();ctx.globalAlpha=o.a==null?1:o.a;ctx.beginPath();ctx.rect(o.x*sc,o.y*sc,o.w*sc,o.h*sc);ctx.clip();
-        ctx.imageSmoothingQuality='high';ctx.drawImage(im,(o.x+(o.w-w)/2)*sc,(o.y+(o.h-h)/2)*sc,w*sc,h*sc);ctx.restore();}
-      else if(im&&im.complete&&im.naturalWidth){const k=Math.min(o.w/im.naturalWidth,o.h/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;
-        ctx.imageSmoothingQuality='high';ctx.drawImage(im,(o.x+(o.w-w)/2)*sc,(o.y+(o.h-h)/2)*sc,w*sc,h*sc);}}
+      if(im&&im.complete&&im.naturalWidth){const src=c.bm||im,nw=im.naturalWidth,nh=im.naturalHeight;
+        if(o.fit==='cover'){const k=Math.max(o.w/nw,o.h/nh),w=nw*k,h=nh*k;
+          ctx.save();ctx.globalAlpha=o.a==null?1:o.a;ctx.beginPath();ctx.rect(o.x*sc,o.y*sc,o.w*sc,o.h*sc);ctx.clip();
+          ctx.imageSmoothingQuality='high';ctx.drawImage(src,(o.x+(o.w-w)/2)*sc,(o.y+(o.h-h)/2)*sc,w*sc,h*sc);ctx.restore();}
+        else{const k=Math.min(o.w/nw,o.h/nh),w=nw*k,h=nh*k;
+          ctx.imageSmoothingQuality='high';ctx.drawImage(src,(o.x+(o.w-w)/2)*sc,(o.y+(o.h-h)/2)*sc,w*sc,h*sc);}}}
   }
 }
 const cv=$('#cv'),ctx=cv.getContext('2d');let imgErr='',errT=0,zoom=1,pending=0,curPg=1,sel=null,drag=null,lastB=null,lastSc=1;
@@ -736,7 +805,8 @@ function draw(){
   syncImgs();if(!S.design.twoPage)curPg=1;const B=build(S,mkMeasure(S.design),curPg),st=$('#stage');
   $('#pgs').hidden=!S.design.twoPage;$$('#pgs button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.p===curPg));
   const fitSc=Math.max(.5,Math.min((st.clientWidth-40)/B.W,(st.clientHeight-40)/B.H))*zoom,dpr=window.devicePixelRatio||1;
-  cv.width=Math.round(B.W*fitSc*dpr);cv.height=Math.round(B.H*fitSc*dpr);
+  const cw=Math.round(B.W*fitSc*dpr),ch=Math.round(B.H*fitSc*dpr); // 大きさが同じなら作り直さずに消すだけ
+  if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch;}else{ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cw,ch);}
   cv.style.width=B.W*fitSc+'px';cv.style.height=B.H*fitSc+'px';
   render(ctx,B,fitSc*dpr,fam(S.design));lastB=B;lastSc=fitSc;
   const sh=sel&&B.hits.find(h=>h.key===sel);
@@ -750,6 +820,11 @@ function draw(){
     if(S.design.showGuides){const m=pageM(B);[m,B.W/2,B.W-m].forEach(v=>ln('x',v,'rgba(0,160,220,.7)',[4*dpr,4*dpr]));ln('y',B.H/2,'rgba(0,160,220,.7)',[4*dpr,4*dpr]);}
     guides.forEach(g=>ln(g[0],g[1],'#ff2d9b',[]));}
   $('#al').hidden=!sh;updProps(sh);
+  $$('.isn',list).forEach(e=>{const h=B.hits.find(x=>x.key===e.dataset.id),t=capMsg(h);if(e.textContent!==t)e.textContent=t;});
+  // 種別の一覧：点数と、色を指定していない種別のテーマ由来の色を最新にする
+  {const T=getTheme(S.design);$$('.kr',kindsEl).forEach(r=>{const k=S.design.kinds.find(x=>x.id===r.dataset.id);if(!k)return;
+    const ne=$('.kn',r),t=kCount(k.id)+'点';if(ne.textContent!==t)ne.textContent=t;
+    const ci=$('[data-kf=c]',r);if(!k.c&&document.activeElement!==ci){const v=kDef(k.id,T);if(ci.value!==v)ci.value=v;}});}
   $('#stat').textContent=PAPERS[S.design.paper].n+'　頒布物 '+S.items.length+' 点';
   $('#warn').textContent=imgErr||B.warn;persist();
 }
@@ -761,9 +836,14 @@ function fillForm(){$$('[data-k]').forEach(e=>{const v=getP(e.dataset.k);if(e.ty
   $$('#themes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===S.design.theme));
   refTs();
   $('#bgName').textContent=S.design.bg.img?(S.design.bg.name||'背景画像あり'):'背景画像なし';$('#bBgX').hidden=!S.design.bg.img;}
+// 用紙を変えたとき：箱の手動配置はリセットする。自由テキストは、用紙の中での相対位置（左寄り・中央・右寄り、上・下など）を保ったまま新しい用紙へ移す
+function paperChanged(prev){const A=PAPERS[prev],P=PAPERS[S.design.paper],F=S.design.free,nf={};
+  if(A&&P){const M=mkMeasure(S.design),mv=(v,size,from,to)=>(from-size>0?Math.max(0,Math.min(1,v/(from-size))):.5)*(to-size);
+    S.texts.forEach(t=>{const key='t:'+t.id,f=F[key];if(!f)return;const b=tBox(t,M);nf[key]={x:mv(f.x,b.w,A.w,P.w),y:mv(f.y,b.h,A.h,P.h),w:b.w,h:b.h};});}
+  S.design.free=nf;if(sel&&!sel.startsWith('t:'))sel=null;}
 document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;
-  const t=e.target;setP(k,t.type==='checkbox'?t.checked:t.type==='number'?Math.max(t.min===''?1:+t.min,Math.min(+t.max||9,t.value===''||isNaN(+t.value)?(t.min===''?1:+t.min):+t.value)):t.value);
-  if(k==='design.paper'){S.design.free={};sel=null;}
+  const t=e.target,prevPaper=S.design.paper;setP(k,t.type==='checkbox'?t.checked:t.type==='number'?Math.max(t.min===''?1:+t.min,Math.min(+t.max||9,t.value===''||isNaN(+t.value)?(t.min===''?1:+t.min):+t.value)):t.value);
+  if(k==='design.paper'&&S.design.paper!==prevPaper)paperChanged(prevPaper);
   if(k==='design.yen')renderList();schedule();});
 $('#selPaper').innerHTML=Object.keys(PAPERS).map(k=>`<option value="${k}">${PAPERS[k].n}</option>`).join('');
 $('#selFont').innerHTML=Object.keys(FONTS).map(k=>`<option value="${k}">${FONTS[k].n}</option>`).join('');
@@ -826,43 +906,59 @@ $('#al').addEventListener('click',e=>{const a=e.target.dataset.al,h=sel&&lastB&&
   S.design.free[sel]=f;schedule();});
 /* ---------- プロパティパネル ---------- */
 const props=$('#props');
+// 箱ごとの要素別の文字サイズ（％）：タイトル / 価格 / 仕様 / 説明。頒布物タブとプロパティパネルの両方で編集でき、値は連動する
+const FE=['fsT','fsP','fsS','fsD'];
+// 箱ごとの％設定の範囲
+const PCT={fs:[50,200],is:[20,200],fsT:[50,200],fsP:[50,200],fsS:[50,200],fsD:[50,200]};
+const capMsg=h=>h&&h.icap?'この箱では '+h.icap+'% が上限です（箱を広げると大きくなります）':'';
 function updProps(h){props.hidden=!S.design.showProps;if(props.hidden)return;
   const it=h&&S.items.find(i=>i.id===h.key);
-  $('#pName').textContent=!h?'箱を選択してください':it?KINDS[it.kind]+'：'+(it.title||'（無題）'):h.key.startsWith('t:')?'文字：'+String((S.texts.find(t=>'t:'+t.id===h.key)||{}).s||'').split('\n')[0]:'見出し：'+(KINDS[h.key.slice(4)]||'');
+  $('#pName').textContent=!h?'箱を選択してください':it?kName(kOf(S.design,it.kind))+'：'+(it.title||'（無題）'):h.key.startsWith('t:')?'文字：'+String((S.texts.find(t=>'t:'+t.id===h.key)||{}).s||'').split('\n')[0]:'見出し：'+kName(kOf(S.design,h.key.slice(4)));
   $('#pMode').textContent=!h?'':S.design.free[h.key]?'手動配置':'自動配置';
   const th=getTheme(S.design),ink=S.design.tc.on?S.design.tc.title:th.ink,fi=$('[data-i=fs]',props),ci=$('[data-i=tcol]',props),ai=$('[data-i=ta]',props);
   {const bi=$('[data-i=bcol]',props);bi.disabled=!it;bi.value=it&&it.bcol||th.card;}
+  {const ii=$('[data-i=is]',props);ii.disabled=!it||!it.img;if(document.activeElement!==ii)ii.value=it&&it.img?(+it.is||100):'';
+    const n=$('#pIsN'),t=capMsg(h);n.hidden=!t;n.textContent=t;}
   ai.disabled=!it;if(document.activeElement!==ai)ai.value=it?(it.ta===''||it.ta==null?100:+it.ta):'';
   fi.disabled=ci.disabled=!it;if(document.activeElement!==fi)fi.value=it?(+it.fs||100):'';ci.value=it&&it.tcol||ink;
-  $('#pTxt').disabled=!it||(!it.tcol&&!it.bcol&&(+it.fs||100)===100&&(it.ta==null||+it.ta===100));
+  FE.forEach(f=>{const e=$(`[data-i=${f}]`,props);e.disabled=!it;if(document.activeElement!==e)e.value=it?(+it[f]||100):'';});
+  $('#pTxt').disabled=!it||(!it.tcol&&!it.bcol&&(it.ta==null||+it.ta===100)&&['fs','is'].concat(FE).every(f=>(+it[f]||100)===100));
   $$('input[data-p]',props).forEach(i=>{const k=i.dataset.p;i.disabled=!h||(!h.rs&&(k==='w'||k==='h'));if(document.activeElement!==i)i.value=h?Math.round(h[k]*10)/10:'';});
   $('#pReset').disabled=!h||!S.design.free[h.key];}
 props.addEventListener('change',e=>{const k=e.target.dataset.p,h=sel&&lastB&&lastB.hits.find(x=>x.key===sel),v=parseFloat(e.target.value);
   if(!k||!h||isNaN(v))return;const f={x:h.x,y:h.y,w:h.w,h:h.h};f[k]=k==='w'?Math.max(15,v):k==='h'?Math.max(8,v):v;S.design.free[sel]=f;schedule();});
 props.addEventListener('input',e=>{const k=e.target.dataset.i,it=sel&&S.items.find(i=>i.id===sel);if(!k||!it)return;
-  if(k==='fs'){const v=+e.target.value;if(!v)return;it.fs=Math.max(50,Math.min(200,v));}
+  if(PCT[k]){const v=+e.target.value;if(!v)return;it[k]=Math.max(PCT[k][0],Math.min(PCT[k][1],v));syncF(it,k);}
   else if(k==='ta'){if(e.target.value==='')return;it.ta=Math.max(0,Math.min(100,+e.target.value||0));}else it[k]=e.target.value;schedule();});
-$('#pTxt').addEventListener('click',()=>{const it=sel&&S.items.find(i=>i.id===sel);if(it){it.fs=100;it.tcol='';it.ta=100;it.bcol='';schedule();}});
+// 頒布物タブ側の同じ欄（表紙画像の大きさ・文字サイズ）にも反映する
+const syncF=(it,f)=>{const e=$(`details[data-id="${it.id}"] [data-f=${f}]`,list);if(e)e.value=+it[f]||100;};
+$('#pTxt').addEventListener('click',()=>{const it=sel&&S.items.find(i=>i.id===sel);if(it){it.tcol='';it.ta=100;it.bcol='';['fs','is'].concat(FE).forEach(f=>{it[f]=100;syncF(it,f);});schedule();}});
 $('#fBg').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{S.design.bg.img=await readImg(f);S.design.bg.name=f.name;}catch(x){setErr((x&&x.message)||'画像を読めませんでした');}fillForm();schedule();});
 $('#bBgX').addEventListener('click',()=>{S.design.bg.img='';S.design.bg.name='';fillForm();schedule();});
-$('#bFs').addEventListener('click',()=>{S.design.fs={title:100,price:100,sub:100,circle:100,sec:100};fillForm();schedule();});
+$('#bFs').addEventListener('click',()=>{S.design.fs=blank().design.fs;fillForm();schedule();});
 $('#pClose').addEventListener('click',()=>{S.design.showProps=false;fillForm();schedule();});
 $('#pReset').addEventListener('click',()=>{if(sel){delete S.design.free[sel];schedule();}});
 $('#bFree').addEventListener('click',()=>{S.design.free={};sel=null;schedule();});
 $('#pgs').addEventListener('click',e=>{const p=e.target.dataset.p;if(p){curPg=+p;schedule();}});
-$('#pgmap').innerHTML=ORDER.map(k=>`<label>${KINDS[k]}<select data-k="design.pg.${k}"><option value="1">1枚目</option><option value="2">2枚目</option></select></label>`).join('');
+// 2枚構成：種別ごとに載せるページ（種別の一覧から作る）
+function renderPgmap(){const d=S.design;$('#pgmap').innerHTML=d.kinds.map(k=>`<label>${esc(kName(k))}<select data-k="design.pg.${k.id}">${[1,2].map(p=>`<option value="${p}" ${(+d.pg[k.id]||1)===p?'selected':''}>${p}枚目</option>`).join('')}</select></label>`).join('');}
+renderPgmap();
 $('#zoom').addEventListener('input',e=>{zoom=+e.target.value;schedule();});
 window.addEventListener('resize',schedule);
 
 /* ---------- 頒布物リスト ---------- */
 const list=$('#list');
+// 種別の札：色を指定した種別はその色、ほかは初期の色（CSS）
+const chipCss=id=>{const k=kOf(S.design,id);return k.c?`background:${k.c};color:${on(k.c)}`:'';};
+const paintChip=(el,id)=>{const k=kOf(S.design,id);el.className='kd k-'+k.id;el.textContent=kName(k);el.style.cssText=chipCss(id);};
+const kindOpts=cur=>S.design.kinds.map(k=>`<option value="${k.id}" ${k.id===cur?'selected':''}>${esc(kName(k))}</option>`).join('');
 function renderList(openId){
   const open=new Set($$('details[open]',list).map(d=>d.dataset.id));if(openId)open.add(openId);
   list.innerHTML=S.items.map(it=>`<details class="it" data-id="${it.id}" ${open.has(it.id)?'open':''}>
-<summary><span class="kd k-${it.kind}">${KINDS[it.kind]}</span><b class="st">${esc(it.title)||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
+<summary><span class="kd k-${kOf(S.design,it.kind).id}" style="${chipCss(it.kind)}">${esc(kName(kOf(S.design,it.kind)))}</span><b class="st">${esc(it.title)||'（無題）'}</b><span class="sp">${esc(priceStr(it.price,S.design))}</span></summary>
 <div class="body">
-<div class="row"><label>種別<select data-f="kind">${ORDER.map(k=>`<option value="${k}" ${k===it.kind?'selected':''}>${KINDS[k]}</option>`).join('')}</select></label>
+<div class="row"><label>種別<select data-f="kind">${kindOpts(kOf(S.design,it.kind).id)}</select></label>
 <label>価格（数字 / 自由記入）<input data-f="price" value="${esc(it.price)}" placeholder="500"></label></div>
 <label>タイトル<input data-f="title" value="${esc(it.title)}"></label>
 <label>仕様<input data-f="spec" value="${esc(it.spec)}" placeholder="B5 / 36P / 全年齢"></label>
@@ -873,6 +969,9 @@ function renderList(openId){
 <label>載せるページ（2枚に分けるとき）<select data-f="pg"><option value="">種別の設定に従う</option><option value="1" ${it.pg==1?'selected':''}>1枚目</option><option value="2" ${it.pg==2?'selected':''}>2枚目</option></select></label>
 <div class="imgrow">${it.img?`<img src="${it.img}" alt="">`:''}<span class="nm">${esc(it.imgName)||'表紙画像なし'}</span>
 <label class="fbtn">画像<input type="file" accept="image/*,.psd,.psb" data-f="img"></label>${it.img?'<button type="button" data-a="noimg">外す</button>':''}</div>
+${it.img?`<div class="row"><label title="20〜200％">表紙画像の大きさ ％<input type="number" min="20" max="200" step="5" data-f="is" value="${+it.is||100}"></label><span class="isn" data-id="${it.id}"></span></div>`:''}
+<div class="cap">この頒布物の文字サイズ ％（文字タブの％との掛け算）</div>
+<div class="row">${[['fsT','タイトル'],['fsP','価格'],['fsS','仕様'],['fsD','説明']].map(([f,n])=>`<label>${n}<input type="number" min="50" max="200" step="5" data-f="${f}" value="${+it[f]||100}"></label>`).join('')}</div>
 <div class="acts"><button type="button" data-a="up" aria-label="上へ">↑</button><button type="button" data-a="down" aria-label="下へ">↓</button>
 <button type="button" data-a="dup">複製</button><button type="button" data-a="del">削除</button></div>
 </div></details>`).join('');
@@ -880,9 +979,10 @@ function renderList(openId){
 const itemOf=el=>{const d=el.closest('details');return d&&S.items.find(i=>i.id===d.dataset.id);};
 list.addEventListener('input',async e=>{const f=e.target.dataset.f,it=itemOf(e.target);if(!f||!it)return;
   if(f==='img'){const file=e.target.files[0];if(!file)return;try{it.img=await readImg(file);it.imgName=file.name;}catch(x){setErr((x&&x.message)||'画像を読めませんでした');}renderList();schedule();return;}
+  if(PCT[f]){const v=+e.target.value;if(v)it[f]=Math.max(PCT[f][0],Math.min(PCT[f][1],v));schedule();return;} // 表紙画像の大きさ・文字サイズ（％）
   it[f]=e.target.type==='checkbox'?e.target.checked:e.target.value;
   const d=e.target.closest('details');
-  if(f==='kind'){const k=$('.kd',d);k.className='kd k-'+it.kind;k.textContent=KINDS[it.kind];}
+  if(f==='kind')paintChip($('.kd',d),it.kind);
   if(f==='title')$('.st',d).textContent=it.title||'（無題）';
   if(f==='price')$('.sp',d).textContent=priceStr(it.price,S.design);
   schedule();});
@@ -894,7 +994,7 @@ list.addEventListener('click',e=>{const a=e.target.dataset.a,it=itemOf(e.target)
   if(a==='down'&&i<S.items.length-1)S.items.splice(i+1,0,S.items.splice(i,1)[0]);
   if(a==='noimg'){it.img='';it.imgName='';}
   renderList();schedule();});
-const newItem=o=>Object.assign({id:uid(),kind:'new',title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:''},o);
+const newItem=o=>Object.assign({id:uid(),kind:S.design.kinds.some(k=>k.id==='new')?'new':S.design.kinds[0].id,title:'',price:'',spec:'',desc:'',r18:false,sold:false,few:false,pg:'',img:'',imgName:''},o);
 $('#bAdd').addEventListener('click',()=>{const it=newItem();S.items.push(it);renderList(it.id);schedule();
   const d=$(`details[data-id="${it.id}"]`,list);d.scrollIntoView({block:'nearest'});$('[data-f=title]',d).focus();});
 /* PSD / PSB：ファイル末尾の「統合画像」を読む（レイヤーは見ない）。大きい画像は間引いて展開する */
@@ -941,12 +1041,55 @@ async function readImg(file){
 $('#fBulk').addEventListener('change',async e=>{for(const f of e.target.files){try{S.items.push(newItem({title:f.name.replace(/\.[^.]+$/,''),img:await readImg(f),imgName:f.name}));}catch(x){setErr(f.name+'：'+((x&&x.message)||'読めませんでした'));}}
   e.target.value='';renderList();schedule();});
 
+/* ---------- 種別の管理（デザインタブ） ---------- */
+const kindsEl=$('#kinds');
+const kDef=(id,T)=>id==='new'?T.accent:T.sub; // 色を指定していない種別のバッジの色（テーマ由来）
+const kCount=id=>S.items.filter(i=>kOf(S.design,i.kind).id===id).length;
+const nkLabel=()=>{const nw=S.design.kinds.find(k=>k.id==='new');$$('.nk').forEach(e=>e.textContent=nw?kName(nw):'新刊');};
+function renderKinds(){const d=S.design,T=getTheme(d),n=d.kinds.length;
+  kindsEl.innerHTML=d.kinds.map((k,i)=>`<div class="kr" data-id="${k.id}">
+<input type="color" data-kf="c" value="${k.c||kDef(k.id,T)}" title="バッジと見出しの色" aria-label="${esc(kName(k))}の色">
+<input data-kf="n" value="${esc(k.n)}" placeholder="種別の名前" aria-label="種別の名前">
+<span class="kn">${kCount(k.id)}点</span>
+<button type="button" data-ka="cx" title="色をテーマの色に戻す" aria-label="${esc(kName(k))}の色をテーマの色に戻す" ${k.c?'':'disabled'}>戻</button>
+<button type="button" data-ka="up" aria-label="上へ" ${i?'':'disabled'}>↑</button><button type="button" data-ka="down" aria-label="下へ" ${i<n-1?'':'disabled'}>↓</button>
+<button type="button" data-ka="del" ${n>1?'':'disabled'}>削除</button></div>`).join('');
+  $('#bKindBack').hidden=DEF_KINDS.every(([id])=>d.kinds.some(k=>k.id===id));nkLabel();}
+// 種別が変わったら、頒布物タブ・ページ分け・プレビューにも反映する（追加・削除・並べ替えは作り直し、名前・色は書き換えだけ）
+function kindsChanged(rebuild){
+  if(rebuild){renderKinds();renderList();}
+  else{$$('details.it',list).forEach(dt=>{const it=S.items.find(i=>i.id===dt.dataset.id);if(it)paintChip($('.kd',dt),it.kind);
+      $$('select[data-f=kind] option',dt).forEach(o=>{o.textContent=kName(kOf(S.design,o.value));});});nkLabel();}
+  renderPgmap();schedule();}
+kindsEl.addEventListener('input',e=>{const f=e.target.dataset.kf,r=e.target.closest('.kr'),k=r&&S.design.kinds.find(x=>x.id===r.dataset.id);if(!f||!k)return;
+  if(f==='n')k.n=e.target.value;
+  if(f==='c'){k.c=e.target.value;$('[data-ka=cx]',r).disabled=false;}
+  kindsChanged(false);});
+kindsEl.addEventListener('click',e=>{const a=e.target.dataset.ka,r=e.target.closest('.kr'),d=S.design,i=r?d.kinds.findIndex(x=>x.id===r.dataset.id):-1;if(!a||i<0)return;const k=d.kinds[i];
+  if(a==='cx')k.c='';
+  if(a==='up'&&i>0)d.kinds.splice(i-1,0,d.kinds.splice(i,1)[0]);
+  if(a==='down'&&i<d.kinds.length-1)d.kinds.splice(i+1,0,d.kinds.splice(i,1)[0]);
+  if(a==='del'){if(d.kinds.length<2)return;
+    const rest=d.kinds.filter(x=>x!==k),to=rest.find(x=>x.id==='old')||rest[0],n=kCount(k.id); // 頒布物の移り先は「既刊」（無ければ先頭）
+    if(n&&!confirm(`種別「${kName(k)}」を削除しますか？\nこの種別の頒布物 ${n} 点は「${kName(to)}」に移ります。`))return;
+    d.kinds.splice(i,1);S.items.forEach(it=>{if(it.kind===k.id)it.kind=to.id;});
+    delete d.free['sec:'+k.id];delete d.pg[k.id];if(sel==='sec:'+k.id)sel=null;}
+  kindsChanged(true);});
+$('#bKindAdd').addEventListener('click',()=>{const d=S.design,k={id:newKindId(),n:'新しい種別',c:''};d.kinds.push(k);d.pg[k.id]=1;kindsChanged(true);
+  const inp=$(`.kr[data-id="${k.id}"] [data-kf=n]`,kindsEl);inp.focus();inp.select();});
+// 消した初期の種別を、もとの並び順に近い位置へ戻す
+$('#bKindBack').addEventListener('click',()=>{const d=S.design,P=blank().design.pg;
+  DEF_KINDS.forEach(([id,n],di)=>{if(d.kinds.some(k=>k.id===id))return;let at=0;
+    for(let j=di-1;j>=0;j--){const p=d.kinds.findIndex(k=>k.id===DEF_KINDS[j][0]);if(p>=0){at=p+1;break;}}
+    d.kinds.splice(at,0,{id,n,c:''});d.pg[id]=P[id]||1;});
+  kindsChanged(true);});
+
 /* ---------- 保存・読込 ---------- */
 function download(name,data,type){const b=data instanceof Blob?data:new Blob([data],{type}),a=document.createElement('a');
   a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
 const baseName=()=>'oshinagaki'+(S.info.event?'_'+S.info.event.replace(/[\\/:*?"<>|\s]+/g,''):'');
 const readText=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(f);});
-function reset(s){S=s;IMG.clear();sel=null;fillForm();list.innerHTML='';renderList();renderTexts();schedule();}
+function reset(s){S=s;clearImgs();sel=null;renderKinds();renderPgmap();fillForm();list.innerHTML='';renderList();renderTexts();schedule();}
 $('#bSave').addEventListener('click',()=>download(baseName()+'.json',JSON.stringify(S),'application/json'));
 $('#fOpen').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   try{reset(norm(JSON.parse(await readText(f))));}catch(x){$('#warn').textContent='プロジェクトファイルを読めませんでした';}});
@@ -965,12 +1108,16 @@ function parseCSV(t){const rows=[];let row=[],cur='',q=false;t=t.replace(/^﻿/,
 const truthy=v=>/^(1|true|yes|y|○|〇|◯|x|✓|はい)$/i.test(String(v||'').trim());
 $('#fCsv').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   const rows=parseCSV(await readText(f));if(rows.length&&rows[0][1]==='タイトル')rows.shift();
-  const kindOf=v=>{v=String(v||'').trim();return ORDER.find(k=>k===v||KINDS[k]===v)||'old';};
+  // 種別は名前（または内部名）で照合。一覧に無い名前は、その名前の種別を自動で追加する。空欄は「既刊」
+  const added=[],kindOf=v=>{v=String(v||'').trim();const K=S.design.kinds;if(!v)return fbKind(S.design).id;
+    let k=K.find(k=>k.id===v)||K.find(k=>kName(k)===v);
+    if(!k){k={id:newKindId(),n:v,c:''};K.push(k);S.design.pg[k.id]=1;added.push(v);}return k.id;};
   const byName={};S.items.forEach(i=>{if(i.imgName&&i.img)byName[i.imgName]=i.img;});
   rows.forEach(r=>S.items.push(newItem({kind:kindOf(r[0]),title:r[1]||'',price:r[2]||'',spec:r[3]||'',desc:r[4]||'',r18:truthy(r[5]),sold:truthy(r[6]),few:truthy(r[7]),imgName:r[8]||'',img:byName[r[8]]||''})));
+  if(added.length){renderKinds();renderPgmap();setErr('CSVにあった種別を追加しました：'+added.join('、'));}
   renderList();schedule();});
 $('#bCsv').addEventListener('click',()=>{const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const rows=[CSVH].concat(S.items.map(i=>[KINDS[i.kind],i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',i.imgName]));
+  const rows=[CSVH].concat(S.items.map(i=>[kName(kOf(S.design,i.kind)),i.title,i.price,i.spec,i.desc,i.r18?1:'',i.sold?1:'',i.few?1:'',i.imgName]));
   download(baseName()+'.csv','﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n'),'text/csv');});
 
 /* ---------- 書き出し ---------- */
@@ -1079,7 +1226,7 @@ help.addEventListener('click',e=>{if(e.target===help)help.close();
   const a=e.target.closest('.hn a');if(a){e.preventDefault();$(a.getAttribute('href'),help).scrollIntoView({block:'start'});}});
 document.addEventListener('keydown',e=>{if(e.key==='F1'){e.preventDefault();if(!help.open)help.showModal();}});
 
-fillForm();renderList();renderTexts();draw();
+renderKinds();fillForm();renderList();renderTexts();draw();
 </script>
 </body>
 </html>
